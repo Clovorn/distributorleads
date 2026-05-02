@@ -306,25 +306,7 @@ textarea.field-inp{resize:vertical;min-height:120px;line-height:1.6}
         <div style="font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Step</div>
         <select id="step-filter" style="width:100%;font-size:13px;padding:7px 10px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;font-family:inherit;outline:none" onchange="renderSidebar()">
           <option value="">All steps</option>
-          <option value="new_lead">🆕 New Lead</option>
-          <option value="assign_rep">👤 Rep Assigned</option>
-          <option value="lead_received">📥 Lead Received</option>
-          <option value="customer_contacted">📞 Customer Contacted</option>
-          <option value="customer_won">🏆 Customer Won</option>
-          <option value="deal_sheet">📋 Deal Sheet Created</option>
-          <option value="waiting_finance">⏳ Waiting on Finance</option>
-          <option value="deal_funded_s">💰 Deal Funded</option>
-          <option value="customer_setup">⚙️ Customer Setup</option>
-          <option value="equip_ordered">🛒 Equipment Ordered</option>
-          <option value="dist_notified">📡 Distributor Notified</option>
-          <option value="install_scheduled">📅 Install Scheduled</option>
-          <option value="complete_s">🏁 Complete</option>
-          <option value="credit_app_sent">📤 Credit App Sent</option>
-          <option value="credit_app_received">📩 Credit App Received</option>
-          <option value="credit_approved">✅ Approved</option>
-          <option value="paperwork_sent">📋 Paperwork Sent</option>
-          <option value="paperwork_signed">✍️ Paperwork Signed</option>
-          <option value="deal_funded_l">💰 Deal Funded (Lease)</option>
+          ${ALL_STEPS.filter((s,i,a)=>a.findIndex(x=>x.id===s.id)===i).map(s=>`<option value="${s.id}">${s.icon} ${s.label}</option>`).join('')}
         </select>
       </div>
       <div>
@@ -336,10 +318,9 @@ textarea.field-inp{resize:vertical;min-height:120px;line-height:1.6}
         <input id="date-to" type="date" style="width:100%;font-size:13px;padding:7px 10px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;font-family:inherit;outline:none" onchange="renderSidebar()"/>
       </div>
     </div>
-    </div>
     <div id="filter-summary" class="filter-summary"></div>
-    </div><!-- end filter-panel-body -->
-  </div><!-- end filter panel -->
+  </div>
+</div>
 
   <div class="layout">
     <div class="sidebar" id="sidebar">
