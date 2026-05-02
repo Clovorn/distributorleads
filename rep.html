@@ -7,21 +7,21 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧑‍💼</text></svg>"/>
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-:root{--navy:#0f2347;--navy-light:#e8edf7;--navy-mid:#1a3a6b;--navy-dark:#071529;--amber:#ba7517;--amber-light:#faeeda;--purple:#534ab7;--purple-light:#eeedfe;--red:#a32d2d;--red-light:#fcebeb;--gray:#f7f6f3;--border:#e2e0da;--text:#1a1a18;--text2:#5f5e5a;--text3:#9ca3af;--white:#ffffff}
-@media(prefers-color-scheme:dark){:root{--navy:#7b9fd4;--navy-light:#071529;--navy-mid:#1a3a6b;--navy-dark:#b5c9e8;--amber:#fac775;--amber-light:#412402;--purple:#afa9ec;--purple-light:#26215c;--red:#f09595;--red-light:#501313;--gray:#252522;--border:#3a3835;--text:#f0ede8;--text2:#b4b2a9;--text3:#888780;--white:#1c1c1a}}
+:root{--navy:#071d3d;--navy-light:#0a1628;--navy-mid:#0d2d5e;--navy-dark:#040e1f;--amber:#ba7517;--amber-light:#faeeda;--purple:#534ab7;--purple-light:#eeedfe;--red:#a32d2d;--red-light:#fcebeb;--gray:#f7f6f3;--border:#e2e0da;--text:#1a1a18;--text2:#5f5e5a;--text3:#9ca3af;--white:#ffffff}
+@media(prefers-color-scheme:dark){:root{--navy:#0d2d5e;--navy-light:#040e1f;--navy-mid:#0d2d5e;--navy-dark:#1e3a5f;--amber:#fac775;--amber-light:#412402;--purple:#afa9ec;--purple-light:#26215c;--red:#f09595;--red-light:#501313;--gray:#252522;--border:#3a3835;--text:#f0ede8;--text2:#b4b2a9;--text3:#888780;--white:#1c1c1a}}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--gray);color:var(--text);font-size:15px;min-height:100vh}
 .wrap{max-width:1280px;margin:0 auto;padding:0 1.5rem 4rem}
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--amber-light)}
 .login-card{background:var(--white);border-radius:16px;padding:2.5rem;width:100%;max-width:440px;text-align:center;border:1px solid var(--border)}
-.login-accent{height:5px;background:linear-gradient(90deg,#0f2347 0%,#1a3a6b 100%);border-radius:5px 5px 0 0;margin:-2.5rem -2.5rem 2rem;border-radius:16px 16px 0 0}
+.login-accent{height:5px;background:linear-gradient(90deg,#071d3d 0%,#0d2d5e 100%);border-radius:5px 5px 0 0;margin:-2.5rem -2.5rem 2rem;border-radius:16px 16px 0 0}
 .login-logo{width:64px;height:64px;border-radius:50%;background:var(--navy-light);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:28px}
 .login-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:.3rem}
 .login-sub{font-size:14px;color:var(--text2);margin-bottom:2rem;line-height:1.5}
 .login-label{font-size:13px;font-weight:600;color:var(--text2);text-align:left;display:block;margin-bottom:5px}
 .login-inp{width:100%;font-size:15px;padding:11px 13px;border:1.5px solid var(--border);border-radius:9px;background:var(--white);color:var(--text);font-family:inherit;outline:none;margin-bottom:1rem;transition:border-color .15s}
 .login-inp:focus{border-color:var(--navy-mid)}
-.login-btn{width:100%;padding:12px;border:none;border-radius:9px;background:var(--navy);color:#e1f5ee;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.login-btn{width:100%;padding:12px;border:none;border-radius:9px;background:var(--navy);color:#0a1628;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
 .login-btn:hover{background:var(--navy-dark)}
 .login-err{font-size:13px;color:var(--red);margin-top:.6rem;display:none}
 .login-suggestion{margin-top:1rem;text-align:left;border:1px solid var(--border);border-radius:8px;overflow:hidden}
@@ -30,19 +30,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .suggestion-item:hover{background:var(--navy-light);color:var(--navy-dark)}
 .page{display:none}
 .page.on{display:block}
-.top{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.5rem;background:#0f2347;position:sticky;top:0;z-index:50;flex-wrap:wrap;gap:10px}
-.brand{font-size:17px;font-weight:600;color:#b5c9e8;letter-spacing:-.01em}
+.top{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.5rem;background:#071d3d;position:sticky;top:0;z-index:50;flex-wrap:wrap;gap:10px}
+.brand{font-size:17px;font-weight:600;color:#1e3a5f;letter-spacing:-.01em}
 .rep-pill{font-size:13px;font-weight:700;color:var(--amber);background:var(--amber-light);padding:5px 14px;border-radius:999px}
 .btn{font-size:13px;padding:7px 14px;border:1px solid var(--border);border-radius:7px;background:var(--white);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap;transition:all .12s}
 .btn:hover{background:var(--gray)}
-.btn-green{background:var(--navy);color:#e1f5ee;border-color:var(--navy)}
+.btn-green{background:var(--navy);color:#0a1628;border-color:var(--navy)}
 .btn-green:hover{background:var(--navy-dark)}
-.btn-blue{background:#185fa5;color:#e6f1fb;border-color:#185fa5}
-.btn-blue:hover{background:#0c447c}
+.btn-blue{background:#0d2d5e;color:#0a1628;border-color:#0d2d5e}
+.btn-blue:hover{background:#071d3d}
 .btn-red{background:var(--red);color:var(--red-light);border-color:var(--red)}
 .btn-sm{font-size:12px;padding:4px 10px}
 .badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px}
-.badge-blue{background:#b5d4f4;color:#042c53}
+.badge-blue{background:#1e3a5f;color:#040e1f}
 .badge-green{background:#c0dd97;color:#173404}
 .badge-amber{background:var(--amber-light);color:var(--amber)}
 .badge-gray{background:var(--border);color:var(--text2)}
@@ -51,7 +51,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .notice{font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:.8rem}
 .n-ok{background:var(--navy-light);color:var(--navy-dark)}
 .n-err{background:var(--red-light);color:var(--red)}
-.n-info{background:#e6f1fb;color:#0c447c}
+.n-info{background:#0a1628;color:#071d3d}
 .n-warn{background:var(--amber-light);color:var(--amber)}
 .content{padding:1.5rem 1.5rem 0}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
@@ -59,12 +59,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .metric.m-green{border-top-color:var(--navy-mid)}
 .metric.m-amber{border-top-color:var(--amber)}
 .metric.m-red{border-top-color:var(--red)}
-.metric.m-blue{border-top-color:#185fa5}
+.metric.m-blue{border-top-color:#0d2d5e}
 .metric-label{font-size:11px;color:var(--text3);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .metric-value{font-size:26px;font-weight:700;color:var(--text)}
 .tabs{display:flex;gap:0;margin-bottom:1.2rem;background:var(--white);border:1px solid var(--border);border-radius:9px;padding:3px;overflow:hidden}
 .tab{font-size:13px;font-weight:600;padding:7px 16px;border:none;background:transparent;color:var(--text2);cursor:pointer;border-radius:7px;font-family:inherit;flex:1;text-align:center;transition:all .15s}
-.tab.on{background:var(--navy);color:#e1f5ee}
+.tab.on{background:var(--navy);color:#0a1628}
 .search-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
 .search-row input,.search-row select{font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:7px;background:var(--white);color:var(--text);font-family:inherit;outline:none;transition:border-color .15s}
 .search-row input:focus,.search-row select:focus{border-color:var(--navy-mid)}
@@ -167,8 +167,8 @@ textarea.field-inp{resize:vertical;min-height:120px;line-height:1.6}
       <span id="conn-badge" class="badge badge-amber">connecting…</span>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <a href="/" style="font-size:13px;color:#b5c9e8;text-decoration:none;opacity:.8">Admin dashboard</a>
-      <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#b5c9e8;border-color:rgba(255,255,255,.25)" onclick="logout()">Switch rep</button>
+      <a href="/" style="font-size:13px;color:#1e3a5f;text-decoration:none;opacity:.8">Admin dashboard</a>
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#1e3a5f;border-color:rgba(255,255,255,.25)" onclick="logout()">Switch rep</button>
     </div>
   </div>
   <div class="content">
