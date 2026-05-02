@@ -469,7 +469,7 @@ function renderRepMain(id){
     return`<div class="pipe-step"><div class="pipe-dot ${dc}">${s.icon}</div><div class="pipe-name ${nc}">${s.label}</div></div>`;
   }).join('');
 
-  const logHtml=logs.length?logs.map(l=>`<div class="log-row"><span class="log-time">${fmtT(l.created_at)}</span><span>${l.action}</span></div>`).join(''):'<div style="font-size:13px;color:#9ca3af;padding:4px 0">No activity yet.</div>';
+  const logHtml=logs.length?logs.map(l=>`<div class="log-row"><span class="log-time">${fmtT(l.created_at)}</span><div><div>${l.action}</div>${l.note?`<div style="margin-top:3px;padding:4px 8px;background:#eff6ff;border-left:2px solid #1d4ed8;border-radius:0 4px 4px 0;font-size:11px;color:#1e40af;font-style:italic">${l.note}</div>`:''}</div></div>`).join(''):'<div style="font-size:13px;color:#9ca3af;padding:4px 0">No activity yet.</div>';
 
   const f=(label,val)=>val?`<div class="info-field"><div class="lbl">${label}</div><div class="val">${val}</div></div>`:'';
 
@@ -600,9 +600,11 @@ async function advanceEmail(){
       const to=steps[idx+1].id;
       let status=lead.status;
       if(to==='customer_won'||to==='complete_s'||to==='deal_funded_l') status='won';
+      // Ask for a note before advancing
+      const note=window.prompt(`Note for moving to "${steps[idx+1].label}" (optional — press OK to skip):`)||'';
       await sb.from('email_log').insert({lead_id:emailLeadId,step:lead.current_step,subject:subj,body,sent_by_role:'rep:'+repName});
       await sb.from('leads').update({current_step:to,status}).eq('id',emailLeadId);
-      await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:'rep:'+repName,action:'Advanced: '+steps[idx].label+' → '+steps[idx+1].label,from_step:lead.current_step,to_step:to});
+      await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:'rep:'+repName,action:'Advanced: '+steps[idx].label+' → '+steps[idx+1].label,from_step:lead.current_step,to_step:to,note:note});
       notice('Advanced to '+steps[idx+1].label+'!','ok');
     }
   }
@@ -616,7 +618,7 @@ async function confirmLost(){
   if(!reason){alert('Please provide a reason.');return;}
   const lead=leads.find(l=>l.id===lostLeadId);
   await sb.from('leads').update({status:'lost',lost_reason:reason,current_step:'customer_lost'}).eq('id',lostLeadId);
-  await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:'rep:'+repName,action:'Marked as lost: '+reason,from_step:lead?.current_step});
+  await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:'rep:'+repName,action:'Marked as lost',from_step:lead?.current_step,note:reason});
   document.getElementById('lost-modal').style.display='none';
   notice('Lead marked as lost.','warn');
 }
