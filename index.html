@@ -62,6 +62,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge-soft-red{background:#fee2e2;color:#991b1b}
 .badge-soft-amber{background:#fef3c7;color:#92400e}
 .badge-soft-blue{background:#dbeafe;color:#1e40af}
+.badge-soft-purple{background:#ede9fe;color:#5b21b6}
 .badge-gray{background:#e5e7eb;color:#374151}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.4rem}
 .metric{background:#fff;border:1px solid #e5e7eb;border-top:3px solid #e5e7eb;border-radius:10px;padding:.9rem 1.1rem}
@@ -202,25 +203,29 @@ textarea.field-inp{resize:vertical;min-height:120px;line-height:1.6}
     <button class="btn btn-sm" onclick="document.getElementById('csv-modal').style.display='flex'">&#8593; Import CSV</button>
     <button class="btn btn-sm" id="sync-btn" style="display:none" onclick="doSync()">&#8635; Sync Jotform</button>
     <button class="btn btn-sm" onclick="toggleShowLost()" id="lost-toggle">Show lost leads</button>
+    <div style="flex:1"></div>
+    <button class="btn btn-blue btn-sm" onclick="showRepReport()">&#128202; Sales Rep Report</button>
   </div>
 
   <div class="notice" id="notice" style="display:none"></div>
 
   <div class="metrics" id="metrics">
-    <div class="metric m-navy"><div class="metric-label">Total leads</div><div class="metric-value" id="m-total">—</div></div>
-    <div class="metric m-amber"><div class="metric-label">New leads</div><div class="metric-value" id="m-new">—</div></div>
-    <div class="metric m-blue"><div class="metric-label">Sales route</div><div class="metric-value" id="m-sales">—</div></div>
-    <div class="metric m-purple"><div class="metric-label">Leasing route</div><div class="metric-value" id="m-leasing">—</div></div>
-    <div class="metric m-teal"><div class="metric-label">Tradeshow</div><div class="metric-value" id="m-tradeshow">—</div></div>
+    <div class="metric m-navy"><div class="metric-label">Total Leads</div><div class="metric-value" id="m-total">—</div></div>
+    <div class="metric m-amber"><div class="metric-label">Leads to Assign</div><div class="metric-value" id="m-unassigned">—</div></div>
+    <div class="metric m-blue"><div class="metric-label">Leads Assigned</div><div class="metric-value" id="m-assigned">—</div></div>
     <div class="metric m-green"><div class="metric-label">Won</div><div class="metric-value" id="m-won">—</div></div>
     <div class="metric m-red"><div class="metric-label">Lost</div><div class="metric-value" id="m-lost">—</div></div>
   </div>
 
   <div style="background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:1rem;margin-bottom:1rem">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;flex-wrap:wrap;gap:8px">
-      <span style="font-size:13px;font-weight:700;color:#374151">🔍 Filter & Sort</span>
-      <button class="btn btn-sm" onclick="clearFilters()">Clear all</button>
+      <span style="font-size:13px;font-weight:700;color:#374151">Filter &amp; Sort</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm" onclick="clearFilters()">Clear all</button>
+        <button class="btn btn-sm" id="filter-toggle-btn" onclick="toggleFilterPanel()" style="min-width:80px">Hide &#8963;</button>
+      </div>
     </div>
+    <div id="filter-panel-body">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px">
       <div>
         <div style="font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">Search</div>
@@ -313,8 +318,9 @@ textarea.field-inp{resize:vertical;min-height:120px;line-height:1.6}
         <input id="date-to" type="date" style="width:100%;font-size:13px;padding:7px 10px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;font-family:inherit;outline:none" onchange="renderSidebar()"/>
       </div>
     </div>
-    <div id="filter-summary" style="font-size:12px;color:#6b7280;margin-top:.6rem"></div>
+    <div id="filter-summary" class="filter-summary"></div>
   </div>
+</div>
 
   <div class="layout">
     <div class="sidebar" id="sidebar">
@@ -328,8 +334,7 @@ textarea.field-inp{resize:vertical;min-height:120px;line-height:1.6}
       </div>
     </div>
   </div>
-  </div><!-- end page-content -->
-  </div><!-- .page-content -->
+  </div>
 </div>
 </div>
 
@@ -384,6 +389,56 @@ textarea.field-inp{resize:vertical;min-height:120px;line-height:1.6}
     <div id="pw-msg" style="font-size:13px;margin-top:.5rem"></div>
   </div>
 </div>
+</div>
+
+<!-- ════ REP REPORT MODAL ════ -->
+<div class="overlay" id="rep-report-modal" style="display:none">
+  <div class="modal" style="max-width:900px;width:95%">
+    <div class="modal-hdr">
+      <div class="modal-title">&#128202; Sales Rep Report</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="rr-rep-filter" class="field-inp" style="width:220px;margin:0" onchange="renderRepReport()">
+          <option value="">All reps</option>
+        </select>
+        <button class="modal-close" onclick="document.getElementById('rep-report-modal').style.display='none'">&#x2715;</button>
+      </div>
+    </div>
+    <div id="rep-report-body" style="overflow-y:auto;max-height:70vh"></div>
+  </div>
+</div>
+
+<!-- ════ STEP NOTE MODAL ════ -->
+<div class="overlay" id="step-note-modal" style="display:none">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="step-note-title">Moving to next step</div>
+        <div id="step-note-sub" style="font-size:13px;color:#6b7280;margin-top:3px"></div>
+      </div>
+      <button class="modal-close" onclick="cancelStepNote()">&#x2715;</button>
+    </div>
+    <label class="field-label">Add a note about this step <span style="color:#9ca3af;font-weight:400">(optional)</span></label>
+    <textarea class="field-inp" id="step-note-text" rows="4" placeholder="e.g. Spoke with customer, sent credit application via email…"></textarea>
+    <div class="modal-foot">
+      <button class="btn" onclick="cancelStepNote()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmStepNote()">Save &amp; advance &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ LEAD EDIT MODAL ════ -->
+<div class="overlay" id="lead-edit-modal" style="display:none">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-hdr">
+      <div class="modal-title" id="edit-modal-title">Edit Lead</div>
+      <button class="modal-close" onclick="document.getElementById('lead-edit-modal').style.display='none'">&#x2715;</button>
+    </div>
+    <div id="lead-edit-body"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="document.getElementById('lead-edit-modal').style.display='none'">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLeadEdit()">Save changes</button>
+    </div>
+  </div>
 </div>
 
 <!-- ════ EMAIL MODAL ════ -->
@@ -559,6 +614,18 @@ function notice(msg,type='info',bar='notice'){
   setTimeout(()=>el.style.display='none',6000);
 }
 
+function toggleFilterPanel(){
+  const body=document.getElementById('filter-panel-body');
+  const btn=document.getElementById('filter-toggle-btn');
+  const summary=document.getElementById('filter-summary');
+  if(!body)return;
+  const hidden=body.style.display==='none';
+  body.style.display=hidden?'':'none';
+  summary.style.display=hidden?'':'none';
+  btn.innerHTML=hidden?'Hide &#8963;':'Show &#8964;';
+  localStorage.setItem('filter_panel_open', hidden?'1':'0');
+}
+
 function showPage(n){['main','lock','settings'].forEach(p=>document.getElementById('pg-'+p).classList.remove('on'));document.getElementById('pg-'+n).classList.add('on');window.scrollTo(0,0);}
 function goSettings(){if(sessionStorage.getItem('unlocked')==='1'){showPage('settings');refreshStatus();}else{showPage('lock');setTimeout(()=>document.getElementById('lock-pw').focus(),100);}}
 function unlock(){const pw=document.getElementById('lock-pw').value;const stored=localStorage.getItem('admin_pw')||DEFAULT_PW;if(pw===stored){sessionStorage.setItem('unlocked','1');document.getElementById('lock-pw').value='';document.getElementById('lock-err').style.display='none';showPage('settings');refreshStatus();}else{document.getElementById('lock-err').style.display='block';}}
@@ -573,7 +640,7 @@ async function init(){
   try{
     sb=supabase.createClient(SB_URL,SB_KEY);
     document.getElementById('conn-badge').textContent='● connected';
-    document.getElementById('conn-badge').className='badge badge-green';
+    document.getElementById('conn-badge').className='badge badge-soft-green';
     await loadLeads();
     sb.channel('leads-rt')
       .on('postgres_changes',{event:'*',schema:'public',table:'leads'},()=>loadLeads())
@@ -585,8 +652,15 @@ async function init(){
       }).subscribe();
     document.getElementById('live-badge').style.display='inline';
     if(localStorage.getItem('jf_key'))document.getElementById('sync-btn').style.display='inline-block';
-    // Show webhook URL in settings
-    document.getElementById('webhook-url').textContent=window.location.origin+'/.netlify/functions/webhook';
+    const wu=document.getElementById('webhook-url');
+    if(wu)wu.textContent=window.location.origin+'/.netlify/functions/webhook';
+    // Restore filter panel collapsed state
+    if(localStorage.getItem('filter_panel_open')==='0'){
+      const body=document.getElementById('filter-panel-body');
+      const btn=document.getElementById('filter-toggle-btn');
+      const summary=document.getElementById('filter-summary');
+      if(body){body.style.display='none';summary.style.display='none';btn.innerHTML='Show &#8964;';}
+    }
   }catch(e){document.getElementById('conn-badge').textContent='✗ error';console.error(e);}
 }
 
@@ -610,10 +684,8 @@ async function loadAct(id){
 function renderMetrics(){
   const active=leads.filter(l=>l.status==='active');
   document.getElementById('m-total').textContent=leads.length;
-  document.getElementById('m-new').textContent=leads.filter(l=>l.current_step==='new_lead').length;
-  document.getElementById('m-sales').textContent=active.filter(l=>l.route==='sales').length;
-  document.getElementById('m-leasing').textContent=active.filter(l=>l.route==='leasing').length;
-  document.getElementById('m-tradeshow').textContent=leads.filter(l=>l.tradeshow_lead&&l.tradeshow_lead.toLowerCase().includes('yes')).length;
+  document.getElementById('m-unassigned').textContent=leads.filter(l=>!l.assigned_sales_rep||l.assigned_sales_rep.trim()==='').length;
+  document.getElementById('m-assigned').textContent=leads.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim()!=='').length;
   document.getElementById('m-won').textContent=leads.filter(l=>l.status==='won').length;
   document.getElementById('m-lost').textContent=leads.filter(l=>l.status==='lost').length;
 }
@@ -792,7 +864,13 @@ function renderMain(id){
   // Add any extra raw CSV fields
   Object.entries(raw).forEach(([k,v])=>{if(v&&v.trim()&&!dataRows.find(r=>r[1]===v))dataRows.push([k.replace(/_/g,' '),v]);});
 
-  const logHtml=logs.length?logs.map(l=>`<div class="log-row"><span class="log-time">${fmtT(l.created_at)}</span><span>[${l.actor_role}] ${l.action}</span></div>`).join(''):'<div style="font-size:13px;color:#9ca3af;padding:4px 0">No activity yet.</div>';
+  const logHtml=logs.length?logs.map(l=>`<div class="log-row">
+    <span class="log-time">${fmtT(l.created_at)}</span>
+    <div>
+      <div>[${l.actor_role}] ${l.action}</div>
+      ${l.note?`<div style="margin-top:3px;padding:4px 8px;background:#eff6ff;border-left:2px solid #1d4ed8;border-radius:0 4px 4px 0;font-size:11px;color:#1e40af;font-style:italic">${l.note}</div>`:''}
+    </div>
+  </div>`).join(''):'<div style="font-size:13px;color:#9ca3af;padding:4px 0">No activity yet.</div>';
 
   document.getElementById('main').innerHTML=`
     <div class="main-hdr">
@@ -898,17 +976,69 @@ async function saveRep(id){
   notice('Rep saved!','ok');
 }
 
+// ─── Step Note ───────────────────────────────────────────────
+let stepNotePending=null; // {leadId, toStep, fromStep, advance, emailSubj, emailBody}
+
+function openStepNote(leadId, fromStep, toStep, advance=false, emailSubj='', emailBody=''){
+  const fromLabel=stepOf(fromStep)?.label||fromStep;
+  const toLabel=stepOf(toStep)?.label||toStep;
+  stepNotePending={leadId,fromStep,toStep,advance,emailSubj,emailBody};
+  document.getElementById('step-note-title').textContent=`Moving to: ${stepOf(toStep)?.icon||''} ${toLabel}`;
+  document.getElementById('step-note-sub').textContent=`From: ${fromLabel}`;
+  document.getElementById('step-note-text').value='';
+  document.getElementById('step-note-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('step-note-text').focus(),100);
+}
+
+function cancelStepNote(){
+  document.getElementById('step-note-modal').style.display='none';
+  stepNotePending=null;
+}
+
+async function confirmStepNote(){
+  if(!stepNotePending||!sb)return;
+  const {leadId,fromStep,toStep,advance,emailSubj,emailBody}=stepNotePending;
+  const note=document.getElementById('step-note-text').value.trim();
+  document.getElementById('step-note-modal').style.display='none';
+  stepNotePending=null;
+
+  const lead=leads.find(l=>l.id===leadId);
+  if(!lead)return;
+
+  // Determine new status
+  let status=lead.status;
+  if(['customer_won','complete_s','deal_funded_l'].includes(toStep)) status='won';
+
+  // Update lead step
+  await sb.from('leads').update({current_step:toStep,status,phase:toStep}).eq('id',leadId);
+
+  // Log the step advance with note
+  const fromLabel=stepOf(fromStep)?.label||fromStep;
+  const toLabel=stepOf(toStep)?.label||toStep;
+  await sb.from('activity_log').insert({
+    lead_id:leadId,
+    actor_role:role,
+    action:`Advanced: ${fromLabel} → ${toLabel}`,
+    from_step:fromStep,
+    to_step:toStep,
+    note:note||''
+  });
+
+  // If came from email advance, also copy email to clipboard
+  if(advance&&emailSubj){
+    try{await navigator.clipboard.writeText('Subject: '+emailSubj+'\n\n'+emailBody);}catch(e){}
+    await sb.from('email_log').insert({lead_id:leadId,step:fromStep,subject:emailSubj,body:emailBody,sent_by_role:role});
+    notice(`Advanced to ${toLabel} — email copied!`,'ok');
+  } else {
+    notice(`Moved to ${toLabel}!`,'ok');
+  }
+}
+
 async function jumpStep(id){
   const sel=document.getElementById('jump-'+id);if(!sel)return;
   const toStep=sel.value;
   const lead=leads.find(l=>l.id===id);if(!lead||toStep===lead.current_step)return;
-  const fromLabel=stepOf(lead.current_step)?.label||lead.current_step;
-  const toLabel=stepOf(toStep)?.label||toStep;
-  let status=lead.status;
-  if(toStep==='customer_won'||toStep==='complete_s'||toStep==='deal_funded_l') status='won';
-  await sb.from('leads').update({current_step:toStep,status}).eq('id',id);
-  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:`Moved: ${fromLabel} → ${toLabel}`,from_step:lead.current_step,to_step:toStep});
-  notice('Moved to '+toLabel+'!','ok');
+  openStepNote(id,lead.current_step,toStep,false);
 }
 
 async function saveEdits(id){
@@ -928,7 +1058,7 @@ async function confirmLost(){
   if(!reason){alert('Please provide a reason.');return;}
   const lead=leads.find(l=>l.id===lostLeadId);
   await sb.from('leads').update({status:'lost',lost_reason:reason,current_step:'customer_lost'}).eq('id',lostLeadId);
-  await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:role,action:`Marked as lost: ${reason}`,from_step:lead?.current_step});
+  await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:role,action:`Marked as lost`,from_step:lead?.current_step,note:reason});
   document.getElementById('lost-modal').style.display='none';
   notice('Lead marked as lost.','warn');
 }
@@ -974,19 +1104,15 @@ async function copyEmail(){
 async function advanceEmail(){
   const subj=document.getElementById('email-subj').value;
   const body=document.getElementById('email-body').value;
-  try{await navigator.clipboard.writeText('Subject: '+subj+'\n\n'+body);}catch(e){}
   if(emailLeadId&&sb){
     const lead=leads.find(x=>x.id===emailLeadId);
     const steps=getSteps(lead.route);const ids=steps.map(s=>s.id);
     const idx=ids.indexOf(lead.current_step);
     if(idx<steps.length-1){
-      const to=steps[idx+1].id;
-      let status=lead.status;
-      if(to==='customer_won'||to==='complete_s'||to==='deal_funded_l') status='won';
-      await sb.from('email_log').insert({lead_id:emailLeadId,step:lead.current_step,subject:subj,body,sent_by_role:role});
-      await sb.from('leads').update({current_step:to,status}).eq('id',emailLeadId);
-      await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:role,action:'Advanced: '+steps[idx].label+' → '+steps[idx+1].label,from_step:lead.current_step,to_step:to});
-      notice('Advanced to '+steps[idx+1].label+'!','ok');
+      const toStep=steps[idx+1].id;
+      closeEmail();
+      openStepNote(emailLeadId,lead.current_step,toStep,true,subj,body);
+      return;
     }
   }
   closeEmail();
@@ -1175,6 +1301,161 @@ function changePw(){
   if(nw!==cf){msg.style.color='#dc2626';msg.textContent='Passwords do not match.';return;}
   localStorage.setItem('admin_pw',nw);msg.style.color='#166534';msg.textContent='Password updated!';
   ['pw-cur','pw-new','pw-conf'].forEach(i=>document.getElementById(i).value='');
+}
+
+// ─── Rep Report ──────────────────────────────────────────────
+function showRepReport(){
+  // Populate rep dropdown
+  const reps=[...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
+  const sel=document.getElementById('rr-rep-filter');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">All reps</option>'+reps.map(r=>`<option value="${r}" ${r===cur?'selected':''}>${r}</option>`).join('');
+  document.getElementById('rep-report-modal').style.display='flex';
+  renderRepReport();
+}
+
+function renderRepReport(){
+  const filterRep=document.getElementById('rr-rep-filter').value;
+  const steps=getAllStepsForReport();
+
+  // Group leads by rep
+  let list=filterRep?leads.filter(l=>l.assigned_sales_rep===filterRep):leads;
+  const byRep={};
+  list.forEach(l=>{
+    const rep=l.assigned_sales_rep||'— Unassigned —';
+    if(!byRep[rep])byRep[rep]=[];
+    byRep[rep].push(l);
+  });
+
+  const fmt=ts=>ts?new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+  const stepLabel=id=>{const s=ALL_STEPS.find(x=>x.id===id);return s?s.label:id;};
+
+  let html='';
+  Object.keys(byRep).sort().forEach(rep=>{
+    const repLeads=byRep[rep];
+    const won=repLeads.filter(l=>l.status==='won').length;
+    const lost=repLeads.filter(l=>l.status==='lost').length;
+    const active=repLeads.filter(l=>l.status==='active').length;
+
+    html+=`<div style="margin-bottom:1.5rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.7rem 1rem;background:#0f2347;border-radius:8px 8px 0 0;flex-wrap:wrap;gap:8px">
+        <div style="font-size:15px;font-weight:700;color:#fff">${rep}</div>
+        <div style="display:flex;gap:10px;font-size:12px;font-weight:600">
+          <span style="color:rgba(255,255,255,.7)">${repLeads.length} total</span>
+          <span style="color:#6ee7b7">${won} won</span>
+          <span style="color:#fca5a5">${lost} lost</span>
+          <span style="color:#bfdbfe">${active} active</span>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;overflow:hidden">
+        <thead>
+          <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb">
+            <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Customer</th>
+            <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Store / DBA</th>
+            <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Program</th>
+            <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Route</th>
+            <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Current step</th>
+            <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Status</th>
+            <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Date</th>
+            <th style="padding:8px 12px;text-align:center;font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em">Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${repLeads.map((l,i)=>{
+            const step=ALL_STEPS.find(s=>s.id===l.current_step);
+            const statusBadge=l.status==='won'?'<span class="badge badge-soft-green">Won</span>':
+              l.status==='lost'?'<span class="badge badge-soft-red">Lost</span>':
+              '<span class="badge badge-gray">Active</span>';
+            const routeBadge=l.route==='leasing'?'<span class="badge badge-soft-purple" style="background:#ede9fe;color:#5b21b6">Leasing</span>':'<span class="badge badge-soft-blue">Sales</span>';
+            return`<tr style="border-bottom:1px solid #f3f4f6;${i%2===1?'background:#f9fafb':''}">
+              <td style="padding:9px 12px;color:#111827;font-weight:500">${l.customer_full_name||'—'}</td>
+              <td style="padding:9px 12px;color:#374151">${l.dba_name||'—'}</td>
+              <td style="padding:9px 12px;color:#374151;max-width:160px">${l.which_program?l.which_program.split('-')[0].trim():'—'}</td>
+              <td style="padding:9px 12px">${routeBadge}</td>
+              <td style="padding:9px 12px;color:#374151">${step?step.icon+' '+step.label:'—'}</td>
+              <td style="padding:9px 12px">${statusBadge}</td>
+              <td style="padding:9px 12px;color:#9ca3af">${fmt(l.created_at)}</td>
+              <td style="padding:9px 12px;text-align:center"><button class="btn btn-sm" onclick="openLeadEdit('${l.id}')">Edit</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  });
+
+  if(!html) html='<div class="empty" style="min-height:200px"><div>No leads found.</div></div>';
+  document.getElementById('rep-report-body').innerHTML=html;
+}
+
+// ─── Lead Edit from Report ────────────────────────────────────
+let editLeadId=null;
+function openLeadEdit(id){
+  const lead=leads.find(l=>l.id===id);
+  if(!lead)return;
+  editLeadId=id;
+  document.getElementById('edit-modal-title').textContent='Edit — '+(lead.customer_full_name||lead.dba_name||'Lead');
+  const steps=getSteps(lead.route);
+
+  document.getElementById('lead-edit-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.8rem">
+      <div class="edit-field"><div class="edit-label">Customer name</div><input class="edit-inp" id="le-name" value="${lead.customer_full_name||''}"/></div>
+      <div class="edit-field"><div class="edit-label">DBA / Store name</div><input class="edit-inp" id="le-dba" value="${lead.dba_name||''}"/></div>
+      <div class="edit-field"><div class="edit-label">Contact email</div><input class="edit-inp" id="le-email" value="${lead.contact_email||''}"/></div>
+      <div class="edit-field"><div class="edit-label">Phone</div><input class="edit-inp" id="le-phone" value="${lead.phone||''}"/></div>
+      <div class="edit-field"><div class="edit-label">Assigned sales rep</div><input class="edit-inp" id="le-rep" value="${lead.assigned_sales_rep||''}"/></div>
+      <div class="edit-field"><div class="edit-label">Status</div>
+        <select class="edit-inp" id="le-status">
+          <option value="active" ${lead.status==='active'?'selected':''}>Active</option>
+          <option value="won" ${lead.status==='won'?'selected':''}>Won</option>
+          <option value="lost" ${lead.status==='lost'?'selected':''}>Lost</option>
+        </select>
+      </div>
+      <div class="edit-field"><div class="edit-label">Route</div>
+        <select class="edit-inp" id="le-route" onchange="updateEditSteps()">
+          <option value="sales" ${lead.route==='sales'?'selected':''}>Sales Rep Route</option>
+          <option value="leasing" ${lead.route==='leasing'?'selected':''}>Leasing/Finance Route</option>
+        </select>
+      </div>
+      <div class="edit-field"><div class="edit-label">Current step</div>
+        <select class="edit-inp" id="le-step">
+          ${steps.map(s=>`<option value="${s.id}" ${s.id===lead.current_step?'selected':''}>${s.icon} ${s.label}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="edit-field" style="margin-bottom:.8rem"><div class="edit-label">Lost reason (if lost)</div><input class="edit-inp" id="le-lost" value="${lead.lost_reason||''}"/></div>
+    <div class="edit-field"><div class="edit-label">Notes</div><textarea class="edit-inp" id="le-notes" rows="3">${lead.notes||''}</textarea></div>`;
+
+  document.getElementById('lead-edit-modal').style.display='flex';
+}
+
+function updateEditSteps(){
+  const route=document.getElementById('le-route').value;
+  const steps=getSteps(route);
+  const sel=document.getElementById('le-step');
+  const cur=sel?sel.value:'';
+  if(sel) sel.innerHTML=steps.map(s=>`<option value="${s.id}" ${s.id===cur?'selected':''}>${s.icon} ${s.label}</option>`).join('');
+}
+
+async function saveLeadEdit(){
+  if(!editLeadId||!sb)return;
+  const updates={
+    customer_full_name:document.getElementById('le-name').value.trim(),
+    dba_name:document.getElementById('le-dba').value.trim(),
+    contact_email:document.getElementById('le-email').value.trim(),
+    phone:document.getElementById('le-phone').value.trim(),
+    assigned_sales_rep:document.getElementById('le-rep').value.trim(),
+    status:document.getElementById('le-status').value,
+    route:document.getElementById('le-route').value,
+    current_step:document.getElementById('le-step').value,
+    lost_reason:document.getElementById('le-lost').value.trim(),
+    notes:document.getElementById('le-notes').value.trim(),
+  };
+  await sb.from('leads').update(updates).eq('id',editLeadId);
+  await sb.from('activity_log').insert({lead_id:editLeadId,actor_role:role,action:'Lead updated via rep report'});
+  document.getElementById('lead-edit-modal').style.display='none';
+  notice('Lead updated!','ok');
+  // Refresh report if open
+  if(document.getElementById('rep-report-modal').style.display!=='none') renderRepReport();
 }
 
 document.addEventListener('DOMContentLoaded',()=>init());
