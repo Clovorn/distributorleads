@@ -3,30 +3,29 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ronnoco Deal Dashboard</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>"/>
+<title>Distributor Lead Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤝</text></svg>"/>
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0ede8;color:#1a1a18;font-size:15px;min-height:100vh}
-.wrap{max-width:1300px;margin:0 auto;padding:0 1.5rem 4rem}
-/* Top bar */
-.top{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid #ddd;margin-bottom:1.2rem;background:#f0ede8;position:sticky;top:0;z-index:50;flex-wrap:wrap;gap:10px}
-.brand{font-size:22px;font-weight:700;color:#1a1a18}
-.badge{font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px}
+.wrap{max-width:1380px;margin:0 auto;padding:0 1.5rem 4rem}
+.top{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1.5px solid #e5e7eb;margin-bottom:1.2rem;background:#f0ede8;position:sticky;top:0;z-index:50;flex-wrap:wrap;gap:10px}
+.brand{font-size:20px;font-weight:700;color:#1a1a18}
+.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px}
 .badge-blue{background:#dbeafe;color:#1e40af}
 .badge-green{background:#dcfce7;color:#166534}
 .badge-amber{background:#fef3c7;color:#92400e}
 .badge-gray{background:#f3f4f6;color:#6b7280}
 .badge-red{background:#fee2e2;color:#991b1b}
-.roles{display:flex;gap:4px}
-.role-btn{font-size:13px;padding:6px 16px;border:1.5px solid #d1d5db;border-radius:999px;background:transparent;color:#6b7280;cursor:pointer;font-family:inherit;font-weight:500}
-.role-btn.on{background:#fff;border-color:#374151;color:#111827;font-weight:600}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.roles{display:flex;gap:4px;flex-wrap:wrap}
+.role-btn{font-size:12px;padding:5px 14px;border:1.5px solid #d1d5db;border-radius:999px;background:transparent;color:#6b7280;cursor:pointer;font-family:inherit;font-weight:500}
+.role-btn.on{background:#fff;border-color:#374151;color:#111827;font-weight:700}
 .icon-btn{font-size:13px;padding:6px 14px;border:1.5px solid #d1d5db;border-radius:8px;background:transparent;color:#374151;cursor:pointer;font-family:inherit}
 .icon-btn:hover{background:#e5e7eb}
-/* Toolbar */
 .toolbar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
-.btn{font-size:13px;padding:8px 16px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#374151;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
+.btn{font-size:13px;padding:7px 15px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#374151;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap}
 .btn:hover{background:#f9fafb}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-green{background:#16a34a;color:#fff;border-color:#16a34a}
@@ -35,88 +34,95 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-blue:hover{background:#1d4ed8}
 .btn-red{background:#dc2626;color:#fff;border-color:#dc2626}
 .btn-red:hover{background:#b91c1c}
-.btn-sm{font-size:12px;padding:5px 12px}
-/* Notice */
+.btn-amber{background:#d97706;color:#fff;border-color:#d97706}
+.btn-amber:hover{background:#b45309}
+.btn-purple{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.btn-purple:hover{background:#6d28d9}
+.btn-sm{font-size:12px;padding:5px 11px}
 .notice{font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:.8rem}
 .n-ok{background:#dcfce7;color:#166534}
 .n-err{background:#fee2e2;color:#991b1b}
 .n-info{background:#dbeafe;color:#1e40af}
 .n-warn{background:#fef3c7;color:#92400e}
-/* Metrics */
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.2rem}
-.metric{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:1rem 1.2rem}
-.metric-label{font-size:12px;color:#6b7280;margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-.metric-value{font-size:30px;font-weight:700;color:#111827}
-/* Search */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.2rem}
+.metric{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:.9rem 1.1rem}
+.metric-label{font-size:11px;color:#6b7280;margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.metric-value{font-size:28px;font-weight:700;color:#111827}
 .search-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
 .search-row input,.search-row select{font-size:14px;padding:8px 12px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;font-family:inherit;outline:none}
 .search-row input:focus,.search-row select:focus{border-color:#2563eb}
-.search-row input{width:240px}
-/* Layout */
-.layout{display:grid;grid-template-columns:310px 1fr;gap:14px;align-items:start}
-/* Sidebar */
-.sidebar{display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 280px);overflow-y:auto;padding-right:4px}
-.deal-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:all .15s}
-.deal-card:hover{border-color:#9ca3af;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.deal-card.on{border:2px solid #2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.card-name{font-size:15px;font-weight:600;color:#111827;margin-bottom:2px}
-.card-store{font-size:13px;color:#6b7280;margin-bottom:2px}
-.card-meta{font-size:12px;color:#9ca3af}
-.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.search-row input{width:250px}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:14px;align-items:start}
+.sidebar{display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 300px);overflow-y:auto;padding-right:4px}
+.lead-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:.9rem 1rem;cursor:pointer;transition:all .15s}
+.lead-card:hover{border-color:#9ca3af;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.lead-card.on{border:2px solid #2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.lead-card.lost{opacity:.6;border-style:dashed}
+.card-name{font-size:15px;font-weight:600;color:#111827}
+.card-sub{font-size:13px;color:#6b7280;margin-top:1px}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:4px}
 .prog-bar{height:4px;background:#e5e7eb;border-radius:2px;margin-top:8px;overflow:hidden}
-.prog-fill{height:100%;border-radius:2px;background:#2563eb;transition:width .3s}
-/* Main panel */
+.prog-fill{height:100%;border-radius:2px;transition:width .3s}
+.prog-sales{background:#2563eb}
+.prog-leasing{background:#7c3aed}
 .main{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:1.5rem;overflow:hidden}
 .main-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1.5px solid #e5e7eb;flex-wrap:wrap;gap:10px}
 .main-name{font-size:24px;font-weight:700;color:#111827}
-.main-meta{font-size:14px;color:#6b7280;margin-top:4px;line-height:1.5}
-/* Pipeline */
+.main-meta{font-size:14px;color:#6b7280;margin-top:4px;line-height:1.6}
+.route-toggle{display:flex;gap:6px;align-items:center;margin-bottom:1rem;padding:.8rem 1rem;background:#f9fafb;border-radius:10px;border:1.5px solid #e5e7eb}
+.route-lbl{font-size:13px;font-weight:600;color:#374151;margin-right:4px}
+.route-opt{font-size:12px;padding:5px 14px;border:1.5px solid #d1d5db;border-radius:999px;background:transparent;cursor:pointer;font-family:inherit;font-weight:500;color:#6b7280}
+.route-opt.on-sales{background:#2563eb;color:#fff;border-color:#2563eb}
+.route-opt.on-leasing{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.assign-box{display:flex;gap:8px;align-items:center;margin-bottom:1rem;padding:.8rem 1rem;background:#fffbeb;border-radius:10px;border:1.5px solid #fde68a}
+.assign-lbl{font-size:13px;font-weight:600;color:#92400e;white-space:nowrap}
+.assign-inp{font-size:14px;padding:6px 10px;border:1.5px solid #fde68a;border-radius:8px;background:#fff;color:#111827;font-family:inherit;flex:1;outline:none}
 .phase-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin:1rem 0 8px}
-.pipeline{display:flex;align-items:flex-start;overflow-x:auto;padding-bottom:8px;gap:0}
-.pipe-step{display:flex;flex-direction:column;align-items:center;min-width:78px;position:relative}
+.pipeline{display:flex;align-items:flex-start;overflow-x:auto;padding-bottom:8px}
+.pipe-step{display:flex;flex-direction:column;align-items:center;min-width:84px;position:relative}
 .pipe-step+.pipe-step::before{content:'';position:absolute;top:15px;left:calc(-50%);width:100%;height:2px;background:#e5e7eb;z-index:0}
-.pipe-dot{width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;font-size:15px;position:relative;z-index:1;flex-shrink:0}
-.pipe-dot.done{background:#dcfce7;border-color:#16a34a}
-.pipe-dot.cur{background:#dbeafe;border:2px solid #2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.15)}
+.pipe-dot{width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;font-size:14px;position:relative;z-index:1;flex-shrink:0}
+.pipe-dot.done-s{background:#dbeafe;border-color:#2563eb}
+.pipe-dot.done-l{background:#ede9fe;border-color:#7c3aed}
+.pipe-dot.cur-s{background:#2563eb;border:2px solid #1d4ed8;box-shadow:0 0 0 4px rgba(37,99,235,.2)}
+.pipe-dot.cur-l{background:#7c3aed;border:2px solid #6d28d9;box-shadow:0 0 0 4px rgba(124,58,237,.2)}
 .pipe-dot.lock{opacity:.3}
-.pipe-name{font-size:10px;color:#9ca3af;text-align:center;margin-top:5px;line-height:1.3;max-width:76px}
-.pipe-name.done{color:#166534;font-weight:600}
-.pipe-name.cur{color:#1d4ed8;font-weight:700}
-/* Action box */
-.action-box{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:12px;padding:1.1rem 1.2rem;margin:.8rem 0}
-.action-step{font-size:17px;font-weight:600;color:#111827;margin-bottom:5px}
-.action-desc{font-size:14px;color:#6b7280;line-height:1.5}
+.pipe-dot.lost-dot{background:#fee2e2;border-color:#dc2626}
+.pipe-name{font-size:9px;color:#9ca3af;text-align:center;margin-top:5px;line-height:1.3;max-width:82px}
+.pipe-name.done-s,.pipe-name.cur-s{color:#1d4ed8;font-weight:700}
+.pipe-name.done-l,.pipe-name.cur-l{color:#6d28d9;font-weight:700}
+.jump-box{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:12px;padding:1rem 1.1rem;margin:.8rem 0}
+.jump-title{font-size:14px;font-weight:600;color:#111827;margin-bottom:.6rem}
+.jump-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.jump-sel{font-size:14px;padding:8px 12px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;font-family:inherit;flex:1;min-width:200px;outline:none}
 .action-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:.8rem}
-/* Info sections */
 .section{border-top:1.5px solid #f3f4f6;padding-top:1rem;margin-top:1rem}
 .section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin-bottom:.8rem}
-.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.info-field .lbl{font-size:11px;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
-.info-field .val{font-size:15px;color:#111827;font-weight:500;line-height:1.4}
-/* Full data table */
+.edit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:.5rem}
+.edit-field{display:flex;flex-direction:column;gap:4px}
+.edit-label{font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em}
+.edit-inp{font-size:14px;padding:7px 10px;border:1.5px solid #e5e7eb;border-radius:8px;background:#fff;color:#111827;font-family:inherit;outline:none;transition:border-color .15s}
+.edit-inp:focus{border-color:#2563eb}
+.edit-inp[readonly]{background:#f9fafb;color:#6b7280}
 .data-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:.5rem}
 .data-table tr:nth-child(even) td{background:#f9fafb}
 .data-table td{padding:7px 10px;border-bottom:1px solid #f3f4f6;vertical-align:top}
-.data-table td:first-child{color:#6b7280;font-weight:600;width:40%;white-space:nowrap}
-.data-table td:last-child{color:#111827}
-/* Log */
+.data-table td:first-child{color:#6b7280;font-weight:600;width:38%;white-space:nowrap}
 .log-box{max-height:180px;overflow-y:auto;margin-top:.5rem}
 .log-row{font-size:12px;padding:6px 0;border-bottom:1px solid #f3f4f6;color:#6b7280;display:flex;gap:10px}
-.log-time{flex-shrink:0;min-width:120px;color:#9ca3af}
-/* Empty */
+.log-time{flex-shrink:0;min-width:130px;color:#9ca3af}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:340px;color:#9ca3af;font-size:15px;gap:10px;text-align:center}
-/* Modal */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .modal{background:#fff;border-radius:16px;padding:1.6rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
 .modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1.5px solid #e5e7eb}
 .modal-title{font-size:18px;font-weight:700;color:#111827}
-.modal-close{background:none;border:none;font-size:22px;color:#9ca3af;cursor:pointer;line-height:1}
+.modal-close{background:none;border:none;font-size:22px;color:#9ca3af;cursor:pointer}
 .field-label{font-size:13px;font-weight:600;color:#374151;margin:.9rem 0 4px;display:block}
 .field-inp{width:100%;font-size:14px;padding:8px 12px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;font-family:inherit;outline:none}
 .field-inp:focus{border-color:#2563eb}
-textarea.field-inp{resize:vertical;min-height:150px;line-height:1.6}
+textarea.field-inp{resize:vertical;min-height:120px;line-height:1.6}
 .modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:1.2rem;padding-top:1rem;border-top:1.5px solid #e5e7eb}
-/* Settings */
+.lost-box{background:#fff5f5;border:1.5px solid #fca5a5;border-radius:10px;padding:1rem;margin-top:.8rem}
 .page{display:none;min-height:100vh}
 .page.on{display:block}
 .settings-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:1.5rem;max-width:540px;margin:1.5rem auto}
@@ -125,85 +131,86 @@ textarea.field-inp{resize:vertical;min-height:150px;line-height:1.6}
 .settings-section{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin:1.2rem 0 .6rem;padding-top:1rem;border-top:1px solid #f3f4f6}
 .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .dot-g{background:#16a34a}.dot-r{background:#dc2626}.dot-y{background:#d97706}
-/* Lock */
 .lock-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f0ede8}
 .lock-card{background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:380px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-.lock-icon{font-size:40px;margin-bottom:1rem}
-.lock-title{font-size:18px;font-weight:700;color:#111827;margin-bottom:.4rem}
-.lock-sub{font-size:13px;color:#6b7280;margin-bottom:1.2rem}
-@media(max-width:700px){.layout{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.layout{grid-template-columns:1fr}.edit-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- ════════════════════ MAIN DASHBOARD ════════════════════ -->
+<!-- ════ MAIN ════ -->
 <div id="pg-main" class="page on">
 <div class="wrap">
   <div class="top">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span class="brand">Ronnoco Deal Dashboard</span>
-      <span class="badge badge-blue">Supabase</span>
+      <span class="brand">🤝 Distributor Lead Dashboard</span>
+      <span class="badge badge-blue">Java Select</span>
       <span id="conn-badge" class="badge badge-amber">connecting…</span>
-      <span id="live-badge" class="badge badge-green" style="display:none">● live sync</span>
-      <span class="badge badge-gray" style="font-size:10px">v6</span>
+      <span id="live-badge" class="badge badge-green" style="display:none">● live</span>
     </div>
     <div class="roles">
       <button class="role-btn on" onclick="setRole('admin',this)">Admin</button>
-      <button class="role-btn" onclick="setRole('sales',this)">Sales</button>
-      <button class="role-btn" onclick="setRole('leasing',this)">Leasing</button>
-      <button class="role-btn" onclick="setRole('ops',this)">Ops</button>
+      <button class="role-btn" onclick="setRole('director',this)">Director</button>
+      <button class="role-btn" onclick="setRole('dist_rep',this)">Dist Rep</button>
+      <button class="role-btn" onclick="setRole('ronnoco_rep',this)">Ronnoco Rep</button>
     </div>
     <button class="icon-btn" onclick="goSettings()">⚙ Settings</button>
   </div>
 
   <div class="toolbar">
-    <button class="btn btn-green" onclick="openNewDeal()">+ New deal</button>
+    <button class="btn btn-green" onclick="openNewLead()">+ New lead</button>
     <button class="btn btn-blue" onclick="document.getElementById('csv-modal').style.display='flex'">⬆ Import CSV</button>
-    <button class="btn" id="sync-btn" style="display:none" onclick="doManualSync()">↻ Sync Jotform</button>
+    <button class="btn" id="sync-btn" style="display:none" onclick="doSync()">↻ Sync Jotform</button>
+    <button class="btn" onclick="toggleShowLost()" id="lost-toggle">Show lost leads</button>
   </div>
 
   <div id="notice" style="display:none" class="notice"></div>
 
   <div class="metrics" id="metrics">
     <div class="metric"><div class="metric-label">Total</div><div class="metric-value" id="m-total">—</div></div>
-    <div class="metric"><div class="metric-label">In leasing</div><div class="metric-value" id="m-leasing" style="color:#1d4ed8">—</div></div>
-    <div class="metric"><div class="metric-label">In ops</div><div class="metric-value" id="m-ops" style="color:#d97706">—</div></div>
-    <div class="metric"><div class="metric-label">Funded</div><div class="metric-value" id="m-funded" style="color:#166534">—</div></div>
-    <div class="metric"><div class="metric-label">Complete</div><div class="metric-value" id="m-done" style="color:#6b7280">—</div></div>
+    <div class="metric"><div class="metric-label">New leads</div><div class="metric-value" id="m-new" style="color:#d97706">—</div></div>
+    <div class="metric"><div class="metric-label">Sales route</div><div class="metric-value" id="m-sales" style="color:#2563eb">—</div></div>
+    <div class="metric"><div class="metric-label">Leasing route</div><div class="metric-value" id="m-leasing" style="color:#7c3aed">—</div></div>
+    <div class="metric"><div class="metric-label">Won</div><div class="metric-value" id="m-won" style="color:#16a34a">—</div></div>
+    <div class="metric"><div class="metric-label">Lost</div><div class="metric-value" id="m-lost" style="color:#dc2626">—</div></div>
   </div>
 
   <div class="search-row">
-    <input id="search-inp" placeholder="Search by name, store, email…" oninput="renderSidebar()"/>
-    <select id="phase-filter" onchange="renderSidebar()">
-      <option value="">All stages</option>
-      <option value="leasing">Leasing</option>
-      <option value="ops">Operations</option>
-      <option value="complete">Complete</option>
+    <input id="search-inp" placeholder="Search by name, store, rep…" oninput="renderSidebar()"/>
+    <select id="route-filter" onchange="renderSidebar()">
+      <option value="">All routes</option>
+      <option value="sales">Sales route</option>
+      <option value="leasing">Leasing route</option>
+    </select>
+    <select id="step-filter" onchange="renderSidebar()">
+      <option value="">All steps</option>
+      <option value="new_lead">New Lead</option>
+      <option value="assign_rep">Assign Rep</option>
     </select>
   </div>
 
   <div class="layout">
     <div class="sidebar" id="sidebar">
-      <div class="empty" style="min-height:200px"><div style="font-size:28px">⏳</div><div>Loading deals…</div></div>
+      <div class="empty" style="min-height:200px"><div style="font-size:28px">⏳</div><div>Loading leads…</div></div>
     </div>
     <div class="main" id="main">
       <div class="empty">
-        <div style="font-size:48px">📋</div>
-        <div style="font-weight:600">Select a deal to view details</div>
-        <div style="font-size:13px">129 deals loaded from your Jotform submissions</div>
+        <div style="font-size:48px">🤝</div>
+        <div style="font-weight:600">Select a lead to view details</div>
+        <div style="font-size:13px;color:#9ca3af">Import your CSV or sync Jotform to get started</div>
       </div>
     </div>
   </div>
 </div>
 </div>
 
-<!-- ════════════════════ SETTINGS LOCK ════════════════════ -->
+<!-- ════ LOCK ════ -->
 <div id="pg-lock" class="page">
 <div class="lock-wrap">
   <div class="lock-card">
-    <div class="lock-icon">🔒</div>
-    <div class="lock-title">Settings</div>
-    <div class="lock-sub">Enter admin password to continue</div>
+    <div style="font-size:40px;margin-bottom:1rem">🔒</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:.4rem">Settings</div>
+    <div style="font-size:13px;color:#6b7280;margin-bottom:1.2rem">Admin password required</div>
     <input class="field-inp" type="password" id="lock-pw" placeholder="Password" style="margin-bottom:.8rem;text-align:center" onkeydown="if(event.key==='Enter')unlock()"/>
     <button class="btn btn-blue" style="width:100%" onclick="unlock()">Unlock</button>
     <div id="lock-err" style="font-size:13px;color:#dc2626;margin-top:.6rem;display:none">Incorrect password</div>
@@ -212,20 +219,20 @@ textarea.field-inp{resize:vertical;min-height:150px;line-height:1.6}
 </div>
 </div>
 
-<!-- ════════════════════ SETTINGS PAGE ════════════════════ -->
+<!-- ════ SETTINGS ════ -->
 <div id="pg-settings" class="page">
 <div class="wrap" style="max-width:600px">
   <div class="top">
-    <span class="brand">Ronnoco Deal Dashboard — Settings</span>
+    <span class="brand">Settings</span>
     <button class="icon-btn" onclick="showPage('main')">← Dashboard</button>
   </div>
   <div id="settings-notice" style="display:none" class="notice"></div>
   <div class="settings-card">
     <div class="settings-title">Jotform Connection</div>
-    <div class="settings-sub">Paste your Jotform API key to enable syncing. The New Deal Sheet form is pre-configured.</div>
+    <div class="settings-sub">Connect to the Distributor Leads form (Java Select Program).</div>
     <div class="settings-section">API Key</div>
     <input class="field-inp" type="password" id="s-key" placeholder="Paste Jotform API key…"/>
-    <div style="font-size:12px;color:#9ca3af;margin-top:6px">Go to ronnoco.jotform.com → Account → API → create a Full Access key</div>
+    <div style="font-size:12px;color:#9ca3af;margin-top:6px">Requires Full Access key from ronnoco.jotform.com</div>
     <div style="display:flex;gap:8px;margin-top:.8rem;flex-wrap:wrap">
       <button class="btn btn-blue" onclick="testKey()">Test & save key</button>
     </div>
@@ -233,25 +240,24 @@ textarea.field-inp{resize:vertical;min-height:150px;line-height:1.6}
     <div class="settings-section">Sync & Webhook</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-green" id="s-sync-btn" onclick="settingsSync()" disabled>↻ Sync now</button>
-      <button class="btn btn-blue" id="s-webhook-btn" onclick="registerWebhook()" disabled>🔗 Register webhook</button>
     </div>
-    <div id="webhook-status" style="font-size:13px;margin-top:.6rem"></div>
-    <div class="settings-section">Current status</div>
+    <div class="settings-section">Webhook URL — add this in Jotform</div>
+    <div id="webhook-url" style="font-size:13px;background:#f3f4f6;padding:.6rem .8rem;border-radius:8px;word-break:break-all;color:#374151"></div>
+    <div class="settings-section">Status</div>
     <div id="s-status" style="font-size:14px;line-height:2"></div>
   </div>
   <div class="settings-card">
     <div class="settings-title">Admin Password</div>
-    <div class="settings-sub">Change the password for this settings page.</div>
     <label class="field-label">Current password</label><input class="field-inp" type="password" id="pw-cur"/>
     <label class="field-label">New password</label><input class="field-inp" type="password" id="pw-new"/>
-    <label class="field-label">Confirm new password</label><input class="field-inp" type="password" id="pw-conf"/>
+    <label class="field-label">Confirm</label><input class="field-inp" type="password" id="pw-conf"/>
     <div style="margin-top:.8rem"><button class="btn btn-blue" onclick="changePw()">Update password</button></div>
     <div id="pw-msg" style="font-size:13px;margin-top:.5rem"></div>
   </div>
 </div>
 </div>
 
-<!-- ════════════════════ EMAIL MODAL ════════════════════ -->
+<!-- ════ EMAIL MODAL ════ -->
 <div class="overlay" id="email-modal" style="display:none">
   <div class="modal">
     <div class="modal-hdr">
@@ -267,36 +273,64 @@ textarea.field-inp{resize:vertical;min-height:150px;line-height:1.6}
     <div class="modal-foot">
       <button class="btn" onclick="closeEmail()">Cancel</button>
       <button class="btn btn-blue" onclick="copyEmail()">Copy email</button>
-      <button class="btn btn-green" id="advance-btn" onclick="advanceEmail()">Copy & advance →</button>
+      <button class="btn btn-green" id="advance-btn" onclick="advanceEmail()" style="display:none">Copy & advance →</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════ NEW DEAL MODAL ════════════════════ -->
+<!-- ════ LOST REASON MODAL ════ -->
+<div class="overlay" id="lost-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">Mark as Lost</div>
+      <button class="modal-close" onclick="document.getElementById('lost-modal').style.display='none'">✕</button>
+    </div>
+    <div style="font-size:14px;color:#6b7280;margin-bottom:1rem">Please provide a reason this lead was lost.</div>
+    <label class="field-label">Reason *</label>
+    <textarea class="field-inp" id="lost-reason" placeholder="e.g. Customer went with competitor, budget issues, not interested…"></textarea>
+    <div class="modal-foot">
+      <button class="btn" onclick="document.getElementById('lost-modal').style.display='none'">Cancel</button>
+      <button class="btn btn-red" onclick="confirmLost()">Mark as Lost</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ NEW LEAD MODAL ════ -->
 <div class="overlay" id="new-modal" style="display:none">
   <div class="modal">
     <div class="modal-hdr">
-      <div class="modal-title">New deal</div>
+      <div class="modal-title">New lead</div>
       <button class="modal-close" onclick="document.getElementById('new-modal').style.display='none'">✕</button>
     </div>
-    <label class="field-label">First name *</label><input class="field-inp" id="nd-first"/>
-    <label class="field-label">Last name</label><input class="field-inp" id="nd-last"/>
-    <label class="field-label">Store name</label><input class="field-inp" id="nd-store"/>
-    <label class="field-label">Email *</label><input class="field-inp" id="nd-email" type="email"/>
+    <label class="field-label">Customer full name *</label><input class="field-inp" id="nd-name"/>
+    <label class="field-label">DBA / Store name</label><input class="field-inp" id="nd-dba"/>
+    <label class="field-label">Contact email</label><input class="field-inp" id="nd-email" type="email"/>
     <label class="field-label">Phone</label><input class="field-inp" id="nd-phone"/>
-    <label class="field-label">Deal type</label>
-    <select class="field-inp" id="nd-type">
-      <option>Equipment Lease</option><option>Finance Equipment</option>
-      <option>Purchase From Ronnoco</option><option>Loan Equipment</option>
+    <label class="field-label">Distributor rep name</label><input class="field-inp" id="nd-rep"/>
+    <label class="field-label">Distributor warehouse</label><input class="field-inp" id="nd-warehouse"/>
+    <label class="field-label">Which program?</label>
+    <select class="field-inp" id="nd-program">
+      <option>Small Coffee - Accounts under $500/Sales/Month</option>
+      <option>Medium Coffee - Accounts over $500/Sales/Month</option>
+      <option>Full Beverage Bar</option>
+      <option>Polar Wave Frozen</option>
+      <option>Other</option>
+    </select>
+    <label class="field-label">Customer interest</label>
+    <select class="field-inp" id="nd-interest">
+      <option>Leasing Equipment</option>
+      <option>Buying Equipment from Ronnoco</option>
+      <option>Financing Equipment</option>
+      <option>Loaned Request</option>
     </select>
     <div class="modal-foot">
       <button class="btn" onclick="document.getElementById('new-modal').style.display='none'">Cancel</button>
-      <button class="btn btn-green" onclick="saveNewDeal()">Create deal</button>
+      <button class="btn btn-green" onclick="saveNewLead()">Create lead</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════ CSV IMPORT MODAL ════════════════════ -->
+<!-- ════ CSV MODAL ════ -->
 <div class="overlay" id="csv-modal" style="display:none">
   <div class="modal">
     <div class="modal-hdr">
@@ -304,7 +338,7 @@ textarea.field-inp{resize:vertical;min-height:150px;line-height:1.6}
       <button class="modal-close" onclick="document.getElementById('csv-modal').style.display='none'">✕</button>
     </div>
     <div style="font-size:13px;color:#6b7280;margin-bottom:1rem;line-height:1.6">
-      Export your submissions from Jotform Tables → ··· menu → Export → Export as CSV, then upload here.
+      Export from Jotform Tables → ··· → Export → Export as CSV, then upload here.
     </div>
     <input type="file" accept=".csv" id="csv-file" onchange="previewCSV(this)" style="font-size:13px;width:100%"/>
     <div id="csv-preview" style="font-size:13px;margin-top:.8rem;padding:.7rem;background:#f9fafb;border-radius:8px;display:none"></div>
@@ -316,363 +350,448 @@ textarea.field-inp{resize:vertical;min-height:150px;line-height:1.6}
 </div>
 
 <script>
-// ─── Config ───────────────────────────────────────────────
-const SB_URL = 'https://hvmlmequwjxvrmgpltec.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2bWxtZXF1d2p4dnJtZ3BsdGVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODEyNzMsImV4cCI6MjA5MzA1NzI3M30.bT56CL9oK9HcRBQTry3G5kBqbseuGDaxKvqyDkCczHM';
-const FORM_ID = '260154983685872';
+// ─── Config ────────────────────────────────────────────────
+const SB_URL = 'https://opnpyunbccifkdnbljsz.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
+const FORM_ID = '260045399064863';
 const DEFAULT_PW = 'pipeline2024';
 
-// ─── Pipeline steps ────────────────────────────────────────
-const LEASING = [
-  {id:'submitted',label:'Submitted',icon:'📥',action:'Review submission and send credit application to customer.',subj:'Your Credit Application',body:d=>`Dear ${d.first_name},\n\nThank you for your interest in ${d.purchase_type||d.deal_type}! To move forward, please complete and return the attached credit application.\n\nBest regards,\nThe Leasing Team`},
-  {id:'credit_sent',label:'Credit Sent',icon:'📤',action:'Credit application sent. Awaiting return from customer.',subj:'Following Up — Credit Application',body:d=>`Dear ${d.first_name},\n\nJust following up on the credit application we sent. Please let us know if you need any help.\n\nBest regards,\nThe Leasing Team`},
-  {id:'credit_received',label:'Credit Received',icon:'📩',action:'Credit received. Begin review and approval.',subj:'Credit Application Received',body:d=>`Dear ${d.first_name},\n\nWe have received your credit application and it is under review. We'll be in touch shortly.\n\nBest regards,\nThe Leasing Team`},
-  {id:'credit_approved',label:'Credit Approved',icon:'✅',action:'Credit approved! Send lease paperwork for signatures.',subj:'Congratulations — Credit Approved!',body:d=>`Dear ${d.first_name},\n\nGreat news — your credit has been approved! Please review and sign the attached lease documents.\n\nBest regards,\nThe Leasing Team`},
-  {id:'paperwork_sent',label:'Paperwork Sent',icon:'📋',action:'Paperwork sent. Awaiting signed return.',subj:'Lease Documents Awaiting Signature',body:d=>`Dear ${d.first_name},\n\nA reminder that your lease documents are awaiting your signature.\n\nBest regards,\nThe Leasing Team`},
-  {id:'paperwork_received',label:'Paperwork Received',icon:'📂',action:'Documents received. Process funding.',subj:'Documents Received — Processing Funding',body:d=>`Dear ${d.first_name},\n\nWe have received your signed documents and are processing your funding.\n\nBest regards,\nThe Leasing Team`},
-  {id:'funded',label:'Funded',icon:'💰',action:'Deal funded! Hand off to Operations.',subj:'Your Lease is Funded!',body:d=>`Dear ${d.first_name},\n\nExcellent news — your lease is fully funded! Our operations team will be in touch to begin setup.\n\nThank you!\nThe Leasing Team`},
+// ─── Pipeline steps ─────────────────────────────────────────
+const COMMON = [
+  {id:'new_lead', label:'New Lead', icon:'🆕', action:'New lead received. Assign to a Ronnoco Sales Rep to begin.'},
+  {id:'assign_rep', label:'Rep Assigned', icon:'👤', action:'Sales rep assigned. Rep should contact the customer.'},
 ];
-const OPS = [
-  {id:'cust_setup',label:'Customer Setup',icon:'👤',action:'Set up customer account in internal systems.',subj:'Your Account is Being Set Up',body:d=>`Dear ${d.first_name},\n\nWe are setting up your account. You'll receive details shortly.\n\nOperations Team`},
-  {id:'equip_ordered',label:'Equip Ordered',icon:'🛒',action:'Equipment ordered for the customer.',subj:'Equipment Order Placed',body:d=>`Dear ${d.first_name},\n\nYour equipment has been ordered. We'll keep you updated on delivery.\n\nOperations Team`},
-  {id:'equip_received',label:'Equip Received',icon:'📦',action:'Equipment arrived. Schedule installation.',subj:'Equipment Received — Scheduling Install',body:d=>`Dear ${d.first_name},\n\nYour equipment has arrived. We'll reach out shortly to schedule installation.\n\nOperations Team`},
-  {id:'install_scheduled',label:'Install Scheduled',icon:'📅',action:'Installation scheduled. Notify distributor.',subj:'Installation Scheduled',body:d=>`Dear ${d.first_name},\n\nYour installation is confirmed. Please ensure site access on the scheduled date.\n\nOperations Team`},
-  {id:'dist_notified',label:'Distributor Notified',icon:'📡',action:'Distributor notified. Prepare for install.',subj:'Installation Preparation Underway',body:d=>`Dear ${d.first_name},\n\nAll parties are notified and preparation is underway. See you soon!\n\nOperations Team`},
-  {id:'installed',label:'Installation',icon:'🔧',action:'Installation complete. Confirm with customer.',subj:'Installation Complete',body:d=>`Dear ${d.first_name},\n\nYour installation is complete! Please review and reach out if you have any questions.\n\nOperations Team`},
-  {id:'complete',label:'Complete',icon:'🏁',action:'All done! Deal fully closed.',subj:'Welcome Aboard!',body:d=>`Dear ${d.first_name},\n\nYour setup is 100% complete! We're thrilled to have you as a customer.\n\nThank you!\nThe Team`},
+
+const SALES_STEPS = [
+  {id:'lead_received', label:'Lead Received', icon:'📥', action:'Lead received by rep. Make initial contact with customer.',
+   subj:'Welcome — We\'re Reaching Out!', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nThank you for your interest in our Java Select Program! I'll be your Ronnoco representative and am looking forward to working with you.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'customer_contacted', label:'Customer Contacted', icon:'📞', action:'Customer has been contacted. Await response and qualify.',
+   subj:'Following Up on Your Interest', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nI wanted to follow up on our recent conversation about the Java Select Program. Please let me know a good time to connect.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'customer_won', label:'Customer Won', icon:'🏆', action:'Customer won! Create program deal sheet.',
+   subj:'Welcome to the Java Select Program!', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe're thrilled to have you join the Java Select Program! I'll be creating your deal sheet and will be in touch shortly with next steps.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'deal_sheet', label:'Deal Sheet Created', icon:'📋', action:'Program deal sheet created. Submit for finance review.',
+   subj:'Your Deal Sheet is Ready', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour program deal sheet has been created and submitted for review. We will be in touch shortly.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'waiting_finance', label:'Waiting on Finance', icon:'⏳', action:'Waiting on finance approval.',
+   subj:'Finance Review in Progress', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal is currently under finance review. We'll notify you as soon as we have an update.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'deal_funded_s', label:'Deal Funded', icon:'💰', action:'Deal funded! Begin customer setup.',
+   subj:'Great News — Your Deal is Funded!', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal has been funded! Our operations team will begin setting up your account.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'customer_setup', label:'Customer Setup', icon:'⚙️', action:'Customer account being set up in internal systems.',
+   subj:'Your Account is Being Set Up', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe are setting up your account. You'll receive your details shortly.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'equip_ordered', label:'Equipment Ordered', icon:'🛒', action:'Equipment ordered for the customer.',
+   subj:'Equipment Order Placed', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment has been ordered and is being prepared for delivery.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'dist_notified', label:'Distributor Notified', icon:'📡', action:'Distributor has been notified of the new account.',
+   subj:'Your Distributor Has Been Notified', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour distributor has been notified about your new Java Select account.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'install_scheduled', label:'Install Scheduled', icon:'📅', action:'Installation scheduled with the customer.',
+   subj:'Installation Scheduled', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour installation has been scheduled. Please ensure site access on the scheduled date.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
+  {id:'complete_s', label:'Complete', icon:'🏁', action:'All done! Customer is fully set up.',
+   subj:'Welcome to Java Select — Setup Complete!', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYou're all set! Welcome to the Java Select Program. We look forward to a great partnership.\n\nBest regards,\n${l.assigned_sales_rep||'Your Ronnoco Rep'}`},
 ];
-const ALL = [...LEASING,...OPS];
-const ALL_IDS = ALL.map(s=>s.id);
 
-// ─── State ─────────────────────────────────────────────────
-let sb=null, deals=[], actMap={}, selId=null, role='admin', phaseF='', searchV='', emailDealId=null, emailAdvance=false, csvRows=[];
+const LEASING_STEPS = [
+  {id:'credit_app_sent', label:'Credit App Sent', icon:'📤', action:'Credit application sent to customer.',
+   subj:'Your Credit Application', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nThank you for your interest in leasing equipment through our Java Select Program! Please complete and return the attached credit application.\n\nBest regards,\n${l.assigned_sales_rep||'The Leasing Team'}`},
+  {id:'credit_app_received', label:'Credit App Received', icon:'📩', action:'Credit application received. Begin review.',
+   subj:'Credit Application Received', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe have received your credit application and it is currently under review.\n\nBest regards,\n${l.assigned_sales_rep||'The Leasing Team'}`},
+  {id:'credit_approved', label:'Approved', icon:'✅', action:'Credit approved! Send lease paperwork.',
+   subj:'Congratulations — Credit Approved!', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nGreat news — your credit application has been approved! Please review and sign the attached lease documents.\n\nBest regards,\n${l.assigned_sales_rep||'The Leasing Team'}`},
+  {id:'paperwork_sent', label:'Paperwork Sent', icon:'📋', action:'Lease paperwork sent. Awaiting signatures.',
+   subj:'Lease Documents Awaiting Your Signature', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour lease documents are ready for your signature. Please review and return at your earliest convenience.\n\nBest regards,\n${l.assigned_sales_rep||'The Leasing Team'}`},
+  {id:'paperwork_signed', label:'Paperwork Signed', icon:'✍️', action:'Paperwork signed. Process funding.',
+   subj:'Documents Received — Processing Funding', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe have received your signed documents and are now processing your funding.\n\nBest regards,\n${l.assigned_sales_rep||'The Leasing Team'}`},
+  {id:'deal_funded_l', label:'Deal Funded', icon:'💰', action:'Deal funded! Leasing complete.',
+   subj:'Your Lease is Funded!', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nExcellent news — your lease has been fully funded! Welcome to the Java Select Program.\n\nBest regards,\n${l.assigned_sales_rep||'The Leasing Team'}`},
+];
 
-// ─── Helpers ───────────────────────────────────────────────
-const si = id=>ALL_IDS.indexOf(id);
-const ph = id=>LEASING.find(s=>s.id===id)?'leasing':'ops';
-const pct = d=>Math.round((si(d.current_step)+1)/ALL.length*100);
-const stepOf = id=>ALL.find(s=>s.id===id);
+const ALL_STEPS = [...COMMON, ...SALES_STEPS, ...LEASING_STEPS];
+const SALES_IDS = [...COMMON.map(s=>s.id), ...SALES_STEPS.map(s=>s.id)];
+const LEASING_IDS = [...COMMON.map(s=>s.id), ...LEASING_STEPS.map(s=>s.id)];
+
+function getSteps(route){ return route==='leasing'?[...COMMON,...LEASING_STEPS]:[...COMMON,...SALES_STEPS]; }
+function stepOf(id){ return ALL_STEPS.find(s=>s.id===id); }
+function pct(lead){
+  const steps=getSteps(lead.route);
+  const ids=steps.map(s=>s.id);
+  const idx=ids.indexOf(lead.current_step);
+  return idx<0?0:Math.round((idx+1)/steps.length*100);
+}
+
+// ─── State ──────────────────────────────────────────────────
+let sb=null, leads=[], actMap={}, selId=null, role='admin', routeF='', stepF='', searchV='', showLost=false;
+let emailLeadId=null, emailAdvance=false, lostLeadId=null, csvRows=[];
+
+// ─── Helpers ────────────────────────────────────────────────
 const fmt = ts=>ts?new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
 const fmtT = ts=>ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
-const f = (label,val)=>val&&val.toString().trim()?`<div class="info-field"><div class="lbl">${label}</div><div class="val">${val}</div></div>`:'';
 
 function notice(msg,type='info',bar='notice'){
-  const el=document.getElementById(bar);
-  if(!el)return;
+  const el=document.getElementById(bar);if(!el)return;
   el.className='notice n-'+(type==='ok'?'ok':type==='err'?'err':type==='warn'?'warn':'info');
-  el.textContent=msg; el.style.display='block';
+  el.textContent=msg;el.style.display='block';
   setTimeout(()=>el.style.display='none',6000);
 }
 
-// ─── Pages ─────────────────────────────────────────────────
-function showPage(name){ ['main','lock','settings'].forEach(p=>document.getElementById('pg-'+p).classList.remove('on')); document.getElementById('pg-'+name).classList.add('on'); window.scrollTo(0,0); }
-function goSettings(){ if(sessionStorage.getItem('unlocked')==='1'){showPage('settings');refreshStatus();}else{showPage('lock');setTimeout(()=>document.getElementById('lock-pw').focus(),100);} }
-function unlock(){ const pw=document.getElementById('lock-pw').value; const stored=localStorage.getItem('admin_pw')||DEFAULT_PW; if(pw===stored){sessionStorage.setItem('unlocked','1');document.getElementById('lock-pw').value='';document.getElementById('lock-err').style.display='none';showPage('settings');refreshStatus();}else{document.getElementById('lock-err').style.display='block';} }
+function showPage(n){['main','lock','settings'].forEach(p=>document.getElementById('pg-'+p).classList.remove('on'));document.getElementById('pg-'+n).classList.add('on');window.scrollTo(0,0);}
+function goSettings(){if(sessionStorage.getItem('unlocked')==='1'){showPage('settings');refreshStatus();}else{showPage('lock');setTimeout(()=>document.getElementById('lock-pw').focus(),100);}}
+function unlock(){const pw=document.getElementById('lock-pw').value;const stored=localStorage.getItem('admin_pw')||DEFAULT_PW;if(pw===stored){sessionStorage.setItem('unlocked','1');document.getElementById('lock-pw').value='';document.getElementById('lock-err').style.display='none';showPage('settings');refreshStatus();}else{document.getElementById('lock-err').style.display='block';}}
+function setRole(r,btn){role=r;document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderSidebar();if(selId)renderMain(selId);}
+function toggleShowLost(){showLost=!showLost;document.getElementById('lost-toggle').textContent=showLost?'Hide lost leads':'Show lost leads';renderSidebar();}
 
-// ─── Role ──────────────────────────────────────────────────
-function setRole(r,btn){ role=r; document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); renderSidebar(); if(selId)renderMain(selId); }
-
-// ─── Supabase init ─────────────────────────────────────────
+// ─── Init ───────────────────────────────────────────────────
 async function init(){
   let tries=0;
   while(typeof supabase==='undefined'&&tries<30){await new Promise(r=>setTimeout(r,200));tries++;}
-  if(typeof supabase==='undefined'){ document.getElementById('conn-badge').textContent='✗ failed'; return; }
+  if(typeof supabase==='undefined'){document.getElementById('conn-badge').textContent='✗ failed';return;}
   try{
     sb=supabase.createClient(SB_URL,SB_KEY);
     document.getElementById('conn-badge').textContent='● connected';
     document.getElementById('conn-badge').className='badge badge-green';
-    await loadDeals();
-    sb.channel('deals').on('postgres_changes',{event:'*',schema:'public',table:'deals'},()=>loadDeals()).on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},async p=>{
-      const did=p.new.deal_id;
-      const{data}=await sb.from('activity_log').select('*').eq('deal_id',did).order('created_at',{ascending:false}).limit(25);
-      if(data)actMap[did]=data;
-      if(selId===did)renderMain(did);
-    }).subscribe();
+    await loadLeads();
+    sb.channel('leads-rt')
+      .on('postgres_changes',{event:'*',schema:'public',table:'leads'},()=>loadLeads())
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},async p=>{
+        const did=p.new.lead_id;
+        const{data}=await sb.from('activity_log').select('*').eq('lead_id',did).order('created_at',{ascending:false}).limit(25);
+        if(data)actMap[did]=data;
+        if(selId===did)renderMain(did);
+      }).subscribe();
     document.getElementById('live-badge').style.display='inline';
     if(localStorage.getItem('jf_key'))document.getElementById('sync-btn').style.display='inline-block';
-  }catch(e){ document.getElementById('conn-badge').textContent='✗ error'; console.error(e); }
+    // Show webhook URL in settings
+    document.getElementById('webhook-url').textContent=window.location.origin+'/.netlify/functions/webhook';
+  }catch(e){document.getElementById('conn-badge').textContent='✗ error';console.error(e);}
 }
 
-async function loadDeals(){
-  const{data,error}=await sb.from('deals').select('*').order('created_at',{ascending:false});
-  if(error){notice('Error loading: '+error.message,'err');return;}
-  deals=data||[];
-  renderMetrics();
-  renderSidebar();
-  if(selId&&deals.find(d=>d.id===selId))renderMain(selId);
+async function loadLeads(){
+  const{data,error}=await sb.from('leads').select('*').order('created_at',{ascending:false});
+  if(error){notice('Error: '+error.message,'err');return;}
+  leads=data||[];
+  renderMetrics();renderSidebar();
+  if(selId&&leads.find(l=>l.id===selId))renderMain(selId);
 }
 
 async function loadAct(id){
-  const{data}=await sb.from('activity_log').select('*').eq('deal_id',id).order('created_at',{ascending:false}).limit(25);
+  const{data}=await sb.from('activity_log').select('*').eq('lead_id',id).order('created_at',{ascending:false}).limit(25);
   actMap[id]=data||[];
 }
 
-// ─── Metrics ───────────────────────────────────────────────
+// ─── Metrics ────────────────────────────────────────────────
 function renderMetrics(){
-  document.getElementById('m-total').textContent=deals.length;
-  document.getElementById('m-leasing').textContent=deals.filter(d=>ph(d.current_step)==='leasing').length;
-  document.getElementById('m-ops').textContent=deals.filter(d=>ph(d.current_step)==='ops'&&d.current_step!=='complete').length;
-  document.getElementById('m-funded').textContent=deals.filter(d=>si(d.current_step)>=si('funded')).length;
-  document.getElementById('m-done').textContent=deals.filter(d=>d.current_step==='complete').length;
+  const active=leads.filter(l=>l.status==='active');
+  document.getElementById('m-total').textContent=leads.length;
+  document.getElementById('m-new').textContent=leads.filter(l=>l.current_step==='new_lead').length;
+  document.getElementById('m-sales').textContent=active.filter(l=>l.route==='sales').length;
+  document.getElementById('m-leasing').textContent=active.filter(l=>l.route==='leasing').length;
+  document.getElementById('m-won').textContent=leads.filter(l=>l.status==='won').length;
+  document.getElementById('m-lost').textContent=leads.filter(l=>l.status==='lost').length;
 }
 
-// ─── Sidebar ───────────────────────────────────────────────
-function stepBadge(d){
-  const s=stepOf(d.current_step);
-  const p=ph(d.current_step);
-  const cls=d.current_step==='complete'?'badge-gray':p==='leasing'?'badge-blue':'badge-amber';
+// ─── Sidebar ────────────────────────────────────────────────
+function stepBadge(lead){
+  const s=stepOf(lead.current_step);
+  if(lead.status==='lost') return`<span class="badge badge-red">✗ Lost</span>`;
+  if(lead.status==='won') return`<span class="badge badge-green">🏆 Won</span>`;
+  const cls=lead.route==='leasing'?'badge-purple':'badge-blue';
   return`<span class="badge ${cls}" style="font-size:10px">${s?s.icon+' '+s.label:'—'}</span>`;
 }
 
 function renderSidebar(){
   const q=(document.getElementById('search-inp').value||'').toLowerCase();
-  const pf=document.getElementById('phase-filter').value;
-  let list=deals;
-  if(q) list=list.filter(d=>((d.first_name||'')+' '+(d.last_name||'')).toLowerCase().includes(q)||(d.store_name||'').toLowerCase().includes(q)||(d.email||'').toLowerCase().includes(q));
-  if(pf==='leasing') list=list.filter(d=>ph(d.current_step)==='leasing');
-  else if(pf==='ops') list=list.filter(d=>ph(d.current_step)==='ops'&&d.current_step!=='complete');
-  else if(pf==='complete') list=list.filter(d=>d.current_step==='complete');
-  if(role==='leasing') list=list.filter(d=>ph(d.current_step)==='leasing');
-  else if(role==='ops') list=list.filter(d=>ph(d.current_step)==='ops');
-  const sb=document.getElementById('sidebar');
-  if(!list.length){sb.innerHTML='<div style="font-size:13px;color:#9ca3af;padding:.8rem">No deals match.</div>';return;}
-  sb.innerHTML=list.map(d=>`<div class="deal-card${selId===d.id?' on':''}" onclick="selectDeal('${d.id}')">
-    <div class="card-name">${d.first_name||''} ${d.last_name||''}${d.store_name&&d.store_name!==(d.first_name+' '+d.last_name).trim()?'':''}</div>
-    <div class="card-store">${d.store_name||'—'}</div>
-    <div class="card-meta">${d.email||d.phone||'No contact info'}</div>
-    <div class="card-foot">${stepBadge(d)}<span style="font-size:11px;color:#9ca3af">${fmt(d.created_at)}</span></div>
-    <div class="prog-bar"><div class="prog-fill" style="width:${pct(d)}%"></div></div>
+  const rf=document.getElementById('route-filter').value;
+  let list=leads;
+  if(!showLost) list=list.filter(l=>l.status!=='lost');
+  if(q) list=list.filter(l=>(l.customer_full_name||'').toLowerCase().includes(q)||(l.dba_name||'').toLowerCase().includes(q)||(l.distributor_sales_rep||'').toLowerCase().includes(q)||(l.assigned_sales_rep||'').toLowerCase().includes(q));
+  if(rf) list=list.filter(l=>l.route===rf);
+  if(role==='dist_rep') list=list.filter(l=>l.route!=='leasing'||l.current_step==='new_lead');
+  const sb2=document.getElementById('sidebar');
+  if(!list.length){sb2.innerHTML='<div style="font-size:13px;color:#9ca3af;padding:.8rem">No leads match.</div>';return;}
+  sb2.innerHTML=list.map(l=>`<div class="lead-card${selId===l.id?' on':''}${l.status==='lost'?' lost':''}" onclick="selectLead('${l.id}')">
+    <div class="card-name">${l.customer_full_name||l.dba_name||'Unknown'}</div>
+    <div class="card-sub">${l.dba_name&&l.dba_name!==l.customer_full_name?l.dba_name+'<br>':''}<span style="color:#9ca3af">Rep: ${l.distributor_sales_rep||'—'}</span></div>
+    <div class="card-foot">${stepBadge(l)}<span style="font-size:11px;color:#9ca3af">${fmt(l.created_at)}</span></div>
+    <div class="prog-bar"><div class="prog-fill prog-${l.route==='leasing'?'leasing':'sales'}" style="width:${pct(l)}%"></div></div>
   </div>`).join('');
 }
 
-// ─── Main panel ────────────────────────────────────────────
-async function selectDeal(id){
-  selId=id;
-  renderSidebar();
-  await loadAct(id);
-  renderMain(id);
-}
+// ─── Main panel ─────────────────────────────────────────────
+async function selectLead(id){selId=id;renderSidebar();await loadAct(id);renderMain(id);}
 
 function renderMain(id){
-  const deal=deals.find(d=>d.id===id);
-  if(!deal)return;
-  const idx=si(deal.current_step);
-  const cur=ALL[idx];
-  const isLast=idx===ALL.length-1;
-  const canAct=role==='admin'||(role==='leasing'&&ph(deal.current_step)==='leasing')||(role==='ops'&&ph(deal.current_step)==='ops');
-  const isSales=role==='sales';
-  const next=ALL[idx+1];
+  const lead=leads.find(l=>l.id===id);if(!lead)return;
+  const steps=getSteps(lead.route);
+  const ids=steps.map(s=>s.id);
+  const idx=ids.indexOf(lead.current_step);
+  const cur=steps[idx]||steps[0];
+  const next=steps[idx+1];
+  const isLast=idx===steps.length-1;
   const logs=actMap[id]||[];
+  const isLost=lead.status==='lost';
+  const isWon=lead.status==='won';
+  const canAct=role==='admin'||role==='director'||(role==='ronnoco_rep'&&lead.assigned_sales_rep);
 
-  const lPipe=LEASING.map(s=>{const di=si(s.id);const c=di<idx?'done':di===idx?'cur':'lock';return`<div class="pipe-step"><div class="pipe-dot ${c}">${s.icon}</div><div class="pipe-name ${c}">${s.label}</div></div>`;}).join('');
-  const oPipe=OPS.map(s=>{const di=si(s.id);const c=di<idx?'done':di===idx?'cur':'lock';return`<div class="pipe-step"><div class="pipe-dot ${c}">${s.icon}</div><div class="pipe-name ${c}">${s.label}</div></div>`;}).join('');
+  // Pipeline display
+  const pipeHtml=steps.map(s=>{
+    const di=ids.indexOf(s.id);
+    const isDone=di<idx;
+    const isCur=di===idx;
+    const dotCls=isLost?'lost-dot':isDone?(lead.route==='leasing'?'done-l':'done-s'):isCur?(lead.route==='leasing'?'cur-l':'cur-s'):'lock';
+    const nameCls=isDone||isCur?(lead.route==='leasing'?'done-l':'done-s'):'';
+    return`<div class="pipe-step"><div class="pipe-dot ${dotCls}">${s.icon}</div><div class="pipe-name ${nameCls}">${s.label}</div></div>`;
+  }).join('');
 
-  // Build full data table from ALL columns
-  const raw=deal.raw_csv&&Object.keys(deal.raw_csv).length?deal.raw_csv:{};
-  const ans=deal.jotform_answers&&Object.keys(deal.jotform_answers).length?deal.jotform_answers:{};
+  // All raw data
+  const raw=lead.raw_csv&&Object.keys(lead.raw_csv).length?lead.raw_csv:{};
+  const ans=lead.jotform_answers&&Object.keys(lead.jotform_answers).length?lead.jotform_answers:{};
+  const dataRows=[];
+  const addRow=(k,v)=>{if(v&&v.toString().trim())dataRows.push([k,v]);};
+  addRow('Customer Name',lead.customer_full_name);
+  addRow('DBA / Store Name',lead.dba_name);
+  addRow('Legal Business Name',lead.legal_business_name);
+  addRow('Contact Email',lead.contact_email);
+  addRow('Contact Number',lead.contact_number);
+  addRow('Phone',lead.phone);
+  addRow('Store Address',lead.store_address);
+  addRow('Number of Locations',lead.num_locations);
+  addRow('Customer Distributor #',lead.customer_distributor_number);
+  addRow('Distributor Sales Rep',lead.distributor_sales_rep);
+  addRow('Distributor Rep Email',lead.distributor_rep_email);
+  addRow('Distributor',lead.distributor);
+  addRow('Distributor Warehouse',lead.distributor_warehouse);
+  addRow('Tradeshow Lead',lead.tradeshow_lead);
+  addRow('Which Program',lead.which_program);
+  addRow('Customer Interest',lead.customer_interest);
+  addRow('Beverage Needs',lead.beverage_needs);
+  addRow('Notes',lead.notes);
+  if(isLost) addRow('Lost Reason',lead.lost_reason);
+  // Add any extra raw CSV fields
+  Object.entries(raw).forEach(([k,v])=>{if(v&&v.trim()&&!dataRows.find(r=>r[1]===v))dataRows.push([k.replace(/_/g,' '),v]);});
 
-  // Merge all available data into display rows
-  const allData={};
-  // Core DB fields
-  if(deal.first_name||deal.last_name) allData['Contact Name']=[deal.first_name,deal.last_name].filter(Boolean).join(' ');
-  if(deal.email) allData['Email']=deal.email;
-  if(deal.phone) allData['Contact Phone']=deal.phone;
-  if(deal.store_name) allData['Store Name']=deal.store_name;
-  if(deal.store_phone) allData['Store Phone']=deal.store_phone;
-  if(deal.legal_business_name) allData['Legal Business Name']=deal.legal_business_name;
-  if(deal.address) allData['Address']=deal.address;
-  if(deal.chain_store&&deal.chain_store!=='No') allData['Chain Store']=deal.chain_store;
-  if(deal.customer_account) allData['Customer Account #']=deal.customer_account;
-  if(deal.sub_group) allData['Sub Group']=deal.sub_group;
-  if(deal.sales_rep) allData['Sales Rep']=deal.sales_rep;
-  if(deal.rom) allData['ROM']=deal.rom;
-  if(deal.coffee_program) allData['Coffee Program']=deal.coffee_program;
-  if(deal.purchase_type||deal.deal_type) allData['Purchase Type']=deal.purchase_type||deal.deal_type;
-  if(deal.total_eq_cost) allData['Total EQ Cost']='$'+deal.total_eq_cost;
-  if(deal.parent_distributor) allData['Distributor']=deal.parent_distributor;
-  if(deal.target_install_date) allData['Target Install Date']=deal.target_install_date;
-  if(deal.graphics_package) allData['Graphics Package']=deal.graphics_package;
-  if(deal.emergency_install==='Yes') allData['Emergency Install']='⚡ YES';
-  if(deal.notes) allData['Notes']=deal.notes;
-
-  // Add ALL raw CSV columns (catches equipment selections, pricing, etc)
-  Object.entries(raw).forEach(([k,v])=>{
-    if(!v||!v.toString().trim()) return;
-    const skip=['id','submission id','status','new','flag','ip','created at','updated at'];
-    if(skip.some(s=>k.toLowerCase().includes(s))) return;
-    const label=k.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
-    if(!allData[label]) allData[label]=v; // don't overwrite DB fields
-  });
-
-  // Add jotform_answers fields for webhook submissions
-  Object.values(ans).forEach(a=>{
-    if(!a.answer||!a.text||a.type==='control_head'||a.type==='control_button'||a.type==='control_pagebreak') return;
-    const label=a.text;
-    if(allData[label]) return;
-    let val='';
-    if(typeof a.answer==='string') val=a.answer.trim();
-    else if(typeof a.answer==='object'){
-      if(a.answer.addr_line1) val=[a.answer.addr_line1,a.answer.city,a.answer.state,a.answer.postal].filter(Boolean).join(', ');
-      else if(a.answer.month) val=[a.answer.month,a.answer.day,a.answer.year].filter(Boolean).join('/');
-      else if(a.answer.area) val='('+a.answer.area+') '+a.answer.phone;
-      else val=Object.values(a.answer).filter(v=>v&&typeof v==='string').join(', ');
-    }
-    if(val) allData[label]=val;
-  });
-
-  const dataRows=Object.entries(allData).filter(([k,v])=>v&&v.toString().trim());
-  const tableHtml=dataRows.length
-    ?`<table class="data-table">${dataRows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`
-    :'<div style="font-size:13px;color:#9ca3af">No submission data available. Re-import CSV to see all fields.</div>';
-
-  const logHtml=logs.length
-    ?logs.map(l=>`<div class="log-row"><span class="log-time">${fmtT(l.created_at)}</span><span>[${l.actor_role}] ${l.action}</span></div>`).join('')
-    :'<div style="font-size:13px;color:#9ca3af;padding:4px 0">No activity yet.</div>';
+  const logHtml=logs.length?logs.map(l=>`<div class="log-row"><span class="log-time">${fmtT(l.created_at)}</span><span>[${l.actor_role}] ${l.action}</span></div>`).join(''):'<div style="font-size:13px;color:#9ca3af;padding:4px 0">No activity yet.</div>';
 
   document.getElementById('main').innerHTML=`
     <div class="main-hdr">
       <div>
-        <div class="main-name">${deal.first_name||''} ${deal.last_name||''}</div>
+        <div class="main-name">${lead.customer_full_name||lead.dba_name||'Unknown Lead'}</div>
         <div class="main-meta">
-          ${deal.store_name?'<strong>'+deal.store_name+'</strong><br>':''}
-          ${[deal.email,deal.phone].filter(Boolean).join(' · ')}${deal.address?'<br>'+deal.address:''}
+          ${lead.dba_name?'<strong>'+lead.dba_name+'</strong><br>':''}
+          ${[lead.contact_email,lead.phone].filter(Boolean).join(' · ')}
+          ${lead.store_address?'<br>'+lead.store_address:''}
+          ${lead.which_program?'<br><span style="color:#7c3aed;font-weight:500">'+lead.which_program+'</span>':''}
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        ${stepBadge(deal)}
-        <span style="font-size:13px;color:#9ca3af">${pct(deal)}% complete</span>
-        ${!isSales?`<button class="btn btn-red btn-sm" onclick="deleteDeal('${id}')">Delete</button>`:''}
+        ${stepBadge(lead)}
+        <span style="font-size:12px;color:#9ca3af">${pct(lead)}%</span>
+        ${role==='admin'||role==='director'?`<button class="btn btn-red btn-sm" onclick="deleteLead('${id}')">Delete</button>`:''}
       </div>
     </div>
-    <div class="prog-bar" style="height:6px;margin-bottom:1.2rem"><div class="prog-fill" style="width:${pct(deal)}%"></div></div>
+    <div class="prog-bar" style="height:6px;margin-bottom:1rem"><div class="prog-fill prog-${lead.route==='leasing'?'leasing':'sales'}" style="width:${pct(lead)}%"></div></div>
 
-    <div class="phase-title">📝 Leasing phase</div>
-    <div class="pipeline">${lPipe}</div>
-    <div class="phase-title">⚙️ Operations phase</div>
-    <div class="pipeline">${oPipe}</div>
-
-    <div class="action-box">
-      <div class="action-step">${cur.icon} ${cur.label}</div>
-      <div class="action-desc">${cur.action}</div>
-      <div style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid #e5e7eb">
-        <label style="font-size:12px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Jump to step</label>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <select id="step-jump-${id}" style="font-size:14px;padding:8px 12px;border:1.5px solid #d1d5db;border-radius:8px;background:#fff;color:#111827;font-family:inherit;outline:none;flex:1;min-width:200px">
-            ${ALL.map(s=>`<option value="${s.id}" ${s.id===deal.current_step?'selected':''}>${s.id===deal.current_step?'▶ ':s.id===deal.current_step?'':''}${LEASING.find(x=>x.id===s.id)?'📝':'⚙️'} ${s.label}</option>`).join('')}
-          </select>
-          <button class="btn btn-green btn-sm" onclick="jumpToStep('${id}')">Move →</button>
-        </div>
-      </div>
-      ${isSales?`<div style="font-size:13px;color:#6b7280;margin-top:.6rem;padding:.6rem;background:#f3f4f6;border-radius:8px">Read-only — contact Leasing or Ops to advance.</div>`
-      :!isLast?`<div class="action-btns">
-        <button class="btn btn-blue btn-sm" onclick="openEmail('${id}',false)">✉ Draft email</button>
-        ${canAct&&next?`<button class="btn btn-green btn-sm" onclick="openEmail('${id}',true)">Advance → ${next.icon} ${next.label}</button>`:''}
-        ${!canAct?`<span style="font-size:13px;color:#9ca3af">Switch to correct role to advance.</span>`:''}
-      </div>`:`<div style="font-size:15px;color:#166534;font-weight:600;margin-top:.5rem">🎉 Deal complete!</div>`}
+    <!-- Route toggle -->
+    <div class="route-toggle">
+      <span class="route-lbl">Route:</span>
+      <button class="route-opt ${lead.route==='sales'?'on-sales':''}" onclick="changeRoute('${id}','sales')">📈 Sales Rep Route</button>
+      <button class="route-opt ${lead.route==='leasing'?'on-leasing':''}" onclick="changeRoute('${id}','leasing')">💳 Leasing/Finance Route</button>
     </div>
 
+    <!-- Assign sales rep -->
+    <div class="assign-box">
+      <span class="assign-lbl">🧑‍💼 Assigned Rep:</span>
+      <input class="assign-inp" id="rep-inp-${id}" value="${lead.assigned_sales_rep||''}" placeholder="Type rep name and press Enter…" onkeydown="if(event.key==='Enter')saveRep('${id}')"/>
+      <button class="btn btn-sm btn-amber" onclick="saveRep('${id}')">Save</button>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="phase-title">${lead.route==='leasing'?'💳 Leasing/Finance Route':'📈 Sales Rep Route'}</div>
+    <div class="pipeline">${pipeHtml}</div>
+
+    <!-- Jump to step -->
+    <div class="jump-box">
+      <div class="jump-title">📍 Move to step</div>
+      <div class="jump-row">
+        <select class="jump-sel" id="jump-${id}">
+          ${steps.map(s=>`<option value="${s.id}" ${s.id===lead.current_step?'selected':''}>${s.icon} ${s.label}</option>`).join('')}
+        </select>
+        <button class="btn btn-blue btn-sm" onclick="jumpStep('${id}')">Move →</button>
+      </div>
+      ${isLost?`<div class="lost-box"><strong>Lost reason:</strong> ${lead.lost_reason||'No reason provided'}</div>`:''}
+      ${!isLost&&!isWon?`<div class="action-btns" style="margin-top:.8rem">
+        ${cur.body&&lead.contact_email?`<button class="btn btn-blue btn-sm" onclick="openEmail('${id}',false)">✉ Draft email</button>`:''}
+        ${canAct&&next&&!isLast?`<button class="btn btn-green btn-sm" onclick="openEmail('${id}',true)">Advance → ${next.icon} ${next.label}</button>`:''}
+        ${canAct&&!isLast?`<button class="btn btn-red btn-sm" onclick="markLost('${id}')">✗ Mark as lost</button>`:''}
+        ${!canAct&&role!=='admin'?`<span style="font-size:13px;color:#9ca3af">Assign a rep to advance.</span>`:''}
+      </div>`:''}
+      ${isWon?`<div style="font-size:15px;color:#166534;font-weight:600;margin-top:.5rem">🏆 Customer Won!</div>`:''}
+    </div>
+
+    <!-- Editable fields -->
     <div class="section">
-      <div class="section-title">📋 Submission data</div>
-      ${tableHtml}
+      <div class="section-title">✏️ Editable fields</div>
+      <div class="edit-grid">
+        <div class="edit-field"><div class="edit-label">Customer name</div><input class="edit-inp" id="ef-name-${id}" value="${lead.customer_full_name||''}"/></div>
+        <div class="edit-field"><div class="edit-label">DBA / Store name</div><input class="edit-inp" id="ef-dba-${id}" value="${lead.dba_name||''}"/></div>
+        <div class="edit-field"><div class="edit-label">Contact email</div><input class="edit-inp" id="ef-email-${id}" value="${lead.contact_email||''}"/></div>
+        <div class="edit-field"><div class="edit-label">Phone</div><input class="edit-inp" id="ef-phone-${id}" value="${lead.phone||''}"/></div>
+        <div class="edit-field"><div class="edit-label">Legal business name</div><input class="edit-inp" id="ef-legal-${id}" value="${lead.legal_business_name||''}"/></div>
+        <div class="edit-field"><div class="edit-label">Store address</div><input class="edit-inp" id="ef-addr-${id}" value="${lead.store_address||''}"/></div>
+        <div class="edit-field"><div class="edit-label">Distributor warehouse</div><input class="edit-inp" id="ef-wh-${id}" value="${lead.distributor_warehouse||''}"/></div>
+        <div class="edit-field"><div class="edit-label">Customer distributor #</div><input class="edit-inp" id="ef-distnum-${id}" value="${lead.customer_distributor_number||''}"/></div>
+        <div class="edit-field" style="grid-column:1/-1"><div class="edit-label">Notes</div><textarea class="edit-inp" id="ef-notes-${id}" rows="3">${lead.notes||''}</textarea></div>
+      </div>
+      <button class="btn btn-green btn-sm" onclick="saveEdits('${id}')">💾 Save changes</button>
     </div>
 
+    <!-- Full submission data -->
+    <div class="section">
+      <div class="section-title">📋 Full submission data</div>
+      <table class="data-table">${dataRows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>
+    </div>
+
+    <!-- Activity log -->
     <div class="section">
       <div class="section-title">Activity log</div>
       <div class="log-box">${logHtml}</div>
     </div>`;
 }
 
-// ─── Email modal ───────────────────────────────────────────
-async function jumpToStep(id){
-  const sel=document.getElementById('step-jump-'+id);
-  if(!sel)return;
-  const toStep=sel.value;
-  const deal=deals.find(d=>d.id===id);
-  if(!deal||toStep===deal.current_step)return;
-  const from=deal.current_step;
-  const fromLabel=stepOf(from).label;
-  const toLabel=stepOf(toStep).label;
-  const newPhase=ph(toStep);
-  await sb.from('deals').update({current_step:toStep,phase:newPhase}).eq('id',id);
-  await sb.from('activity_log').insert({deal_id:id,actor_role:role,action:`Moved: ${fromLabel} → ${toLabel}`,from_step:from,to_step:toStep});
-  notice(`Moved to ${toLabel}!`,'ok');
+// ─── Actions ────────────────────────────────────────────────
+async function changeRoute(id,route){
+  const lead=leads.find(l=>l.id===id);if(!lead)return;
+  const firstStep=route==='leasing'?'new_lead':'new_lead';
+  await sb.from('leads').update({route,current_step:firstStep}).eq('id',id);
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:`Route changed to ${route==='leasing'?'Leasing/Finance':'Sales Rep'}`,from_step:lead.current_step});
+  notice('Route updated!','ok');
 }
 
+async function saveRep(id){
+  const inp=document.getElementById('rep-inp-'+id);if(!inp)return;
+  const rep=inp.value.trim();
+  await sb.from('leads').update({assigned_sales_rep:rep}).eq('id',id);
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:`Sales rep assigned: ${rep||'(cleared)'}`});
+  notice('Rep saved!','ok');
+}
+
+async function jumpStep(id){
+  const sel=document.getElementById('jump-'+id);if(!sel)return;
+  const toStep=sel.value;
+  const lead=leads.find(l=>l.id===id);if(!lead||toStep===lead.current_step)return;
+  const fromLabel=stepOf(lead.current_step)?.label||lead.current_step;
+  const toLabel=stepOf(toStep)?.label||toStep;
+  let status=lead.status;
+  if(toStep==='customer_won'||toStep==='complete_s'||toStep==='deal_funded_l') status='won';
+  await sb.from('leads').update({current_step:toStep,status}).eq('id',id);
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:`Moved: ${fromLabel} → ${toLabel}`,from_step:lead.current_step,to_step:toStep});
+  notice('Moved to '+toLabel+'!','ok');
+}
+
+async function saveEdits(id){
+  const g=field=>{ const el=document.getElementById('ef-'+field+'-'+id); return el?el.value.trim():''; };
+  await sb.from('leads').update({
+    customer_full_name:g('name'),dba_name:g('dba'),contact_email:g('email'),
+    phone:g('phone'),legal_business_name:g('legal'),store_address:g('addr'),
+    distributor_warehouse:g('wh'),customer_distributor_number:g('distnum'),notes:g('notes'),
+  }).eq('id',id);
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Lead details updated'});
+  notice('Changes saved!','ok');
+}
+
+function markLost(id){ lostLeadId=id; document.getElementById('lost-reason').value=''; document.getElementById('lost-modal').style.display='flex'; }
+async function confirmLost(){
+  const reason=document.getElementById('lost-reason').value.trim();
+  if(!reason){alert('Please provide a reason.');return;}
+  const lead=leads.find(l=>l.id===lostLeadId);
+  await sb.from('leads').update({status:'lost',lost_reason:reason,current_step:'customer_lost'}).eq('id',lostLeadId);
+  await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:role,action:`Marked as lost: ${reason}`,from_step:lead?.current_step});
+  document.getElementById('lost-modal').style.display='none';
+  notice('Lead marked as lost.','warn');
+}
+
+async function deleteLead(id){
+  if(!confirm('Delete this lead? Cannot be undone.'))return;
+  await sb.from('leads').delete().eq('id',id);
+  if(selId===id){selId=null;document.getElementById('main').innerHTML='<div class="empty"><div>Lead deleted.</div></div>';}
+  notice('Lead deleted.','warn');
+}
+
+// ─── Email ──────────────────────────────────────────────────
 function openEmail(id,advance){
-  const deal=deals.find(d=>d.id===id);if(!deal)return;
-  const step=stepOf(deal.current_step);
-  emailDealId=id; emailAdvance=advance;
+  const lead=leads.find(l=>l.id===id);if(!lead)return;
+  const steps=getSteps(lead.route);
+  const ids=steps.map(s=>s.id);
+  const step=steps[ids.indexOf(lead.current_step)];
+  if(!step)return;
+  emailLeadId=id;emailAdvance=advance;
   document.getElementById('email-title').textContent=advance?'Compose & advance':'Compose email — '+step.label;
-  document.getElementById('email-to').value=deal.email||'';
-  document.getElementById('email-subj').value=step.subj;
-  document.getElementById('email-body').value=step.body(deal);
-  const next=ALL[si(deal.current_step)+1];
+  document.getElementById('email-to').value=lead.contact_email||'';
+  document.getElementById('email-subj').value=step.subj||'';
+  document.getElementById('email-body').value=step.body?step.body(lead):'';
+  const steps2=getSteps(lead.route);const ids2=steps2.map(s=>s.id);
+  const next=steps2[ids2.indexOf(lead.current_step)+1];
   const ab=document.getElementById('advance-btn');
   ab.textContent=next?'Copy & advance → '+next.label:'Copy';
   ab.style.display=advance?'inline-block':'none';
   document.getElementById('email-modal').style.display='flex';
 }
-function closeEmail(){ document.getElementById('email-modal').style.display='none'; emailDealId=null; }
-
+function closeEmail(){document.getElementById('email-modal').style.display='none';emailLeadId=null;}
 async function copyEmail(){
   const subj=document.getElementById('email-subj').value;
   const body=document.getElementById('email-body').value;
   try{await navigator.clipboard.writeText('Subject: '+subj+'\n\n'+body);}catch(e){}
-  if(emailDealId&&sb){
-    const d=deals.find(x=>x.id===emailDealId);
-    await sb.from('email_log').insert({deal_id:emailDealId,step:d.current_step,subject:subj,body,sent_by_role:role});
-    await sb.from('activity_log').insert({deal_id:emailDealId,actor_role:role,action:'Email copied — "'+subj+'"',from_step:d.current_step});
+  if(emailLeadId&&sb){
+    const l=leads.find(x=>x.id===emailLeadId);
+    await sb.from('email_log').insert({lead_id:emailLeadId,step:l.current_step,subject:subj,body,sent_by_role:role});
+    await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:role,action:'Email copied — "'+subj+'"',from_step:l.current_step});
   }
-  notice('Email copied to clipboard!','ok');
-  closeEmail();
+  notice('Email copied!','ok');closeEmail();
 }
-
 async function advanceEmail(){
   const subj=document.getElementById('email-subj').value;
   const body=document.getElementById('email-body').value;
   try{await navigator.clipboard.writeText('Subject: '+subj+'\n\n'+body);}catch(e){}
-  if(emailDealId&&sb){
-    const d=deals.find(x=>x.id===emailDealId);
-    const from=d.current_step; const idx=si(from);
-    if(idx<ALL.length-1){
-      const to=ALL[idx+1].id; const np=ph(to);
-      await sb.from('email_log').insert({deal_id:emailDealId,step:from,subject:subj,body,sent_by_role:role});
-      await sb.from('deals').update({current_step:to,phase:np}).eq('id',emailDealId);
-      await sb.from('activity_log').insert({deal_id:emailDealId,actor_role:role,action:'Advanced: '+ALL[idx].label+' → '+ALL[idx+1].label,from_step:from,to_step:to});
-      notice('Advanced to '+ALL[idx+1].label+'!','ok');
+  if(emailLeadId&&sb){
+    const lead=leads.find(x=>x.id===emailLeadId);
+    const steps=getSteps(lead.route);const ids=steps.map(s=>s.id);
+    const idx=ids.indexOf(lead.current_step);
+    if(idx<steps.length-1){
+      const to=steps[idx+1].id;
+      let status=lead.status;
+      if(to==='customer_won'||to==='complete_s'||to==='deal_funded_l') status='won';
+      await sb.from('email_log').insert({lead_id:emailLeadId,step:lead.current_step,subject:subj,body,sent_by_role:role});
+      await sb.from('leads').update({current_step:to,status}).eq('id',emailLeadId);
+      await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:role,action:'Advanced: '+steps[idx].label+' → '+steps[idx+1].label,from_step:lead.current_step,to_step:to});
+      notice('Advanced to '+steps[idx+1].label+'!','ok');
     }
   }
   closeEmail();
 }
 
-// ─── Deal CRUD ─────────────────────────────────────────────
-async function deleteDeal(id){
-  if(!confirm('Delete this deal? Cannot be undone.'))return;
-  await sb.from('deals').delete().eq('id',id);
-  if(selId===id){selId=null;document.getElementById('main').innerHTML='<div class="empty"><div>Deal deleted.</div></div>';}
-  notice('Deal deleted.','warn');
-}
-function openNewDeal(){ document.getElementById('new-modal').style.display='flex'; }
-async function saveNewDeal(){
-  const fn=document.getElementById('nd-first').value.trim();
-  const em=document.getElementById('nd-email').value.trim();
-  if(!fn||!em){notice('First name and email required.','warn');return;}
-  const{error}=await sb.from('deals').insert({first_name:fn,last_name:document.getElementById('nd-last').value.trim(),store_name:document.getElementById('nd-store').value.trim(),email:em,phone:document.getElementById('nd-phone').value.trim(),deal_type:document.getElementById('nd-type').value,purchase_type:document.getElementById('nd-type').value,current_step:'submitted',phase:'leasing'});
+// ─── New lead ───────────────────────────────────────────────
+function openNewLead(){document.getElementById('new-modal').style.display='flex';}
+async function saveNewLead(){
+  const name=document.getElementById('nd-name').value.trim();
+  if(!name){notice('Customer name required.','warn');return;}
+  const interest=document.getElementById('nd-interest').value;
+  const route=['Leasing Equipment','Financing Equipment'].includes(interest)?'leasing':'sales';
+  const nameParts=name.split(' ');
+  const{error}=await sb.from('leads').insert({
+    customer_full_name:name,customer_first_name:nameParts[0]||'',customer_last_name:nameParts.slice(1).join(' ')||'',
+    dba_name:document.getElementById('nd-dba').value.trim(),
+    contact_email:document.getElementById('nd-email').value.trim(),
+    phone:document.getElementById('nd-phone').value.trim(),
+    distributor_sales_rep:document.getElementById('nd-rep').value.trim(),
+    distributor_warehouse:document.getElementById('nd-warehouse').value.trim(),
+    which_program:document.getElementById('nd-program').value,
+    customer_interest:interest,route,current_step:'new_lead',status:'active',
+  });
   if(error){notice('Error: '+error.message,'err');return;}
   document.getElementById('new-modal').style.display='none';
-  notice('Deal created for '+fn+'!','ok');
-  ['nd-first','nd-last','nd-store','nd-email','nd-phone'].forEach(id=>document.getElementById(id).value='');
+  notice('Lead created!','ok');
+  ['nd-name','nd-dba','nd-email','nd-phone','nd-rep','nd-warehouse'].forEach(i=>document.getElementById(i).value='');
 }
 
-// ─── CSV Import ────────────────────────────────────────────
+// ─── CSV ────────────────────────────────────────────────────
 function parseCSV(text){
   const rows=[];const lines=text.split(/\r?\n/);
-  for(const line of lines){
-    if(!line.trim())continue;
-    const cols=[];let cur='',inQ=false;
-    for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else{cur+=ch;}}
-    cols.push(cur.trim());rows.push(cols);
-  }
+  for(const line of lines){if(!line.trim())continue;const cols=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else{cur+=ch;}}cols.push(cur.trim());rows.push(cols);}
   return rows;
 }
 function previewCSV(input){
@@ -680,63 +799,51 @@ function previewCSV(input){
   const reader=new FileReader();
   reader.onload=e=>{
     csvRows=parseCSV(e.target.result);
-    const pr=document.getElementById('csv-preview');
-    const btn=document.getElementById('csv-btn');
-    if(csvRows.length>1){
-      pr.style.display='block';
-      pr.innerHTML='<strong>'+( csvRows.length-1)+' submissions</strong> found. Columns: '+csvRows[0].slice(0,5).join(', ')+(csvRows[0].length>5?'…':'');
-      btn.disabled=false;
-    }else{pr.style.display='block';pr.textContent='Could not read CSV.';btn.disabled=true;}
-  };
-  reader.readAsText(file);
+    const pr=document.getElementById('csv-preview');const btn=document.getElementById('csv-btn');
+    if(csvRows.length>1){pr.style.display='block';pr.innerHTML='<strong>'+(csvRows.length-1)+' submissions</strong> ready to import.';btn.disabled=false;}
+    else{pr.style.display='block';pr.textContent='Could not read CSV.';btn.disabled=true;}
+  };reader.readAsText(file);
 }
 async function importCSV(){
   if(!csvRows.length||!sb)return;
   const headers=csvRows[0].map(h=>h.toLowerCase().trim());
   const dataRows=csvRows.slice(1).filter(r=>r.some(c=>c));
-  const btn=document.getElementById('csv-btn');
-  btn.disabled=true;btn.textContent='Importing…';
+  const btn=document.getElementById('csv-btn');btn.disabled=true;btn.textContent='Importing…';
   const col=(row,...kws)=>{for(const kw of kws){const idx=headers.findIndex(h=>h.includes(kw));if(idx>=0&&row[idx]&&row[idx].trim())return row[idx].trim();}return '';};
   let added=0,skipped=0;
   for(let i=0;i<dataRows.length;i++){
     const row=dataRows[i];
-    // Skip rows with no meaningful data
-    const storeName=col(row,'store name');
-    const contactName=col(row,'contact name');
-    const email=col(row,'contact email','contacts email','email');
-    const phone=col(row,'contact cell','cell phone','phone');
-    if(!storeName&&!contactName&&!email&&!phone){skipped++;continue;}
-    const subId=col(row,'submission id','submissionid')||'csv-'+Date.now()+'-'+i;
-    const{data:ex}=await sb.from('deals').select('id').eq('jotform_submission_id',subId).maybeSingle();
+    const name=col(row,'customers full','customer full','customer name','full name');
+    const dba=col(row,'doing business','dba','store name','legal name');
+    const email=col(row,'contact email','email');
+    const phone=col(row,'phone');
+    if(!name&&!dba&&!email&&!phone){skipped++;continue;}
+    const subId=col(row,'submission id','submissionid','unique id')||'csv-'+Date.now()+'-'+i;
+    const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',subId).maybeSingle();
     if(ex){skipped++;continue;}
-    const cn=contactName;const np=cn.split(' ').filter(Boolean);
-    // Store ALL CSV columns in raw_csv
+    const interest=col(row,'customer interested','is customer','interest');
+    const route=['leasing equipment','financing equipment'].some(s=>interest.toLowerCase().includes(s))?'leasing':'sales';
+    const nameParts=name.split(' ');
     const raw=Object.fromEntries(headers.map((h,idx)=>[h,row[idx]||'']).filter(([k,v])=>v&&v.trim()));
-    await sb.from('deals').insert({
+    await sb.from('leads').insert({
       jotform_submission_id:subId,
-      first_name:np[0]||col(row,'first name')||'Customer',
-      last_name:np.slice(1).join(' ')||col(row,'last name')||'',
-      email:email,
-      phone:phone,
-      store_name:storeName,
-      store_phone:col(row,'store phone'),
-      legal_business_name:col(row,'legal business'),
-      address:col(row,'address'),
-      sales_rep:col(row,'ronnoco sales rep','sales rep'),
-      rom:col(row,'select the rom','rom'),
-      purchase_type:col(row,'pick which','purchase type')||'Equipment Lease',
-      total_eq_cost:col(row,'total eq'),
-      parent_distributor:col(row,'parent distributor'),
-      target_install_date:col(row,'target install'),
-      graphics_package:col(row,'pick a graphics','graphics'),
-      emergency_install:col(row,'emergency install')||'No',
-      notes:col(row,'additional note','notes'),
-      coffee_program:col(row,'coffee program'),
-      sub_group:col(row,'sub group'),
-      customer_account:col(row,'customer account'),
-      chain_store:col(row,'chain store')||'No',
-      deal_type:col(row,'pick which')||'Equipment Lease',
-      current_step:'submitted',phase:'leasing',
+      customer_full_name:name,customer_first_name:nameParts[0]||'',customer_last_name:nameParts.slice(1).join(' ')||'',
+      dba_name:dba,contact_email:email,phone,
+      contact_number:col(row,'contact number'),
+      legal_business_name:col(row,'legal name','llc','s-corp','secretary'),
+      store_address:col(row,'store location','address'),
+      distributor_sales_rep:col(row,'distributor sales rep','dist rep','rep name'),
+      distributor_rep_email:col(row,'distributor rep email','rep email'),
+      distributor:col(row,'distributor'),
+      distributor_warehouse:col(row,'distributor warehouse','warehouse'),
+      tradeshow_lead:col(row,'tradeshow'),
+      num_locations:col(row,'number of locations','locations'),
+      customer_distributor_number:col(row,"customer's distributor",'distributor number'),
+      which_program:col(row,'which program','program'),
+      customer_interest:interest,
+      beverage_needs:col(row,'beverage needs','additional information'),
+      notes:col(row,'additional notes','notes'),
+      route,current_step:'new_lead',status:'active',
       jotform_answers:{},raw_csv:raw,
     });
     added++;
@@ -746,17 +853,15 @@ async function importCSV(){
   notice('Import complete — '+added+' added, '+skipped+' skipped.','ok');
 }
 
-// ─── Settings ──────────────────────────────────────────────
+// ─── Settings ───────────────────────────────────────────────
 function refreshStatus(){
   const key=localStorage.getItem('jf_key')||'';
   if(key)document.getElementById('s-key').value=key;
   document.getElementById('s-sync-btn').disabled=!key;
-  document.getElementById('s-webhook-btn').disabled=!key;
   document.getElementById('s-status').innerHTML=`
     <span class="status-dot ${key?'dot-g':'dot-r'}"></span>API Key: <strong>${key?'Saved':'Not set'}</strong><br>
-    <span class="status-dot dot-g"></span>Form: <strong>New Deal Sheet</strong> (${FORM_ID})<br>
-    <span class="status-dot dot-g"></span>Supabase: <strong>Connected</strong><br>
-    <span class="status-dot dot-g"></span>Webhook URL: <strong style="font-size:12px">${window.location.origin}/.netlify/functions/webhook</strong>`;
+    <span class="status-dot dot-g"></span>Form: <strong>Java Select / Distributor Leads</strong> (${FORM_ID})<br>
+    <span class="status-dot dot-g"></span>Supabase: <strong>Connected</strong>`;
 }
 async function testKey(){
   const key=document.getElementById('s-key').value.trim();
@@ -769,15 +874,13 @@ async function testKey(){
       localStorage.setItem('jf_key',key);
       document.getElementById('key-status').innerHTML='<span style="color:#166534">✓ Connected as '+d.content.username+'</span>';
       document.getElementById('s-sync-btn').disabled=false;
-      document.getElementById('s-webhook-btn').disabled=false;
       document.getElementById('sync-btn').style.display='inline-block';
       notice('API key saved!','ok','settings-notice');
     }else{
-      // Save anyway for webhook use
       localStorage.setItem('jf_key',key);
-      document.getElementById('key-status').innerHTML='<span style="color:#d97706">⚠ Saved — limited access ('+d.responseCode+'). Webhook may still work.</span>';
+      document.getElementById('key-status').innerHTML='<span style="color:#d97706">⚠ Saved — limited access. Webhook will still work.</span>';
       document.getElementById('s-sync-btn').disabled=false;
-      document.getElementById('s-webhook-btn').disabled=false;
+      document.getElementById('sync-btn').style.display='inline-block';
     }
     refreshStatus();
   }catch(e){document.getElementById('key-status').innerHTML='<span style="color:#dc2626">✗ '+e.message+'</span>';}
@@ -787,11 +890,11 @@ async function settingsSync(){
   if(!key){notice('Save API key first.','warn','settings-notice');return;}
   notice('Syncing…','info','settings-notice');
   const added=await syncFromAPI(key);
-  notice('Sync complete — '+added+' new submissions.','ok','settings-notice');
+  notice('Sync complete — '+added+' new leads.','ok','settings-notice');
 }
-async function doManualSync(){
+async function doSync(){
   const key=localStorage.getItem('jf_key');
-  if(!key){notice('Configure API key in Settings first.','warn');return;}
+  if(!key){notice('Configure API key in Settings.','warn');return;}
   notice('Syncing…','info');
   const added=await syncFromAPI(key);
   notice('Sync complete — '+added+' added.','ok');
@@ -811,46 +914,39 @@ async function syncFromAPI(key){
     }
     let added=0;
     for(const sub of all){
-      const{data:ex}=await sb.from('deals').select('id').eq('jotform_submission_id',sub.id).maybeSingle();
+      const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',sub.id).maybeSingle();
       if(ex)continue;
       const ans=sub.answers||{};
-      const g=qid=>{const a=ans[qid];if(!a||!a.answer)return'';if(typeof a.answer==='string')return a.answer.trim();if(typeof a.answer==='object')return Object.values(a.answer).filter(Boolean).join(', ');return '';};
-      const cn=g('13');const np=cn.split(' ');
-      await sb.from('deals').insert({jotform_submission_id:sub.id,first_name:np[0]||'Customer',last_name:np.slice(1).join(' ')||'',email:g('22'),phone:g('12'),store_name:g('15'),store_phone:g('16'),legal_business_name:g('144'),sales_rep:g('108'),rom:g('99'),purchase_type:g('48')||'Equipment Lease',total_eq_cost:g('4'),parent_distributor:g('23'),target_install_date:g('49'),graphics_package:g('36'),emergency_install:g('17')||'No',notes:g('113'),coffee_program:g('139'),sub_group:g('137'),customer_account:g('130'),chain_store:g('18')||'No',deal_type:g('48')||'Equipment Lease',current_step:'submitted',phase:'leasing',jotform_answers:ans,raw_csv:{}});
+      const g=qid=>{const a=ans[qid];if(!a||!a.answer)return'';if(typeof a.answer==='string')return a.answer.trim();if(typeof a.answer==='object'){if(a.answer.first)return(a.answer.first+' '+a.answer.last).trim();return Object.values(a.answer).filter(Boolean).join(', ');}return '';};
+      const interest=g('36');
+      const route=['Leasing Equipment','Financing Equipment'].includes(interest)?'leasing':'sales';
+      const fullName=g('19');const nameParts=fullName.split(' ');
+      await sb.from('leads').insert({
+        jotform_submission_id:sub.id,
+        customer_full_name:fullName,customer_first_name:nameParts[0]||'',customer_last_name:nameParts.slice(1).join(' ')||'',
+        contact_email:g('6'),contact_number:g('7'),phone:g('13'),
+        legal_business_name:g('8'),dba_name:g('16'),
+        store_address:[ans['5']?.answer?.addr_line1,ans['5']?.answer?.city,ans['5']?.answer?.state,ans['5']?.answer?.zip].filter(Boolean).join(', '),
+        distributor_sales_rep:g('3'),distributor_rep_email:g('9'),
+        distributor:g('28'),distributor_warehouse:g('37')||g('29'),
+        tradeshow_lead:g('38'),num_locations:g('32'),
+        customer_distributor_number:g('34'),which_program:g('31'),
+        customer_interest:interest,beverage_needs:g('30'),notes:g('25'),
+        route,current_step:'new_lead',status:'active',jotform_answers:ans,raw_csv:{},
+      });
       added++;
     }
     return added;
   }catch(e){console.error(e);return 0;}
 }
-async function registerWebhook(){
-  const key=localStorage.getItem('jf_key');
-  if(!key){notice('Save API key first.','warn','settings-notice');return;}
-  const url=window.location.origin+'/.netlify/functions/webhook';
-  document.getElementById('webhook-status').textContent='Registering…';
-  try{
-    const r=await fetch(`/.netlify/functions/jotform?path=form%2F${FORM_ID}%2Fwebhooks&apiKey=${encodeURIComponent(key)}`);
-    const d=await r.json();
-    const existing=Object.values(d.content||{});
-    if(existing.includes(url)){document.getElementById('webhook-status').innerHTML='<span style="color:#166534">✓ Already registered!</span>';return;}
-    // Try to register
-    const pr=await fetch('/.netlify/functions/jotform',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:`form/${FORM_ID}/webhooks`,apiKey:key,webhookURL:url})});
-    document.getElementById('webhook-status').innerHTML=`Webhook URL to add manually in Jotform:<br><code style="font-size:12px;background:#f3f4f6;padding:3px 8px;border-radius:4px">${url}</code>`;
-  }catch(e){
-    document.getElementById('webhook-status').innerHTML=`Add this webhook URL manually in Jotform:<br><code style="font-size:12px;background:#f3f4f6;padding:3px 8px;border-radius:4px">${window.location.origin}/.netlify/functions/webhook</code>`;
-  }
-}
 function changePw(){
-  const cur=document.getElementById('pw-cur').value;
-  const nw=document.getElementById('pw-new').value;
-  const cf=document.getElementById('pw-conf').value;
-  const stored=localStorage.getItem('admin_pw')||DEFAULT_PW;
-  const msg=document.getElementById('pw-msg');
+  const cur=document.getElementById('pw-cur').value;const nw=document.getElementById('pw-new').value;const cf=document.getElementById('pw-conf').value;
+  const stored=localStorage.getItem('admin_pw')||DEFAULT_PW;const msg=document.getElementById('pw-msg');
   if(cur!==stored){msg.style.color='#dc2626';msg.textContent='Current password incorrect.';return;}
-  if(nw.length<6){msg.style.color='#dc2626';msg.textContent='Must be at least 6 characters.';return;}
+  if(nw.length<6){msg.style.color='#dc2626';msg.textContent='Must be 6+ characters.';return;}
   if(nw!==cf){msg.style.color='#dc2626';msg.textContent='Passwords do not match.';return;}
-  localStorage.setItem('admin_pw',nw);
-  msg.style.color='#166534';msg.textContent='Password updated!';
-  ['pw-cur','pw-new','pw-conf'].forEach(id=>document.getElementById(id).value='');
+  localStorage.setItem('admin_pw',nw);msg.style.color='#166534';msg.textContent='Password updated!';
+  ['pw-cur','pw-new','pw-conf'].forEach(i=>document.getElementById(i).value='');
 }
 
 document.addEventListener('DOMContentLoaded',()=>init());

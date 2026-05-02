@@ -1,6 +1,6 @@
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 200, body: 'Webhook endpoint ready' };
+    return { statusCode: 200, body: 'Webhook ready' };
   }
   try {
     const params = new URLSearchParams(event.body);
@@ -8,81 +8,71 @@ exports.handler = async (event) => {
     const submissionID = params.get('submissionID');
     const rawRequest = params.get('rawRequest');
 
-    if (formID && formID !== '260154983685872') {
+    if (formID && formID !== '260045399064863') {
       return { statusCode: 200, body: 'Ignored - wrong form' };
     }
 
-    const submission = rawRequest ? JSON.parse(rawRequest) : {};
-
-    const SB_URL = 'https://hvmlmequwjxvrmgpltec.supabase.co';
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2bWxtZXF1d2p4dnJtZ3BsdGVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODEyNzMsImV4cCI6MjA5MzA1NzI3M30.bT56CL9oK9HcRBQTry3G5kBqbseuGDaxKvqyDkCczHM';
-
-    const checkRes = await fetch(`${SB_URL}/rest/v1/deals?jotform_submission_id=eq.${submissionID}&select=id`, {
-      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-    });
-    const existing = await checkRes.json();
-    if (existing && existing.length > 0) {
-      return { statusCode: 200, body: 'Already exists' };
-    }
-
+    const s = rawRequest ? JSON.parse(rawRequest) : {};
     const get = (name) => {
-      const val = submission[name];
+      const val = s[name];
       if (!val) return '';
       if (typeof val === 'string') return val.trim();
       if (typeof val === 'object') return Object.values(val).filter(Boolean).join(', ').trim();
       return '';
     };
 
-    const contactName = get('typeA13');
-    const nameParts = contactName.split(' ').filter(Boolean);
+    const SB_URL = 'https://opnpyunbccifkdnbljsz.supabase.co';
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
 
-    const deal = {
-      jotform_submission_id: submissionID || Date.now().toString(),
-      first_name: nameParts[0] || 'Customer',
-      last_name: nameParts.slice(1).join(' ') || '',
-      email: get('contactsEmail'),
-      phone: get('typeA12'),
-      store_name: get('typeA15'),
-      store_phone: get('typeA16'),
-      legal_business_name: get('legalBusiness'),
-      address: [submission['address_addr_line1'], submission['address_city'], submission['address_state'], submission['address_postal']].filter(Boolean).join(', '),
-      sales_rep: get('ronnocoSales108'),
-      rom: get('selectThe'),
-      chain_store: get('chainStore') || 'No',
-      purchase_type: get('pickWhich') || 'Equipment Lease',
-      total_eq_cost: get('totalEq'),
-      parent_distributor: get('parentDistributor'),
-      target_install_date: get('targetInstall'),
-      graphics_package: get('pickA'),
-      emergency_install: get('emergencyInstall') || 'No',
-      notes: get('pleaseGive'),
-      coffee_program: get('coffeeProgram139'),
-      sub_group: get('subGroup'),
-      customer_account: get('customerAccount'),
-      deal_type: get('pickWhich') || 'Equipment Lease',
-      current_step: 'submitted',
-      phase: 'leasing',
-      jotform_answers: submission,
+    // Check duplicate
+    const checkRes = await fetch(`${SB_URL}/rest/v1/leads?jotform_submission_id=eq.${submissionID}&select=id`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+    });
+    const existing = await checkRes.json();
+
+    const fullName = get('customersFull') || (get('customersFull_first') + ' ' + get('customersFull_last'));
+    const nameParts = fullName.trim().split(' ');
+
+    const lead = {
+      jotform_submission_id: submissionID,
+      distributor_sales_rep: get('distributorSales'),
+      distributor_rep_email: get('hthRep9'),
+      distributor: get('distributor'),
+      distributor_warehouse: get('distributorWarehouse37') || get('distributorWarehouse'),
+      tradeshow_lead: get('tradeshowLead'),
+      customer_first_name: nameParts[0] || '',
+      customer_last_name: nameParts.slice(1).join(' ') || '',
+      customer_full_name: fullName.trim(),
+      contact_email: get('contactEmail'),
+      contact_number: get('contactName7'),
+      phone: get('phoneNumber'),
+      legal_business_name: get('storeName8'),
+      dba_name: get('whatIs'),
+      store_address: [s['storeLocation_addr_line1'], s['storeLocation_city'], s['storeLocation_state'], s['storeLocation_zip']].filter(Boolean).join(', '),
+      num_locations: get('numberOf'),
+      customer_distributor_number: get('customersDistributor'),
+      which_program: get('whichProgram'),
+      customer_interest: get('isCustomer'),
+      beverage_needs: get('pleaseProvide'),
+      notes: get('typeA'),
+      route: ['Leasing Equipment','Financing Equipment'].includes(get('isCustomer')) ? 'leasing' : 'sales',
+      current_step: 'new_lead',
+      jotform_answers: s,
       raw_csv: {},
     };
 
-    const insertRes = await fetch(`${SB_URL}/rest/v1/deals`, {
-      method: 'POST',
-      headers: {
-        'apikey': SB_KEY,
-        'Authorization': `Bearer ${SB_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal',
-      },
-      body: JSON.stringify(deal),
+    const method = existing && existing.length > 0 ? 'PATCH' : 'POST';
+    const url = existing && existing.length > 0
+      ? `${SB_URL}/rest/v1/leads?jotform_submission_id=eq.${submissionID}`
+      : `${SB_URL}/rest/v1/leads`;
+
+    await fetch(url, {
+      method,
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify(lead),
     });
 
-    if (insertRes.ok) {
-      return { statusCode: 200, body: 'Success' };
-    } else {
-      const err = await insertRes.text();
-      return { statusCode: 500, body: 'Insert failed: ' + err };
-    }
+    return { statusCode: 200, body: 'Success' };
   } catch (err) {
     return { statusCode: 500, body: 'Error: ' + err.message };
   }
