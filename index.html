@@ -926,8 +926,13 @@ async function changeRoute(id,route){
 async function saveRep(id){
   const inp=document.getElementById('rep-inp-'+id);if(!inp)return;
   const rep=inp.value;
-  await sb.from('leads').update({assigned_sales_rep:rep}).eq('id',id);
+  const{error}=await sb.from('leads').update({assigned_sales_rep:rep}).eq('id',id);
+  if(error){notice('Error: '+error.message,'err');return;}
   await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:`Sales rep assigned: ${rep||'(cleared)'}`});
+  // Update local state immediately
+  const idx=leads.findIndex(l=>l.id===id);
+  if(idx>=0)leads[idx]={...leads[idx],assigned_sales_rep:rep};
+  renderMetrics();renderList();renderMain(id);
   notice('Rep saved!','ok');
 }
 
@@ -964,12 +969,16 @@ async function confirmNote(){
   const note=document.getElementById('note-text').value.trim();
   hideModal('note-modal');notePending=null;
   const lead=leads.find(l=>l.id===leadId);if(!lead)return;
-  let status=lead.status;
-  if(['customer_won','complete_s','deal_funded_l'].includes(toStep))status='won';
-  await sb.from('leads').update({current_step:toStep,status}).eq('id',leadId);
+  let newStatus=lead.status;
+  if(['customer_won','complete_s','deal_funded_l'].includes(toStep))newStatus='won';
+
+  const{error}=await sb.from('leads').update({current_step:toStep,status:newStatus}).eq('id',leadId);
+  if(error){notice('Error advancing: '+error.message,'err');return;}
+
   const fromLabel=stepOf(fromStep)?.label||fromStep;
   const toLabel=stepOf(toStep)?.label||toStep;
   await sb.from('activity_log').insert({lead_id:leadId,actor_role:role,action:`Advanced: ${fromLabel} → ${toLabel}`,from_step:fromStep,to_step:toStep,note:note||''});
+
   if(advance&&emailSubj){
     try{await navigator.clipboard.writeText('Subject: '+emailSubj+'\n\n'+emailBody);}catch(e){}
     await sb.from('email_log').insert({lead_id:leadId,step:fromStep,subject:emailSubj,body:emailBody,sent_by_role:role});
@@ -977,6 +986,13 @@ async function confirmNote(){
   } else {
     notice(`Moved to ${toLabel}!`,'ok');
   }
+
+  // Force local state update immediately without waiting for realtime
+  const idx=leads.findIndex(l=>l.id===leadId);
+  if(idx>=0){leads[idx]={...leads[idx],current_step:toStep,status:newStatus};}
+  await loadAct(leadId);
+  renderList();
+  renderMain(leadId);
 }
 
 async function jumpStep(id){
