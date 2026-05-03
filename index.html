@@ -722,13 +722,13 @@ function renderList(){
   if(role==='dist_rep')list=list.filter(l=>l.current_step==='new_lead'||l.route!=='leasing');
 
   list.sort((a,b)=>{
-    if(sort==='oldest')return new Date(a.created_at)-new Date(b.created_at);
+    if(sort==='oldest')return new Date(a.submission_date||a.created_at)-new Date(b.submission_date||b.created_at);
     if(sort==='name')return(a.customer_full_name||'').localeCompare(b.customer_full_name||'');
     if(sort==='rep')return(a.assigned_sales_rep||'').localeCompare(b.assigned_sales_rep||'');
     if(sort==='dist_rep')return(a.distributor_sales_rep||'').localeCompare(b.distributor_sales_rep||'');
     if(sort==='warehouse')return(a.distributor_warehouse||'').localeCompare(b.distributor_warehouse||'');
     if(sort==='step')return ALL_STEPS.findIndex(s=>s.id===a.current_step)-ALL_STEPS.findIndex(s=>s.id===b.current_step);
-    return new Date(b.created_at)-new Date(a.created_at);
+    return new Date(b.submission_date||b.created_at)-new Date(a.submission_date||a.created_at);
   });
 
   const active=[];if(q)active.push(`"${q}"`);if(route)active.push(route);if(status)active.push(status);if(prog)active.push(prog);if(rep)active.push('Rep: '+rep);if(wh)active.push(wh);if(ts)active.push(ts==='yes'?'Tradeshow':'Non-tradeshow');
@@ -740,7 +740,7 @@ function renderList(){
   sb2.innerHTML=list.map(l=>`<div class="lcard${selId===l.id?' sel':''}${l.status==='lost'?' lost':''}" onclick="selectLead('${l.id}')">
     <div class="lc-name">${l.customer_full_name||l.dba_name||'Unknown'}</div>
     <div class="lc-sub">${l.dba_name&&l.dba_name!==l.customer_full_name?l.dba_name+'<br>':''}Rep: ${l.assigned_sales_rep||'<span style="color:#dc2626">Unassigned</span>'}</div>
-    <div class="lc-foot">${stepBadge(l)}<span style="font-size:11px;color:#6b7280;font-weight:500">&#128197; ${fmtD(l.created_at)}</span></div>
+    <div class="lc-foot">${stepBadge(l)}<span style="font-size:11px;color:#6b7280;font-weight:500">&#128197; ${fmtD(l.submission_date||l.created_at)}</span></div>
     <div class="pbar"><div class="pfill ${l.route==='leasing'?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
   </div>`).join('');
 }
@@ -778,6 +778,7 @@ function renderMain(id){
   const raw=lead.raw_csv&&Object.keys(lead.raw_csv).length?lead.raw_csv:{};
   const rows=[];
   const add=(k,v)=>{if(v&&v.toString().trim())rows.push([k,v]);};
+  add('Submission Date',fmtD(lead.submission_date||lead.created_at));
   add('Customer Name',lead.customer_full_name);add('DBA / Store',lead.dba_name);add('Legal Name',lead.legal_business_name);
   add('Email',lead.contact_email);add('Phone',lead.phone);add('Address',lead.store_address);
   add('Locations',lead.num_locations);add('Customer Dist #',lead.customer_distributor_number);
@@ -792,7 +793,7 @@ function renderMain(id){
     <div class="main-hdr">
       <div>
         <div class="main-name">${lead.customer_full_name||lead.dba_name||'Unknown Lead'}</div>
-        <div class="main-meta">${lead.dba_name?'<strong>'+lead.dba_name+'</strong><br>':''}${[lead.contact_email,lead.phone].filter(Boolean).join(' · ')}${lead.store_address?'<br>'+lead.store_address:''}${lead.which_program?'<br><span style="color:#7c3aed;font-weight:500">'+lead.which_program+'</span>':''}<br><span style="color:#9ca3af;font-size:13px">&#128197; Submitted: ${fmtD(lead.created_at)}</span></div>
+        <div class="main-meta">${lead.dba_name?'<strong>'+lead.dba_name+'</strong><br>':''}${[lead.contact_email,lead.phone].filter(Boolean).join(' · ')}${lead.store_address?'<br>'+lead.store_address:''}${lead.which_program?'<br><span style="color:#7c3aed;font-weight:500">'+lead.which_program+'</span>':''}<br><span style="color:#9ca3af;font-size:13px">&#128197; Submitted: ${fmtD(lead.submission_date||lead.created_at)}</span></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         ${stepBadge(lead)}<span style="font-size:12px;color:#9ca3af">${pct(lead)}%</span>
@@ -1074,6 +1075,7 @@ async function importCSV(){
       beverage_needs:col(row,'beverage needs','additional information'),
       notes:col(row,'additional notes','notes'),
       route,current_step:'new_lead',status:'active',
+      submission_date:col(row,'submission date','created at','date')||null,
       jotform_answers:{},raw_csv:raw,
     });
     added++;
@@ -1125,7 +1127,7 @@ function renderReport(){
             <td>${rb}</td>
             <td>${step?step.icon+' '+step.label:'—'}</td>
             <td>${sb2}</td>
-            <td style="color:#9ca3af">${fmtD(l.created_at)}</td>
+            <td style="color:#9ca3af">${fmtD(l.submission_date||l.created_at)}</td>
             <td><button class="btn btn-sm" onclick="openEdit('${l.id}')">Edit</button></td>
           </tr>`;
         }).join('')}</tbody>
