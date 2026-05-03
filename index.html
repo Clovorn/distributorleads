@@ -877,7 +877,7 @@ function renderMain(id){
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         ${stepBadge(lead)}<span style="font-size:12px;color:#9ca3af">${pct(lead)}%</span>
-        ${role==='admin'||role==='director'?`<button class="btn btn-red btn-sm" onclick="deleteLead('${id}')">Delete</button>`:''}
+        ${role==='admin'||role==='director'?`<button class="btn btn-red btn-sm" onclick="deleteLead(selId)">Delete</button>`:''}
       </div>
     </div>
     <div class="pbar" style="height:5px;margin-bottom:1rem"><div class="pfill ${lead.route==='leasing'?'pf-l':'pf-s'}" style="width:${pct(lead)}%"></div></div>
@@ -890,13 +890,14 @@ function renderMain(id){
 
     <div class="assign">
       <span class="assign-lbl">&#129309; Assigned Rep:</span>
-      <select class="assign-inp" id="rep-inp-${id}">
+      <select class="assign-inp" id="rep-inp-current">
         <option value="">— Select a rep —</option>
-        ${salesReps.map(r=>`<option value="${r.name}" ${r.name===lead.assigned_sales_rep?'selected':''}>${r.name}</option>`).join('')}
+        ${salesReps.length?salesReps.map(r=>`<option value="${r.name}" ${r.name===lead.assigned_sales_rep?'selected':''}>${r.name}</option>`).join(''):'<option disabled>Loading reps…</option>'}
       </select>
-      <button class="btn btn-amber btn-sm" onclick="saveRep('${id}')">Assign</button>
+      <button class="btn btn-amber btn-sm" onclick="saveRepCurrent()">Assign</button>
       <button class="btn btn-sm" onclick="addNewRep()" title="Add new rep">+ Rep</button>
     </div>
+    ${!salesReps.length?`<div style="font-size:12px;color:#dc2626;margin-bottom:.5rem">⚠ Reps not loaded — <a href="#" onclick="loadReps().then(()=>renderMain(selId));return false;">click to reload</a></div>`:''}`
 
     <div class="phase-lbl">${lead.route==='leasing'?'&#128179; Leasing/Finance Route':'&#128200; Sales Rep Route'}</div>
     <div class="pipeline">${pipeHtml}</div>
@@ -904,16 +905,16 @@ function renderMain(id){
     <div class="jump-box">
       <div class="jump-title">&#128205; Move to step</div>
       <div class="jump-row">
-        <select class="jump-sel" id="jump-${id}">
+        <select class="jump-sel" id="jump-current">
           ${steps.map(s=>`<option value="${s.id}" ${s.id===lead.current_step?'selected':''}>${s.icon} ${s.label}</option>`).join('')}
         </select>
-        <button class="btn btn-blue btn-sm" onclick="jumpStep('${id}')">Move &#8594;</button>
+        <button class="btn btn-blue btn-sm" onclick="jumpStepCurrent()">Move &#8594;</button>
       </div>
       ${isLost?`<div class="lost-box"><strong>Lost reason:</strong> ${lead.lost_reason||'—'}</div>`:''}
       ${!isLost&&!isWon?`<div class="abtns">
-        ${cur.body&&lead.contact_email?`<button class="btn btn-blue btn-sm" onclick="openEmail('${id}',false)">&#9993; Draft email</button>`:''}
-        ${canAct&&next&&!isLast?`<button class="btn btn-green btn-sm" onclick="openEmail('${id}',true)">Advance &#8594; ${next.icon} ${next.label}</button>`:''}
-        ${canAct&&!isLast?`<button class="btn btn-red btn-sm" onclick="markLost('${id}')">&#x2717; Mark lost</button>`:''}
+        ${cur.body&&lead.contact_email?`<button class="btn btn-blue btn-sm" onclick="openEmail(selId,false)">&#9993; Draft email</button>`:''}
+        ${canAct&&next&&!isLast?`<button class="btn btn-green btn-sm" onclick="openEmail(selId,true)">Advance &#8594; ${next.icon} ${next.label}</button>`:''}
+        ${canAct&&!isLast?`<button class="btn btn-red btn-sm" onclick="markLost(selId)">&#x2717; Mark lost</button>`:''}
       </div>`:''}
       ${isWon?'<div style="font-size:15px;color:#065f46;font-weight:700;margin-top:.5rem">&#127942; Customer Won!</div>':''}
     </div>
@@ -953,9 +954,9 @@ async function changeRoute(id,route){
   notice('Route updated!','ok');
 }
 
-async function saveRep(id){
-  const inp=document.getElementById('rep-inp-'+id);if(!inp)return;
-  const rep=inp.value;
+async function saveRep(id, repOverride){
+  let rep=repOverride;
+  if(!rep){const inp=document.getElementById('rep-inp-current')||document.getElementById('rep-inp-'+id);if(!inp)return;rep=inp.value;}
   if(!rep){notice('Please select a rep first.','warn');return;}
   const lead=leads.find(l=>l.id===id);if(!lead)return;
   const autoAdvance=['new_lead','lead_received'].includes(lead.current_step);
@@ -969,7 +970,16 @@ async function saveRep(id){
   notice(autoAdvance?rep+' assigned — advanced to Rep Assigned!':'Rep updated to '+rep+'.','ok');
 }
 
-function openRepAssignEmail(leadId, rep){
+async function saveRepCurrent(){
+  const inp=document.getElementById('rep-inp-current');
+  if(!inp){notice('Assign box not found — please reselect the lead.','err');return;}
+  const rep=inp.value;
+  if(!rep){notice('Please select a rep from the dropdown first.','warn');return;}
+  if(!selId){notice('No lead selected.','err');return;}
+  await saveRep(selId,rep);
+}
+
+async function saveRep(id, repOverride){
   const lead=leads.find(l=>l.id===leadId);if(!lead)return;
   repAssignPending={leadId,rep};
   const customerName=lead.customer_full_name||lead.dba_name||'a new customer';
@@ -1099,6 +1109,14 @@ async function confirmNote(){
   await loadAct(leadId);
   renderList();
   renderMain(leadId);
+}
+
+async function jumpStepCurrent(){
+  if(!selId){notice('No lead selected.','err');return;}
+  const sel=document.getElementById('jump-current');if(!sel)return;
+  const toStep=sel.value;
+  const lead=leads.find(l=>l.id===selId);if(!lead||toStep===lead.current_step)return;
+  openNote(selId,lead.current_step,toStep,false);
 }
 
 async function jumpStep(id){
