@@ -534,7 +534,7 @@ const DEFAULT_PW='pipeline2024';
 // Pipeline steps
 const COMMON=[
   {id:'new_lead',label:'New Lead',icon:'🆕',action:'New lead — assign to a sales rep to begin.'},
-  {id:'assign_rep',label:'Rep Assigned',icon:'👤',action:'Rep assigned. Make contact with the customer.'},
+  {id:'assign_rep',label:'Assign Rep',icon:'👤',action:'Select a sales rep, notify them by email, and assign this lead.'},
 ];
 const SALES_STEPS=[
   {id:'lead_received',label:'Lead Received',icon:'📥',action:'Lead received. Make initial contact.',subj:"We're Reaching Out!",body:l=>`Dear ${l.customer_full_name||l.dba_name},
