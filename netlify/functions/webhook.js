@@ -47,6 +47,7 @@ exports.handler = async (event) => {
       beverage_needs: get('pleaseProvide'),
       notes: get('typeA'),
       route, current_step: 'new_lead', status: 'active',
+      submission_date: params.get('created_at') ? new Date(parseInt(params.get('created_at'))*1000).toISOString() : new Date().toISOString(),
       jotform_answers: s, raw_csv: {},
     };
     const method = existing && existing.length > 0 ? 'PATCH' : 'POST';
