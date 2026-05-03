@@ -233,36 +233,42 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
     <!-- FILTER PANEL -->
     <div class="fpanel">
       <div class="fpanel-hdr">
-        <span class="fpanel-title">Filter &amp; Sort</span>
-        <div style="display:flex;gap:8px">
+        <span class="fpanel-title">&#128269; Filter &amp; Sort</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span id="f-active-count" style="font-size:12px;color:#6b7280"></span>
           <button class="btn btn-sm" onclick="clearFilters()">Clear all</button>
-          <button class="btn btn-sm" id="fp-toggle" onclick="toggleFilters()" style="min-width:72px">Hide</button>
+          <button class="btn btn-sm" id="fp-toggle" onclick="toggleFilters()" style="min-width:60px">Hide</button>
         </div>
       </div>
       <div id="fp-body">
-        <div class="fpanel-grid">
-          <div class="fg"><label>Search</label><input id="f-search" placeholder="Name, store, rep…" oninput="renderList()"/></div>
-          <div class="fg"><label>Sort by</label><select id="f-sort" onchange="renderList()">
-            <option value="newest">Submission Date — Newest first</option>
-            <option value="oldest">Submission Date — Oldest first</option>
+        <!-- Row 1: Search + Sort (full width feel) -->
+        <div style="display:grid;grid-template-columns:1fr 220px;gap:8px;margin-bottom:8px">
+          <div class="fg"><label>&#128269; Search</label><input id="f-search" placeholder="Name, store, rep, email, phone, warehouse…" oninput="renderList()"/></div>
+          <div class="fg"><label>&#128196; Sort by</label><select id="f-sort" onchange="renderList()">
+            <option value="newest">Date — Newest first</option>
+            <option value="oldest">Date — Oldest first</option>
             <option value="name">Name A→Z</option>
             <option value="rep">Sales rep A→Z</option>
             <option value="dist_rep">Distributor rep A→Z</option>
             <option value="warehouse">Warehouse A→Z</option>
             <option value="step">Pipeline step</option>
           </select></div>
-          <div class="fg"><label>Route</label><select id="f-route" onchange="renderList()">
-            <option value="">All routes</option>
-            <option value="sales">Sales route</option>
-            <option value="leasing">Leasing route</option>
-          </select></div>
-          <div class="fg"><label>Status</label><select id="f-status" onchange="renderList()">
-            <option value="">All</option>
+        </div>
+        <!-- Row 2: Key filters -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:8px">
+          <div class="fg"><label>&#129309; Sales Rep</label><select id="f-rep" onchange="renderList()"><option value="">All reps</option></select></div>
+          <div class="fg"><label>&#9679; Status</label><select id="f-status" onchange="renderList()">
+            <option value="">All statuses</option>
             <option value="active">Active</option>
-            <option value="won">Won</option>
-            <option value="lost">Lost</option>
+            <option value="won">&#127942; Won</option>
+            <option value="lost">&#10007; Lost</option>
           </select></div>
-          <div class="fg"><label>Program</label><select id="f-program" onchange="renderList()">
+          <div class="fg"><label>&#128200; Route</label><select id="f-route" onchange="renderList()">
+            <option value="">All routes</option>
+            <option value="sales">Sales Rep Route</option>
+            <option value="leasing">Leasing/Finance Route</option>
+          </select></div>
+          <div class="fg"><label>&#127381; Program</label><select id="f-program" onchange="renderList()">
             <option value="">All programs</option>
             <option value="Small Coffee">Small Coffee</option>
             <option value="Medium Coffee">Medium Coffee</option>
@@ -270,24 +276,31 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
             <option value="Polar Wave">Polar Wave</option>
             <option value="Other">Other</option>
           </select></div>
-          <div class="fg"><label>Interest</label><select id="f-interest" onchange="renderList()">
-            <option value="">All</option>
-            <option value="Leasing">Leasing</option>
-            <option value="Buying">Buying</option>
-            <option value="Financing">Financing</option>
-            <option value="Loaned">Loaned</option>
-          </select></div>
-          <div class="fg"><label>Assigned rep</label><select id="f-rep" onchange="renderList()"><option value="">All reps</option></select></div>
-          <div class="fg"><label>Warehouse</label><select id="f-wh" onchange="renderList()"><option value="">All warehouses</option></select></div>
-          <div class="fg"><label>Lead type</label><select id="f-tradeshow" onchange="renderList()">
-            <option value="">All</option>
-            <option value="yes">Tradeshow</option>
-            <option value="no">Non-tradeshow</option>
-          </select></div>
-          <div class="fg"><label>Date from</label><input id="f-from" type="date" onchange="renderList()"/></div>
-          <div class="fg"><label>Date to</label><input id="f-to" type="date" onchange="renderList()"/></div>
         </div>
-        <div id="f-summary" class="fsummary"></div>
+        <!-- Row 3: Secondary filters (collapsible) -->
+        <details id="fp-more" style="margin-top:2px">
+          <summary style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;margin-bottom:6px">
+            <span id="fp-more-arrow" style="font-size:10px">&#9654;</span> More filters
+          </summary>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;padding-top:4px">
+            <div class="fg"><label>&#128179; Interest</label><select id="f-interest" onchange="renderList()">
+              <option value="">All</option>
+              <option value="Leasing">Leasing</option>
+              <option value="Buying">Buying</option>
+              <option value="Financing">Financing</option>
+              <option value="Loaned">Loaned</option>
+            </select></div>
+            <div class="fg"><label>&#127963; Warehouse</label><select id="f-wh" onchange="renderList()"><option value="">All warehouses</option></select></div>
+            <div class="fg"><label>&#127981; Lead type</label><select id="f-tradeshow" onchange="renderList()">
+              <option value="">All leads</option>
+              <option value="yes">Tradeshow only</option>
+              <option value="no">Non-tradeshow</option>
+            </select></div>
+            <div class="fg"><label>&#128197; Date from</label><input id="f-from" type="date" onchange="renderList()"/></div>
+            <div class="fg"><label>&#128197; Date to</label><input id="f-to" type="date" onchange="renderList()"/></div>
+          </div>
+        </details>
+        <div id="f-summary" class="fsummary" style="margin-top:6px"></div>
       </div>
     </div>
     <!-- LAYOUT -->
@@ -763,6 +776,16 @@ function toggleFilters(){
   btn.textContent=hidden?'Hide':'Show';
   localStorage.setItem('fp-hidden',hidden?'0':'1');
 }
+// Toggle arrow on details element
+document.addEventListener('click',e=>{
+  if(e.target.closest('#fp-more')){
+    setTimeout(()=>{
+      const arrow=document.getElementById('fp-more-arrow');
+      const details=document.getElementById('fp-more');
+      if(arrow&&details)arrow.textContent=details.open?'▾':'▸';
+    },10);
+  }
+});
 function clearFilters(){
   ['f-search'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   ['f-sort','f-route','f-status','f-program','f-interest','f-rep','f-wh','f-tradeshow'].forEach(id=>{const e=document.getElementById(id);if(e)e.selectedIndex=0;});
@@ -824,9 +847,11 @@ function renderList(){
     return new Date(b.submission_date||b.created_at)-new Date(a.submission_date||a.created_at);
   });
 
-  const active=[];if(q)active.push(`"${q}"`);if(route)active.push(route);if(status)active.push(status);if(prog)active.push(prog);if(rep)active.push('Rep: '+rep);if(wh)active.push(wh);if(ts)active.push(ts==='yes'?'Tradeshow':'Non-tradeshow');
+  const active=[];if(q)active.push(`"${q}"`);if(route)active.push(route);if(status)active.push(status);if(prog)active.push(prog);if(rep)active.push('Rep: '+rep);if(wh)active.push(wh);if(ts)active.push(ts==='yes'?'Tradeshow':'Non-tradeshow');if(from)active.push('From: '+from);if(to)active.push('To: '+to);
   const fs=document.getElementById('f-summary');
-  if(fs)fs.textContent=active.length?`Showing ${list.length} of ${leads.length} · Filters: ${active.join(', ')}`:leads.length?`Showing all ${list.length} leads`:'';
+  if(fs)fs.textContent=active.length?`Showing ${list.length} of ${leads.length} leads · Active filters: ${active.join(', ')}`:leads.length?`Showing all ${list.length} leads`:'';
+  const fc=document.getElementById('f-active-count');
+  if(fc)fc.textContent=active.length?`${active.length} filter${active.length>1?'s':''} active`:'';
 
   const mi=document.getElementById('metric-indicator');
   const mt=document.getElementById('metric-indicator-text');
