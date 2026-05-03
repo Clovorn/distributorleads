@@ -926,14 +926,31 @@ async function changeRoute(id,route){
 async function saveRep(id){
   const inp=document.getElementById('rep-inp-'+id);if(!inp)return;
   const rep=inp.value;
-  const{error}=await sb.from('leads').update({assigned_sales_rep:rep}).eq('id',id);
+  if(!rep){notice('Please select a rep first.','warn');return;}
+  const lead=leads.find(l=>l.id===id);if(!lead)return;
+
+  // Auto-advance to assign_rep if still on new_lead or lead_received
+  const autoAdvance=['new_lead','lead_received'].includes(lead.current_step);
+  const newStep=autoAdvance?'assign_rep':lead.current_step;
+
+  const{error}=await sb.from('leads').update({assigned_sales_rep:rep,current_step:newStep}).eq('id',id);
   if(error){notice('Error: '+error.message,'err');return;}
-  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:`Sales rep assigned: ${rep||'(cleared)'}`});
+
+  // Log the assignment
+  await sb.from('activity_log').insert({
+    lead_id:id,actor_role:role,
+    action:`Sales rep assigned: ${rep}${autoAdvance?' — Advanced to Rep Assigned':''}`,
+    from_step:lead.current_step,
+    to_step:newStep,
+    note:autoAdvance?`Assigned to ${rep} and moved to Rep Assigned.`:''
+  });
+
   // Update local state immediately
   const idx=leads.findIndex(l=>l.id===id);
-  if(idx>=0)leads[idx]={...leads[idx],assigned_sales_rep:rep};
+  if(idx>=0)leads[idx]={...leads[idx],assigned_sales_rep:rep,current_step:newStep};
+  await loadAct(id);
   renderMetrics();renderList();renderMain(id);
-  notice('Rep saved!','ok');
+  notice(autoAdvance?`${rep} assigned — advanced to Rep Assigned!`:`Rep updated to ${rep}.`,'ok');
 }
 
 async function saveEdits(id){
