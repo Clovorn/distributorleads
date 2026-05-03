@@ -57,7 +57,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .b-soft-purple{background:#ede9fe;color:#5b21b6}
 /* METRICS */
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.4rem}
-.metric{background:#fff;border:1px solid #e5e7eb;border-top:3px solid #e5e7eb;border-radius:10px;padding:.9rem 1.1rem}
+.metric{background:#fff;border:1px solid #e5e7eb;border-top:3px solid #e5e7eb;border-radius:10px;padding:.9rem 1.1rem;cursor:pointer;transition:box-shadow .15s,transform .1s;user-select:none}
+.metric:hover{box-shadow:0 4px 12px rgba(0,0,0,.1);transform:translateY(-1px)}
+.metric.active-filter{box-shadow:0 0 0 3px #1d4ed8;border-color:#1d4ed8}
 .metric.mn{border-top-color:#0f2347}
 .metric.mb{border-top-color:#1d4ed8}
 .metric.mg{border-top-color:#059669}
@@ -217,11 +219,16 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
   <div class="content">
     <div id="notice" class="notice"></div>
     <div class="metrics">
-      <div class="metric mn"><div class="m-lbl">Total Leads</div><div class="m-val" id="m-total">—</div></div>
-      <div class="metric ma"><div class="m-lbl">Needs Assigned</div><div class="m-val" id="m-unassigned">—</div></div>
-      <div class="metric mb"><div class="m-lbl">Assigned</div><div class="m-val" id="m-assigned">—</div></div>
-      <div class="metric mg"><div class="m-lbl">Won</div><div class="m-val" id="m-won">—</div></div>
-      <div class="metric mr"><div class="m-lbl">Lost</div><div class="m-val" id="m-lost">—</div></div>
+      <div class="metric mn" onclick="filterByMetric('total')" id="mc-total" title="Show all leads"><div class="m-lbl">Total Leads</div><div class="m-val" id="m-total">—</div></div>
+      <div class="metric ma" onclick="filterByMetric('unassigned')" id="mc-unassigned" title="Show unassigned leads"><div class="m-lbl">Needs Assigned</div><div class="m-val" id="m-unassigned">—</div></div>
+      <div class="metric mb" onclick="filterByMetric('assigned')" id="mc-assigned" title="Show assigned leads"><div class="m-lbl">Assigned</div><div class="m-val" id="m-assigned">—</div></div>
+      <div class="metric mg" onclick="filterByMetric('won')" id="mc-won" title="Show won leads"><div class="m-lbl">Won</div><div class="m-val" id="m-won">—</div></div>
+      <div class="metric mr" onclick="filterByMetric('lost')" id="mc-lost" title="Show lost leads"><div class="m-lbl">Lost</div><div class="m-val" id="m-lost">—</div></div>
+    </div>
+    <!-- METRIC FILTER INDICATOR -->
+    <div id="metric-indicator" style="display:none;margin-bottom:.8rem;padding:8px 14px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:13px;color:#1e40af;display:flex;justify-content:space-between;align-items:center">
+      <span id="metric-indicator-text"></span>
+      <button class="btn btn-sm" style="font-size:11px;padding:3px 8px" onclick="filterByMetric(activeMetricFilter)">&#x2715; Clear</button>
     </div>
     <!-- FILTER PANEL -->
     <div class="fpanel">
@@ -588,7 +595,7 @@ function stepOf(id){return ALL_STEPS.find(s=>s.id===id);}
 function pct(lead){const steps=getSteps(lead.route);const idx=steps.findIndex(s=>s.id===lead.current_step);return idx<0?0:Math.round((idx+1)/steps.length*100);}
 
 // State
-let sb=null,leads=[],actMap={},selId=null,role='admin',showLost=false,emailLeadId=null,emailAdvance=false,salesReps=[];
+let sb=null,leads=[],actMap={},selId=null,role='admin',showLost=false,emailLeadId=null,emailAdvance=false,salesReps=[],activeMetricFilter='';
 let notePending=null,lostLeadId=null,editLeadId=null,csvRows=[];
 
 // Helpers
@@ -653,6 +660,33 @@ async function loadAct(id){
   actMap[id]=data||[];
 }
 
+// METRIC QUICK FILTER
+function filterByMetric(type){
+  // Toggle off if clicking same filter
+  if(activeMetricFilter===type){
+    activeMetricFilter='';
+  } else {
+    activeMetricFilter=type;
+  }
+  // Update metric card highlight
+  ['total','unassigned','assigned','won','lost'].forEach(t=>{
+    const el=document.getElementById('mc-'+t);
+    if(el) el.classList.toggle('active-filter', activeMetricFilter===t);
+  });
+  // Apply to sidebar - reset status filter first
+  const statusSel=document.getElementById('f-status');
+  if(statusSel) statusSel.value='';
+  if(activeMetricFilter==='won'||activeMetricFilter==='lost'){
+    if(statusSel) statusSel.value=activeMetricFilter;
+    showLost=activeMetricFilter==='lost';
+    document.getElementById('lost-btn').textContent=showLost?'Hide lost':'Show lost';
+  } else {
+    showLost=false;
+    document.getElementById('lost-btn').textContent='Show lost';
+  }
+  renderList();
+}
+
 // METRICS
 function renderMetrics(){
   document.getElementById('m-total').textContent=leads.length;
@@ -707,8 +741,15 @@ function renderList(){
   const to=document.getElementById('f-to')?.value||'';
 
   let list=[...leads];
-  if(!showLost&&!status)list=list.filter(l=>l.status!=='lost');
-  if(status)list=list.filter(l=>l.status===status);
+  // Apply metric quick filter first
+  if(activeMetricFilter==='unassigned') list=list.filter(l=>!l.assigned_sales_rep||!l.assigned_sales_rep.trim());
+  else if(activeMetricFilter==='assigned') list=list.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim());
+  else if(activeMetricFilter==='won') list=list.filter(l=>l.status==='won');
+  else if(activeMetricFilter==='lost') list=list.filter(l=>l.status==='lost');
+  else{
+    if(!showLost&&!status)list=list.filter(l=>l.status!=='lost');
+    if(status)list=list.filter(l=>l.status===status);
+  }
   if(q)list=list.filter(l=>[l.customer_full_name,l.dba_name,l.legal_business_name,l.contact_email,l.distributor_sales_rep,l.assigned_sales_rep,l.distributor_warehouse,l.which_program,l.phone].some(v=>(v||'').toLowerCase().includes(q)));
   if(route)list=list.filter(l=>l.route===route);
   if(prog)list=list.filter(l=>(l.which_program||'').includes(prog));
@@ -735,7 +776,15 @@ function renderList(){
   const fs=document.getElementById('f-summary');
   if(fs)fs.textContent=active.length?`Showing ${list.length} of ${leads.length} · Filters: ${active.join(', ')}`:leads.length?`Showing all ${list.length} leads`:'';
 
-  const sb2=document.getElementById('sidebar');
+  const mi=document.getElementById('metric-indicator');
+  const mt=document.getElementById('metric-indicator-text');
+  if(mi&&mt){
+    if(activeMetricFilter){
+      const labels={total:'All leads',unassigned:'Needs to be assigned',assigned:'Assigned leads',won:'Won leads',lost:'Lost leads'};
+      mt.textContent=`Filtered by: ${labels[activeMetricFilter]} — ${list.length} lead${list.length!==1?'s':''}`;
+      mi.style.display='flex';
+    } else { mi.style.display='none'; }
+  }
   if(!list.length){sb2.innerHTML='<div style="font-size:13px;color:#9ca3af;padding:.8rem;text-align:center">No leads match these filters.</div>';return;}
   sb2.innerHTML=list.map(l=>`<div class="lcard${selId===l.id?' sel':''}${l.status==='lost'?' lost':''}" onclick="selectLead('${l.id}')">
     <div class="lc-name">${l.customer_full_name||l.dba_name||'Unknown'}</div>
