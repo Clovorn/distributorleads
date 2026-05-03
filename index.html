@@ -727,9 +727,16 @@ function renderMetrics(){
 }
 
 function populateSelects(){
-  const reps=[...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
+  // Use full salesReps list from DB so all reps are always searchable
+  const repNames=salesReps.length
+    ?salesReps.map(r=>r.name)
+    :[...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
   const whs=[...new Set(leads.map(l=>l.distributor_warehouse).filter(Boolean))].sort();
-  ['f-rep','rr-filter'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const v=s.value;s.innerHTML='<option value="">All reps</option>'+reps.map(r=>`<option value="${r}" ${r===v?'selected':''}>${r}</option>`).join('');});
+  ['f-rep','rr-filter'].forEach(id=>{
+    const s=document.getElementById(id);if(!s)return;
+    const v=s.value;
+    s.innerHTML='<option value="">All reps</option>'+repNames.map(r=>`<option value="${r}" ${r===v?'selected':''}>${r}</option>`).join('');
+  });
   const fw=document.getElementById('f-wh');if(fw){const v=fw.value;fw.innerHTML='<option value="">All warehouses</option>'+whs.map(w=>`<option value="${w}" ${w===v?'selected':''}>${w}</option>`).join('');}
 }
 
