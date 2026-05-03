@@ -841,7 +841,11 @@ function renderList(){
   if(!list.length){sb2.innerHTML='<div style="font-size:13px;color:#9ca3af;padding:.8rem;text-align:center">No leads match these filters.</div>';return;}
   sb2.innerHTML=list.map(l=>`<div class="lcard${selId===l.id?' sel':''}${l.status==='lost'?' lost':''}" onclick="selectLead('${l.id}')">
     <div class="lc-name">${l.customer_full_name||l.dba_name||'Unknown'}</div>
-    <div class="lc-sub">${l.dba_name&&l.dba_name!==l.customer_full_name?l.dba_name+'<br>':''}Rep: ${l.assigned_sales_rep||'<span style="color:#dc2626">Unassigned</span>'}</div>
+    ${l.dba_name&&l.dba_name!==l.customer_full_name?`<div style="font-size:12px;color:#6b7280;margin-bottom:3px">${l.dba_name}</div>`:''}
+    <div style="display:flex;align-items:center;gap:5px;margin:5px 0 2px;padding:4px 7px;border-radius:5px;background:${l.assigned_sales_rep?'#eff6ff':'#fef2f2'};border:1px solid ${l.assigned_sales_rep?'#bfdbfe':'#fecaca'}">
+      <span style="font-size:11px">${l.assigned_sales_rep?'👤':'⚠️'}</span>
+      <span style="font-size:12px;font-weight:600;color:${l.assigned_sales_rep?'#1e40af':'#dc2626'}">${l.assigned_sales_rep||'Needs Rep Assigned'}</span>
+    </div>
     <div class="lc-foot">${stepBadge(l)}<span style="font-size:11px;color:#6b7280;font-weight:500">&#128197; ${fmtD(l.submission_date||l.created_at)}</span></div>
     <div class="pbar"><div class="pfill ${l.route==='leasing'?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
   </div>`).join('');
