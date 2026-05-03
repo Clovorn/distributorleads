@@ -785,6 +785,7 @@ function renderList(){
       mi.style.display='flex';
     } else { mi.style.display='none'; }
   }
+  const sb2=document.getElementById('sidebar');
   if(!list.length){sb2.innerHTML='<div style="font-size:13px;color:#9ca3af;padding:.8rem;text-align:center">No leads match these filters.</div>';return;}
   sb2.innerHTML=list.map(l=>`<div class="lcard${selId===l.id?' sel':''}${l.status==='lost'?' lost':''}" onclick="selectLead('${l.id}')">
     <div class="lc-name">${l.customer_full_name||l.dba_name||'Unknown'}</div>
