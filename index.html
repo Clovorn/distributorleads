@@ -358,28 +358,43 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
   </div>
 </div>
 
-<!-- REP ASSIGN EMAIL MODAL -->
+<!-- REP ASSIGN MODAL -->
 <div class="overlay" id="rep-assign-modal" style="display:none">
-  <div class="modal" style="max-width:580px">
+  <div class="modal" style="max-width:640px">
     <div class="mhdr">
       <div>
-        <div class="mtitle">&#128140; Notify Sales Rep</div>
-        <div id="ra-rep-name" style="font-size:13px;color:#6b7280;margin-top:2px"></div>
+        <div class="mtitle">&#129309; Assign Sales Rep</div>
+        <div id="ra-lead-name" style="font-size:13px;color:#6b7280;margin-top:2px"></div>
       </div>
       <button class="mclose" onclick="hideModal('rep-assign-modal')">&#x2715;</button>
     </div>
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:13px;color:#92400e">
-      &#9993; This email will be copied to your clipboard. Paste it into your email client to send.
+
+    <!-- Rep selection -->
+    <label class="flbl">Select Sales Rep *</label>
+    <select class="finp" id="ra-rep-select" onchange="buildAssignEmail()">
+      <option value="">— Choose a rep —</option>
+    </select>
+
+    <!-- Rep email -->
+    <label class="flbl">Rep Email Address</label>
+    <input class="finp" id="ra-to" type="email" placeholder="rep@example.com" oninput="buildAssignEmail()"/>
+
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:.75rem 1rem;margin:.8rem 0;font-size:13px;color:#92400e">
+      &#9993; Email will be copied to your clipboard — paste into your email client to send. Direct sending will be available once email integration is connected.
     </div>
-    <label class="flbl">To (rep email address)</label>
-    <input class="finp" id="ra-to" type="email" placeholder="rep@example.com"/>
+
+    <!-- Email subject -->
     <label class="flbl">Subject</label>
-    <input class="finp" id="ra-subj"/>
-    <label class="flbl">Message — edit before sending</label>
-    <textarea class="finp" id="ra-body" rows="14" style="font-family:monospace;font-size:13px;line-height:1.6"></textarea>
+    <input class="finp" id="ra-subj" value="You Have Been Assigned a New Lead — Ronnoco Java Select Program"/>
+
+    <!-- Email body -->
+    <label class="flbl">Email Body <span style="color:#9ca3af;font-weight:400">(editable)</span></label>
+    <textarea class="finp" id="ra-body" rows="18" style="font-family:monospace;font-size:12px;line-height:1.6"></textarea>
+
     <div class="mfoot">
       <button class="btn" onclick="hideModal('rep-assign-modal')">Cancel</button>
-      <button class="btn btn-navy" onclick="confirmRepAssign()">Copy email &amp; assign rep &#8594;</button>
+      <button class="btn btn-blue btn-sm" onclick="copyAssignEmailOnly()">&#128203; Copy email only</button>
+      <button class="btn btn-navy" onclick="confirmRepAssign()">Copy email &amp; assign &#8594;</button>
     </div>
   </div>
 </div>
@@ -897,14 +912,9 @@ function renderMain(id){
 
     <div class="assign">
       <span class="assign-lbl">&#129309; Assigned Rep:</span>
-      <select class="assign-inp" id="rep-inp-current">
-        <option value="">— Select a rep —</option>
-        ${salesReps.length?salesReps.map(r=>`<option value="${r.name}" ${r.name===lead.assigned_sales_rep?'selected':''}>${r.name}</option>`).join(''):'<option disabled>Loading reps…</option>'}
-      </select>
-      <button class="btn btn-amber btn-sm" onclick="saveRepCurrent()">Assign</button>
-      <button class="btn btn-sm" onclick="addNewRep()" title="Add new rep">+ Rep</button>
+      <span style="font-size:14px;font-weight:600;color:#111827">${lead.assigned_sales_rep||'<span style="color:#dc2626;font-weight:400">Not yet assigned</span>'}</span>
+      ${lead.assigned_sales_rep?`<span style="font-size:12px;color:#6b7280;margin-left:4px">(use Move → Assign Rep to change)</span>`:'<span style="font-size:12px;color:#92400e;margin-left:4px">(use Move → Assign Rep below)</span>'}
     </div>
-    ${!salesReps.length?`<div style="font-size:12px;color:#dc2626;margin-bottom:.5rem">⚠ Reps not loaded — <a href="#" onclick="loadReps().then(()=>renderMain(selId));return false;">click to reload</a></div>`:''}
 
     <div class="phase-lbl">${lead.route==='leasing'?'&#128179; Leasing/Finance Route':'&#128200; Sales Rep Route'}</div>
     <div class="pipeline">${pipeHtml}</div>
@@ -977,87 +987,128 @@ async function saveRep(id, repOverride){
   notice(autoAdvance?rep+' assigned — advanced to Rep Assigned!':'Rep updated to '+rep+'.','ok');
 }
 
-async function saveRepCurrent(){
-  const inp=document.getElementById('rep-inp-current');
-  if(!inp){notice('Assign box not found — please reselect the lead.','err');return;}
-  const rep=inp.value;
-  if(!rep){notice('Please select a rep from the dropdown first.','warn');return;}
-  if(!selId){notice('No lead selected.','err');return;}
-  await saveRep(selId,rep);
+// ── ASSIGN REP MODAL ──────────────────────────────────────
+function openAssignRepModal(leadId){
+  const lead=leads.find(l=>l.id===leadId);if(!lead)return;
+  repAssignPending={leadId,rep:''};
+  const nameEl=document.getElementById('ra-lead-name');
+  if(nameEl)nameEl.textContent=(lead.customer_full_name||lead.dba_name||'Unknown Lead')+(lead.dba_name&&lead.dba_name!==lead.customer_full_name?' — '+lead.dba_name:'');
+  const repSel=document.getElementById('ra-rep-select');
+  if(repSel)repSel.innerHTML='<option value="">— Choose a rep —</option>'+salesReps.map(r=>`<option value="${r.name}" ${r.name===lead.assigned_sales_rep?'selected':''}>${r.name}</option>`).join('');
+  document.getElementById('ra-to').value='';
+  buildAssignEmail();
+  showModal('rep-assign-modal');
+  setTimeout(()=>document.getElementById('ra-rep-select').focus(),100);
 }
 
-async function saveRep(id, repOverride){
-  const lead=leads.find(l=>l.id===leadId);if(!lead)return;
-  repAssignPending={leadId,rep};
-  const customerName=lead.customer_full_name||lead.dba_name||'a new customer';
+function buildAssignEmail(){
+  if(!repAssignPending)return;
+  const lead=leads.find(l=>l.id===repAssignPending.leadId);if(!lead)return;
+  const repSel=document.getElementById('ra-rep-select');
+  const rep=repSel?repSel.value:'';
+  repAssignPending.rep=rep;
+  const appUrl=window.location.origin;
+  const customerName=lead.customer_full_name||lead.dba_name||'—';
   const storeName=lead.dba_name||lead.legal_business_name||'';
   const email=lead.contact_email||'';
   const phone=lead.phone||lead.contact_number||'';
   const address=lead.store_address||'';
   const program=lead.which_program||'';
   const interest=lead.customer_interest||'';
+  const bevNeeds=lead.beverage_needs||'';
+  const notes=lead.notes||'';
+  const distRep=lead.distributor_sales_rep||'';
+  const warehouse=lead.distributor_warehouse||'';
+  const lines2=[];
+  lines2.push(`Hi ${rep||'[Rep Name]'},`);
+  lines2.push('');
+  lines2.push('You have been assigned a new lead through the Ronnoco Java Select Distributor Portal. Please reach out to this customer within 24 hours.');
+  lines2.push('');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines2.push('CUSTOMER INFORMATION');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines2.push(`Name:         ${customerName}`);
+  if(storeName&&storeName!==customerName)lines2.push(`Store/DBA:    ${storeName}`);
+  if(address)lines2.push(`Address:      ${address}`);
+  if(email)lines2.push(`Email:        ${email}`);
+  if(phone)lines2.push(`Phone:        ${phone}`);
+  lines2.push('');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines2.push('DEAL SYNOPSIS');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  if(program)lines2.push(`Program:      ${program}`);
+  if(interest)lines2.push(`Interest:     ${interest}`);
+  if(bevNeeds)lines2.push(`Beverage:     ${bevNeeds}`);
+  if(distRep)lines2.push(`Dist Rep:     ${distRep}`);
+  if(warehouse)lines2.push(`Warehouse:    ${warehouse}`);
+  if(notes){lines2.push('');lines2.push('Notes:');lines2.push(notes);}
+  lines2.push('');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines2.push('NEXT STEPS');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines2.push('1. Contact the customer within 24 hours');
+  lines2.push('2. Log your activity in the portal');
+  lines2.push('3. Advance the pipeline as you progress');
+  lines2.push('');
+  lines2.push('View this lead in the Ronnoco Distributor Portal:');
+  lines2.push(appUrl);
+  lines2.push('');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines2.push('LEASING & FINANCING — IMPORTANT');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines2.push('If the customer is interested in leasing or financing their equipment,');
+  lines2.push('they will need to complete a credit application through our financing');
+  lines2.push('partner, Smarter Equipment Finance. This is the NEXT STEP for any');
+  lines2.push('leasing or financing deal — the sooner the application is submitted,');
+  lines2.push('the faster we can move the process forward.');
+  lines2.push('');
+  lines2.push('Please copy the link below and send it directly to the customer:');
+  lines2.push('');
+  lines2.push('  ► Smarter Equipment Finance — Credit Application:');
+  lines2.push('  https://signnow.com/s/YKsq02bU');
+  lines2.push('');
+  lines2.push('Ask the customer to complete this application as soon as possible.');
+  lines2.push('Once submitted, our team will review and move the deal forward.');
+  lines2.push('');
+  lines2.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  lines2.push('Thank you,');
+  lines2.push('Ronnoco Beverage Solutions');
+  lines2.push('Java Select Program Team');
+  const bodyEl=document.getElementById('ra-body');
+  if(bodyEl)bodyEl.value=lines2.join('\n');
+}
 
-  const body=`Hi ${rep},
-
-You have been assigned a new lead in the Distributor Deal Portal. Please reach out to this customer within the next 24 hours.
-
-CUSTOMER INFORMATION
-────────────────────────────
-Name:     ${customerName}${storeName?`
-Store:    ${storeName}`:''}${email?`
-Email:    ${email}`:''}${phone?`
-Phone:    ${phone}`:''}${address?`
-Address:  ${address}`:''}${program?`
-Program:  ${program}`:''}${interest?`
-Interest: ${interest}`:''}
-
-Please log into the Distributor Deal Portal to view the full lead details and update the status as you work this account.
-
-Thank you,
-Ronnoco Beverage Solutions`;
-
-  document.getElementById('ra-to').value='';
-  document.getElementById('ra-subj').value='You Have Received a New Lead';
-  document.getElementById('ra-body').value=body;
-  document.getElementById('ra-rep-name').textContent=rep;
-  showModal('rep-assign-modal');
-  setTimeout(()=>document.getElementById('ra-to').focus(),100);
+async function copyAssignEmailOnly(){
+  const subj=document.getElementById('ra-subj').value;
+  const body=document.getElementById('ra-body').value;
+  const to=document.getElementById('ra-to').value.trim();
+  try{await navigator.clipboard.writeText((to?'To: '+to+'\n':'')+'Subject: '+subj+'\n\n'+body);}catch(e){}
+  notice('Email copied to clipboard!','ok');
 }
 
 async function confirmRepAssign(){
   if(!repAssignPending||!sb)return;
-  const{leadId,rep}=repAssignPending;
+  const{leadId}=repAssignPending;
+  const repSel=document.getElementById('ra-rep-select');
+  const rep=repSel?repSel.value.trim():'';
+  if(!rep){notice('Please select a sales rep first.','warn');return;}
   const toEmail=document.getElementById('ra-to').value.trim();
   const subj=document.getElementById('ra-subj').value;
   const body=document.getElementById('ra-body').value;
   repAssignPending=null;
   hideModal('rep-assign-modal');
-  // Copy email to clipboard
-  try{await navigator.clipboard.writeText('To: '+toEmail+'\nSubject: '+subj+'\n\n'+body);}catch(e){}
-  // Log email
-  if(toEmail){
-    await sb.from('email_log').insert({lead_id:leadId,step:'assign_rep',subject:subj,body,sent_by_role:role});
-  }
-  await doAssignRep(leadId, rep, true, toEmail, subj, body);
+  try{await navigator.clipboard.writeText((toEmail?'To: '+toEmail+'\n':'')+'Subject: '+subj+'\n\n'+body);}catch(e){}
+  if(toEmail){await sb.from('email_log').insert({lead_id:leadId,step:'assign_rep',subject:subj,body,sent_by_role:role}).catch(()=>{});}
+  const lead=leads.find(l=>l.id===leadId);if(!lead)return;
+  const{error}=await sb.from('leads').update({assigned_sales_rep:rep,current_step:'assign_rep'}).eq('id',leadId);
+  if(error){notice('Error: '+error.message,'err');return;}
+  await sb.from('activity_log').insert({lead_id:leadId,actor_role:role,action:`Sales rep assigned: ${rep} — moved to Assign Rep`,from_step:lead.current_step,to_step:'assign_rep',note:`Assigned to ${rep}. Email ${toEmail?'copied for '+toEmail:'copied to clipboard'}.`});
+  const idx=leads.findIndex(l=>l.id===leadId);
+  if(idx>=0)leads[idx]={...leads[idx],assigned_sales_rep:rep,current_step:'assign_rep'};
+  await loadAct(leadId);renderMetrics();renderList();renderMain(leadId);
+  notice(`${rep} assigned — email copied to clipboard!`,'ok');
 }
 
-async function doAssignRep(id, rep, autoAdvance, toEmail='', subj='', body=''){
-  const lead=leads.find(l=>l.id===id);if(!lead)return;
-  const newStep=autoAdvance?'assign_rep':lead.current_step;
-  const{error}=await sb.from('leads').update({assigned_sales_rep:rep,current_step:newStep}).eq('id',id);
-  if(error){notice('Error: '+error.message,'err');return;}
-  await sb.from('activity_log').insert({
-    lead_id:id,actor_role:role,
-    action:`Sales rep assigned: ${rep}${autoAdvance?' — Advanced to Rep Assigned':''}`,
-    from_step:lead.current_step,to_step:newStep,
-    note:autoAdvance?`Assigned to ${rep}. Notification email copied${toEmail?' to '+toEmail:''}.`:''
-  });
-  const idx=leads.findIndex(l=>l.id===id);
-  if(idx>=0)leads[idx]={...leads[idx],assigned_sales_rep:rep,current_step:newStep};
-  await loadAct(id);
-  renderMetrics();renderList();renderMain(id);
-  notice(autoAdvance?`${rep} assigned — email copied to clipboard!`:`Rep updated to ${rep}.`,'ok');
-}
 
 async function saveEdits(id){
   const g=f=>{const e=document.getElementById('ef-'+f+'-'+id);return e?e.value.trim():'';};
@@ -1123,6 +1174,8 @@ async function jumpStepCurrent(){
   const sel=document.getElementById('jump-current');if(!sel)return;
   const toStep=sel.value;
   const lead=leads.find(l=>l.id===selId);if(!lead||toStep===lead.current_step)return;
+  // Intercept assign_rep step — open the assign rep modal instead
+  if(toStep==='assign_rep'){openAssignRepModal(selId);return;}
   openNote(selId,lead.current_step,toStep,false);
 }
 
