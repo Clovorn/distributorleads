@@ -651,6 +651,8 @@ async function init(){
     sb=supabase.createClient(SB_URL,SB_KEY);
     await loadReps();
     await loadLeads();
+    // Re-render if a lead is selected after reps load
+    if(selId)renderMain(selId);
     sb.channel('leads-ch').on('postgres_changes',{event:'*',schema:'public',table:'leads'},()=>loadLeads())
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},async p=>{
         const did=p.new.lead_id;
@@ -675,6 +677,8 @@ async function loadLeads(){
   const{data,error}=await sb.from('leads').select('*').order('created_at',{ascending:false});
   if(error){notice('Load error: '+error.message,'err');return;}
   leads=data||[];
+  // Make sure reps are loaded before rendering
+  if(!salesReps.length) await loadReps();
   renderMetrics();
   populateSelects();
   renderList();
@@ -822,7 +826,7 @@ function renderList(){
 }
 
 // MAIN DETAIL PANEL
-async function selectLead(id){selId=id;renderList();await loadAct(id);renderMain(id);}
+async function selectLead(id){selId=id;renderList();await loadAct(id);if(!salesReps.length)await loadReps();renderMain(id);}
 
 function renderMain(id){
   const lead=leads.find(l=>l.id===id);if(!lead)return;
@@ -955,12 +959,14 @@ async function saveRep(id){
   if(!rep){notice('Please select a rep first.','warn');return;}
   const lead=leads.find(l=>l.id===id);if(!lead)return;
   const autoAdvance=['new_lead','lead_received'].includes(lead.current_step);
-  // If auto-advancing, show the rep notification email first
-  if(autoAdvance){
-    openRepAssignEmail(id, rep);
-  } else {
-    await doAssignRep(id, rep, false);
-  }
+  const newStep=autoAdvance?'assign_rep':lead.current_step;
+  const{error}=await sb.from('leads').update({assigned_sales_rep:rep,current_step:newStep}).eq('id',id);
+  if(error){notice('Error: '+error.message,'err');return;}
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Sales rep assigned: '+rep+(autoAdvance?' — Advanced to Rep Assigned':''),from_step:lead.current_step,to_step:newStep,note:''});
+  const idx=leads.findIndex(l=>l.id===id);
+  if(idx>=0)leads[idx]={...leads[idx],assigned_sales_rep:rep,current_step:newStep};
+  await loadAct(id);renderMetrics();renderList();renderMain(id);
+  notice(autoAdvance?rep+' assigned — advanced to Rep Assigned!':'Rep updated to '+rep+'.','ok');
 }
 
 function openRepAssignEmail(leadId, rep){
