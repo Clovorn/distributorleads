@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"/><title>Login Test</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+body{font-family:sans-serif;max-width:500px;margin:60px auto;padding:20px}
+input{width:100%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:6px;font-size:14px;box-sizing:border-box}
+button{width:100%;padding:12px;background:#0f2347;color:#fff;border:none;border-radius:6px;font-size:15px;cursor:pointer;margin-top:8px}
+#log{margin-top:20px;padding:12px;background:#f3f4f6;border-radius:6px;font-size:13px;font-family:monospace;white-space:pre-wrap;min-height:80px}
+</style>
+</head>
+<body>
+<h2>Login Diagnostic</h2>
+<input type="email" id="email" placeholder="Email" value="admin@ronnoco.com"/>
+<input type="password" id="pw" placeholder="Password" value="Ronnoco2024!"/>
+<button onclick="test()">Test Login</button>
+<div id="log">Ready. Click Test Login.</div>
+
+<script>
+const SB_URL='https://opnpyunbccifkdnbljsz.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
+
+function log(msg){document.getElementById('log').textContent+='\n'+msg;}
+
+async function test(){
+  document.getElementById('log').textContent='Starting test...\n';
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  const pw=document.getElementById('pw').value;
+  
+  log('1. Email: '+email);
+  log('2. Password length: '+pw.length);
+  
+  // Test SubtleCrypto
+  try{
+    const buf=await window.crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
+    const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    log('3. Hash: '+hash);
+    log('4. Expected: 3c2ca3093403111db8f3f24afd77256c08953dfbd3f207a5f4c02f3067accf25');
+    log('5. Hash match: '+(hash==='3c2ca3093403111db8f3f24afd77256c08953dfbd3f207a5f4c02f3067accf25'));
+    
+    // Test Supabase connection
+    log('6. Initializing Supabase...');
+    const sb=supabase.createClient(SB_URL,SB_KEY);
+    log('7. Supabase client created');
+    
+    // Query
+    log('8. Querying portal_users...');
+    const res=await sb.from('portal_users').select('id,email,password_hash,active').eq('email',email);
+    log('9. Query error: '+JSON.stringify(res.error));
+    log('10. Query data count: '+(res.data?res.data.length:0));
+    
+    if(res.data&&res.data.length>0){
+      const user=res.data[0];
+      log('11. Found user: '+user.email);
+      log('12. DB hash: '+user.password_hash);
+      log('13. Active: '+user.active);
+      log('14. Hash match: '+(user.password_hash===hash));
+      
+      if(user.password_hash===hash){
+        log('\n✅ LOGIN WOULD SUCCEED');
+      }else{
+        log('\n❌ PASSWORD HASH MISMATCH');
+        log('    Computed: '+hash);
+        log('    Database: '+user.password_hash);
+      }
+    }else{
+      log('11. ❌ No user found for email: '+email);
+    }
+  }catch(e){
+    log('ERROR: '+e.message);
+    console.error(e);
+  }
+}
+</script>
+</body>
+</html>
