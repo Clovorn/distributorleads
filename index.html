@@ -1399,45 +1399,82 @@ async function doLogin(){
   const pw = document.getElementById('login-pw').value;
   const btn = document.getElementById('login-btn');
   const err = document.getElementById('login-err');
-  if(!email||!pw){err.style.display='block';err.textContent='Please enter your email and password.';return;}
-  btn.textContent='Signing in…';btn.disabled=true;err.style.display='none';
+  err.style.display='none';
+  if(!email||!pw){
+    err.style.display='block';
+    err.textContent='Please enter your email and password.';
+    return;
+  }
+  btn.textContent='Signing in…';
+  btn.disabled=true;
   try{
-    if(!sb){
-      let tries=0;
-      while(typeof supabase==='undefined'&&tries<20){await new Promise(r=>setTimeout(r,200));tries++;}
-      sb=supabase.createClient(SB_URL,SB_KEY);
+    // Make sure supabase is loaded
+    let tries=0;
+    while(typeof supabase==='undefined'&&tries<30){
+      await new Promise(r=>setTimeout(r,200));tries++;
     }
+    if(typeof supabase==='undefined'){
+      err.style.display='block';
+      err.textContent='Could not connect — please refresh the page and try again.';
+      btn.textContent='Sign In →';btn.disabled=false;return;
+    }
+    if(!sb) sb=supabase.createClient(SB_URL,SB_KEY);
+
     const hash = await hashPassword(pw);
+    // Query without password hash first to check if user exists
+    const {data:userCheck} = await sb.from('portal_users')
+      .select('id,email,password_hash,active')
+      .eq('email',email)
+      .maybeSingle();
+
+    if(!userCheck){
+      err.style.display='block';
+      err.textContent='No account found with that email address.';
+      btn.textContent='Sign In →';btn.disabled=false;return;
+    }
+    if(!userCheck.active){
+      err.style.display='block';
+      err.textContent='This account has been deactivated. Please contact your administrator.';
+      btn.textContent='Sign In →';btn.disabled=false;return;
+    }
+    if(userCheck.password_hash!==hash){
+      err.style.display='block';
+      err.textContent='Incorrect password. Please try again.';
+      btn.textContent='Sign In →';btn.disabled=false;return;
+    }
+    // Fetch full user record
     const {data,error} = await sb.from('portal_users')
       .select('*')
-      .eq('email',email)
-      .eq('password_hash',hash)
-      .eq('active',true)
+      .eq('id',userCheck.id)
       .single();
     if(error||!data){
       err.style.display='block';
-      err.textContent='Incorrect email or password. Please try again.';
+      err.textContent='Login error: '+(error?.message||'Unknown error');
       btn.textContent='Sign In →';btn.disabled=false;return;
     }
     // Save session
     currentUser = data;
     sessionStorage.setItem('portal_user', JSON.stringify(data));
     // Update last login
-    await sb.from('portal_users').update({last_login:new Date().toISOString()}).eq('id',data.id);
+    await sb.from('portal_users').update({last_login:new Date().toISOString()}).eq('id',data.id).catch(()=>{});
     // Apply role UI
     applyRoleUI();
     // Check if must change password
     if(data.must_change_password){
-      showChangePwModal();return;
+      showChangePwModal();
+      btn.textContent='Sign In →';btn.disabled=false;
+      return;
     }
     // Go to dashboard
     await init();
     showPage('main');
   }catch(e){
     err.style.display='block';
-    err.textContent='Connection error. Please try again.';
+    err.textContent='Error: '+e.message;
+    console.error('Login error:',e);
   }
-  btn.textContent='Sign In →';btn.disabled=false;
+  btn.textContent='Sign In →';
+  btn.disabled=false;
 }
 
 function applyRoleUI(){
