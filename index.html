@@ -210,6 +210,35 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
 .pill-amber{background:#d97706;color:#fff}
 .pill-gray{background:#e5e7eb;color:#374151}
 .contact-card{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1rem}
+/* LOGIN PAGE */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0f2347 0%,#1b3a6b 100%)}
+.login-card{background:#fff;border-radius:16px;padding:2.5rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-logo{height:40px;display:block;margin:0 auto 1.5rem;filter:brightness(0)}
+.login-title{font-size:20px;font-weight:700;color:#111827;text-align:center;margin-bottom:.3rem}
+.login-sub{font-size:13px;color:#6b7280;text-align:center;margin-bottom:1.5rem}
+.login-label{font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px}
+.login-inp{width:100%;font-size:14px;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-family:inherit;outline:none;margin-bottom:1rem;transition:border-color .15s}
+.login-inp:focus{border-color:#0f2347}
+.login-btn{width:100%;padding:11px;background:#0f2347;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.login-btn:hover{background:#1b3a6b}
+.login-err{font-size:13px;color:#dc2626;text-align:center;margin-top:.8rem;display:none}
+.login-version{font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-top:1rem}
+/* USER BADGE */
+.user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border-radius:8px;padding:4px 10px;cursor:default}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:#fff;color:#0f2347;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.user-info{line-height:1.2}
+.user-name{font-size:12px;font-weight:700;color:#fff}
+.user-role{font-size:10px;color:rgba(255,255,255,.6);text-transform:capitalize}
+/* USER ADMIN */
+.ucard{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:.9rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ucard-info{flex:1;min-width:0}
+.ucard-name{font-size:14px;font-weight:600;color:#111827}
+.ucard-email{font-size:12px;color:#6b7280}
+.ucard-role{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;display:inline-block;margin-top:3px}
+.role-admin{background:#fee2e2;color:#991b1b}
+.role-director{background:#dbeafe;color:#1e40af}
+.role-sales_rep{background:#d1fae5;color:#065f46}
+.role-distributor{background:#ede9fe;color:#5b21b6}
 /* LOCK */
 .lock-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0f2347}
 .lock-card{background:#fff;border-radius:12px;padding:2.5rem;width:100%;max-width:380px;text-align:center}
@@ -224,8 +253,28 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
 </head>
 <body>
 
+<!-- LOGIN PAGE -->
+<div id="pg-login" class="page on">
+  <div class="login-wrap">
+    <div>
+      <div class="login-card">
+        <div style="font-size:32px;text-align:center;margin-bottom:.8rem">☕</div>
+        <div class="login-title">Distributor Deal Portal</div>
+        <div class="login-sub">Ronnoco Beverage Solutions — Java Select &amp; Distributor Programs</div>
+        <label class="login-label" style="margin-top:1rem">Email Address</label>
+        <input class="login-inp" type="email" id="login-email" placeholder="you@example.com" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pw').focus()"/>
+        <label class="login-label">Password</label>
+        <input class="login-inp" type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button class="login-btn" onclick="doLogin()" id="login-btn">Sign In →</button>
+        <div class="login-err" id="login-err">Incorrect email or password. Please try again.</div>
+      </div>
+      <div class="login-version">Ronnoco Distributor Deal Portal · v2.0</div>
+    </div>
+  </div>
+</div>
+
 <!-- MAIN PAGE -->
-<div id="pg-main" class="page on">
+<div id="pg-main" class="page">
   <div class="hdr">
     <div class="hdr-left">
       <img src="data:image/png;base64,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" alt="Ronnoco Beverage Solutions" class="logo"/>
@@ -235,14 +284,22 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
         <div class="hdr-sub">Java Select Program</div>
       </div>
     </div>
-    <div class="roles">
+    <div class="roles" id="role-switcher" style="display:none">
       <button class="rbtn on" onclick="setRole('admin',this)">Admin</button>
       <button class="rbtn" onclick="setRole('director',this)">Director</button>
       <button class="rbtn" onclick="setRole('dist_rep',this)">Dist Rep</button>
       <button class="rbtn" onclick="setRole('ronnoco_rep',this)">Ronnoco Rep</button>
     </div>
     <button class="hdr-btn" onclick="goHelp()">&#10067; Help / Support</button>
-    <button class="hdr-btn" onclick="goSettings()">Settings</button>
+    <button class="hdr-btn" onclick="goSettings()" id="settings-btn" style="display:none">Settings</button>
+    <div class="user-badge" id="user-badge" style="display:none">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name-display">—</div>
+        <div class="user-role" id="user-role-display">—</div>
+      </div>
+    </div>
+    <button class="hdr-btn" onclick="doLogout()" id="logout-btn" style="display:none;background:rgba(220,38,38,.2);border-color:rgba(220,38,38,.4)">Sign out</button>
   </div>
   <div class="toolbar">
     <button class="btn btn-navy btn-sm" onclick="openNewLead()">+ New lead</button>
@@ -879,6 +936,136 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
       <div style="margin-top:.8rem"><button class="btn btn-navy btn-sm" onclick="changePw()">Update password</button></div>
       <div id="pw-msg" style="font-size:13px;margin-top:.5rem"></div>
     </div>
+
+    <!-- USER MANAGEMENT — Admin only -->
+    <div class="scard" id="user-mgmt-section">
+      <div class="stitle">👥 User Management</div>
+      <div class="ssub">Create and manage portal users. Admins see everything. Directors see all leads. Sales Reps see only their assigned leads. Distributors see only their accounts.</div>
+
+      <!-- Add User -->
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem">
+        <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:.8rem">➕ Add New User</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Full Name *</label>
+          <input class="finp" id="nu-name" placeholder="Jane Smith"/></div>
+          <div><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Email *</label>
+          <input class="finp" id="nu-email" type="email" placeholder="jane@example.com"/></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Role *</label>
+          <select class="finp" id="nu-role" onchange="updateNewUserFields()">
+            <option value="sales_rep">Sales Rep</option>
+            <option value="director">Director</option>
+            <option value="distributor">Distributor</option>
+            <option value="admin">Admin</option>
+          </select></div>
+          <div><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Initial Password *</label>
+          <input class="finp" id="nu-pw" type="password" placeholder="Min 8 characters"/></div>
+        </div>
+        <div id="nu-extra" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px"></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;cursor:pointer">
+            <input type="checkbox" id="nu-must-change" checked style="width:auto"/> User must change password on first login
+          </label>
+        </div>
+        <div id="nu-err" style="font-size:13px;color:#dc2626;margin-top:.5rem;display:none"></div>
+        <button class="btn btn-navy btn-sm" style="margin-top:.8rem" onclick="createUser()">Create User</button>
+      </div>
+
+      <!-- User List -->
+      <div id="user-list" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <!-- USER MANAGEMENT — ADMIN ONLY -->
+    <div class="scard" id="user-mgmt-card" style="display:none;max-width:860px">
+      <div class="stitle">&#128100; User Management</div>
+      <div class="ssub">Create and manage portal users. Each user logs in with their email and password. Their role determines what they can see and do.</div>
+      <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+        <button class="btn btn-navy btn-sm" onclick="openNewUser()">+ Add user</button>
+        <button class="btn btn-sm" onclick="loadUserList()">&#8635; Refresh</button>
+      </div>
+      <!-- Role legend -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;font-size:12px">
+        <span><span class="ucard-role role-admin">Admin</span> Full access</span>
+        <span><span class="ucard-role role-director">Director</span> All leads, no delete</span>
+        <span><span class="ucard-role role-sales_rep">Sales Rep</span> Own leads only</span>
+        <span><span class="ucard-role role-distributor">Distributor</span> Own distributor leads</span>
+      </div>
+      <div id="user-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- NEW/EDIT USER MODAL -->
+<div class="overlay" id="user-modal" style="display:none">
+  <div class="modal" style="max-width:520px">
+    <div class="mhdr">
+      <div class="mtitle" id="user-modal-title">Add User</div>
+      <button class="mclose" onclick="hideModal('user-modal')">&#x2715;</button>
+    </div>
+    <label class="flbl">Full Name *</label>
+    <input class="finp" id="u-name" placeholder="e.g. Will Simms"/>
+    <label class="flbl">Email Address *</label>
+    <input class="finp" id="u-email" type="email" placeholder="will@example.com"/>
+    <label class="flbl">Role *</label>
+    <select class="finp" id="u-role" onchange="updateUserRoleFields()">
+      <option value="sales_rep">Sales Rep</option>
+      <option value="director">Director</option>
+      <option value="distributor">Distributor</option>
+      <option value="admin">Admin</option>
+    </select>
+    <!-- Sales rep link -->
+    <div id="u-rep-row" style="margin-top:.6rem">
+      <label class="flbl">Links to Sales Rep name in leads</label>
+      <select class="finp" id="u-rep-name"><option value="">— Select rep —</option></select>
+    </div>
+    <!-- Distributor link -->
+    <div id="u-dist-row" style="display:none;margin-top:.6rem">
+      <label class="flbl">Distributor / Warehouse name (must match leads exactly)</label>
+      <input class="finp" id="u-dist-name" placeholder="e.g. Dot Foods Minnesota"/>
+    </div>
+    <!-- Program scope for directors -->
+    <div id="u-prog-row" style="display:none;margin-top:.6rem">
+      <label class="flbl">Program scope (leave blank for all programs)</label>
+      <select class="finp" id="u-prog-scope">
+        <option value="">All programs</option>
+        <option value="Java Select">Java Select</option>
+        <option value="Sledd">Sledd</option>
+      </select>
+    </div>
+    <label class="flbl" id="u-pw-label">Password *</label>
+    <input class="finp" id="u-pw" type="password" placeholder="Minimum 6 characters"/>
+    <div style="font-size:12px;color:#6b7280;margin-top:4px" id="u-pw-note">User will be prompted to change password on first login.</div>
+    <label class="flbl">Active</label>
+    <select class="finp" id="u-active">
+      <option value="true">Yes — can log in</option>
+      <option value="false">No — account disabled</option>
+    </select>
+    <div class="mfoot">
+      <button class="btn" onclick="hideModal('user-modal')">Cancel</button>
+      <button class="btn btn-navy" onclick="saveUser()">Save user</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL (first login) -->
+<div class="overlay" id="change-pw-modal" style="display:none">
+  <div class="modal" style="max-width:420px">
+    <div class="mhdr">
+      <div>
+        <div class="mtitle">&#128274; Set Your Password</div>
+        <div style="font-size:13px;color:#6b7280;margin-top:2px">Please set a new password before continuing.</div>
+      </div>
+    </div>
+    <label class="flbl">New Password *</label>
+    <input class="finp" type="password" id="cpw-new" placeholder="Minimum 6 characters"/>
+    <label class="flbl">Confirm Password *</label>
+    <input class="finp" type="password" id="cpw-conf" placeholder="Repeat password"/>
+    <div id="cpw-err" style="font-size:13px;color:#dc2626;margin-top:.4rem;display:none"></div>
+    <div class="mfoot">
+      <button class="btn btn-navy" onclick="saveFirstPassword()">Set password &amp; continue &#8594;</button>
+    </div>
   </div>
 </div>
 
@@ -1006,6 +1193,11 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
   <div class="modal">
     <div class="mhdr"><div class="mtitle">Import CSV from Jotform</div><button class="mclose" onclick="hideModal('csv-modal')">&#x2715;</button></div>
     <div style="font-size:13px;color:#6b7280;margin-bottom:1rem">Export from Jotform Tables → ··· → Export as CSV, then upload here.</div>
+    <label class="flbl">Which Distributor Program is this CSV from? *</label>
+    <select class="finp" id="csv-source" style="margin-bottom:.8rem">
+      <option value="Java Select">Java Select</option>
+      <option value="Sledd">Sledd</option>
+    </select>
     <input type="file" accept=".csv" id="csv-file" onchange="previewCSV(this)" style="font-size:13px;width:100%"/>
     <div id="csv-preview" style="font-size:13px;margin-top:.8rem;padding:.7rem;background:#f9fafb;border-radius:8px;display:none"></div>
     <div class="mfoot">
@@ -1178,8 +1370,8 @@ const fmtT=ts=>ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeri
 function showModal(id){document.getElementById(id).style.display='flex';}
 function hideModal(id){document.getElementById(id).style.display='none';}
 function showPage(n){['main','lock','settings','help'].forEach(p=>document.getElementById('pg-'+p).classList.remove('on'));document.getElementById('pg-'+n).classList.add('on');window.scrollTo(0,0);}
-function goSettings(){if(sessionStorage.getItem('unlocked')==='1'){showPage('settings');refreshSettings();}else{showPage('lock');setTimeout(()=>document.getElementById('lock-pw').focus(),100);}}
-function unlock(){const pw=document.getElementById('lock-pw').value;const stored=localStorage.getItem('admin_pw')||DEFAULT_PW;if(pw===stored){sessionStorage.setItem('unlocked','1');document.getElementById('lock-pw').value='';document.getElementById('lock-err').style.display='none';showPage('settings');refreshSettings();}else{document.getElementById('lock-err').style.display='block';}}
+function goSettings(){if(currentUser&&(currentUser.role==='admin'||currentUser.role==='director')){showPage('settings');refreshSettings();}else{notice('Settings requires Admin or Director access.','warn');}}
+function unlock(){/* Legacy - now handled by doLogin */goSettings();}
 function setRole(r,btn){role=r;document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderList();if(selId)renderMain(selId);}
 function toggleShowLost(){showLost=!showLost;document.getElementById('lost-btn').textContent=showLost?'Hide lost':'Show lost';renderList();}
 
@@ -1188,6 +1380,161 @@ function notice(msg,type='info',el='notice'){
   d.className='notice n-'+(type==='ok'?'ok':type==='err'?'err':type==='warn'?'warn':'info');
   d.textContent=msg;d.style.display='block';
   setTimeout(()=>d.style.display='none',6000);
+}
+
+// ══════════════════════════════════════════════
+// AUTH SYSTEM
+// ══════════════════════════════════════════════
+let currentUser = null;
+
+async function hashPassword(pw){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pw = document.getElementById('login-pw').value;
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-err');
+  if(!email||!pw){err.style.display='block';err.textContent='Please enter your email and password.';return;}
+  btn.textContent='Signing in…';btn.disabled=true;err.style.display='none';
+  try{
+    if(!sb){
+      let tries=0;
+      while(typeof supabase==='undefined'&&tries<20){await new Promise(r=>setTimeout(r,200));tries++;}
+      sb=supabase.createClient(SB_URL,SB_KEY);
+    }
+    const hash = await hashPassword(pw);
+    const {data,error} = await sb.from('portal_users')
+      .select('*')
+      .eq('email',email)
+      .eq('password_hash',hash)
+      .eq('active',true)
+      .single();
+    if(error||!data){
+      err.style.display='block';
+      err.textContent='Incorrect email or password. Please try again.';
+      btn.textContent='Sign In →';btn.disabled=false;return;
+    }
+    // Save session
+    currentUser = data;
+    sessionStorage.setItem('portal_user', JSON.stringify(data));
+    // Update last login
+    await sb.from('portal_users').update({last_login:new Date().toISOString()}).eq('id',data.id);
+    // Apply role UI
+    applyRoleUI();
+    // Check if must change password
+    if(data.must_change_password){
+      showChangePwModal();return;
+    }
+    // Go to dashboard
+    await init();
+    showPage('main');
+  }catch(e){
+    err.style.display='block';
+    err.textContent='Connection error. Please try again.';
+  }
+  btn.textContent='Sign In →';btn.disabled=false;
+}
+
+function applyRoleUI(){
+  if(!currentUser)return;
+  const r=currentUser.role;
+  const name=currentUser.full_name||currentUser.email;
+  // Update header user display
+  const nd=document.getElementById('user-name-display');if(nd)nd.textContent=name;
+  const rd=document.getElementById('user-role-display');
+  const roleLabels={admin:'Administrator',director:'Director',sales_rep:'Sales Rep',distributor:'Distributor'};
+  if(rd)rd.textContent=roleLabels[r]||r;
+  // Show/hide logout
+  const lb=document.getElementById('logout-btn');if(lb)lb.style.display='inline-block';
+  // Show/hide settings button
+  const sb2=document.getElementById('settings-btn');
+  if(sb2)sb2.style.display=(r==='admin'||r==='director')?'inline-block':'none';
+  // Role buttons — set correct active role
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));
+  const roleMap={admin:'Admin',director:'Director',sales_rep:'Ronnoco Rep',distributor:'Dist Rep'};
+  const targetLabel=roleMap[r]||'Admin';
+  document.querySelectorAll('.rbtn').forEach(b=>{if(b.textContent.trim()===targetLabel)b.classList.add('on');});
+  role=r==='admin'?'admin':r==='director'?'director':r==='sales_rep'?'ronnoco_rep':'dist_rep';
+  // Hide role switcher for non-admins
+  const rolesSwitcher=document.querySelector('.roles');
+  if(rolesSwitcher)rolesSwitcher.style.display=(r==='admin')?'flex':'none';
+}
+
+function doLogout(){
+  currentUser=null;
+  sessionStorage.removeItem('portal_user');
+  leads=[];actMap={};selId=null;salesReps=[];
+  // Reset header
+  const nd=document.getElementById('user-name-display');if(nd)nd.textContent='—';
+  const rd=document.getElementById('user-role-display');if(rd)rd.textContent='—';
+  const lb=document.getElementById('logout-btn');if(lb)lb.style.display='none';
+  // Reset role buttons
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));
+  const first=document.querySelector('.rbtn');if(first)first.classList.add('on');
+  showPage('login');
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pw').value='';
+  document.getElementById('login-err').style.display='none';
+}
+
+// CHANGE PASSWORD MODAL
+function showChangePwModal(){
+  let modal=document.getElementById('change-pw-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='change-pw-modal';
+    modal.className='overlay';
+    modal.innerHTML=`<div class="modal" style="max-width:420px">
+      <div class="mhdr"><div class="mtitle">🔐 Set Your Password</div></div>
+      <p style="font-size:14px;color:#6b7280;margin-bottom:1rem">Welcome! Please set a new password for your account before continuing.</p>
+      <label class="flbl">New Password</label>
+      <input class="finp" type="password" id="cpw-new" placeholder="Min 8 characters"/>
+      <label class="flbl">Confirm Password</label>
+      <input class="finp" type="password" id="cpw-conf" placeholder="Repeat password" style="margin-top:4px"/>
+      <div id="cpw-err" style="font-size:13px;color:#dc2626;margin-top:.5rem;display:none"></div>
+      <div class="mfoot"><button class="btn btn-navy" style="width:100%" onclick="saveNewPassword()">Set Password &amp; Continue →</button></div>
+    </div>`;
+    document.body.appendChild(modal);
+  }
+  modal.style.display='flex';
+}
+
+async function saveNewPassword(){
+  const nw=document.getElementById('cpw-new').value;
+  const cf=document.getElementById('cpw-conf').value;
+  const err=document.getElementById('cpw-err');
+  if(nw.length<8){err.style.display='block';err.textContent='Password must be at least 8 characters.';return;}
+  if(nw!==cf){err.style.display='block';err.textContent='Passwords do not match.';return;}
+  const hash=await hashPassword(nw);
+  await sb.from('portal_users').update({password_hash:hash,must_change_password:false,updated_at:new Date().toISOString()}).eq('id',currentUser.id);
+  currentUser.must_change_password=false;
+  currentUser.password_hash=hash;
+  sessionStorage.setItem('portal_user',JSON.stringify(currentUser));
+  document.getElementById('change-pw-modal').style.display='none';
+  await init();
+  showPage('main');
+  notice('Password set! Welcome to the portal.','ok');
+}
+
+// FILTER LEADS BY USER ROLE
+function filterLeadsByRole(list){
+  if(!currentUser)return list;
+  const r=currentUser.role;
+  if(r==='admin'||r==='director')return list;
+  if(r==='sales_rep'){
+    // Only see leads assigned to them
+    const repName=currentUser.sales_rep_name||currentUser.full_name;
+    return list.filter(l=>l.assigned_sales_rep===repName);
+  }
+  if(r==='distributor'){
+    // Only see leads for their distributor
+    const distName=currentUser.distributor_name;
+    return list.filter(l=>l.distributor===distName||l.distributor_warehouse===distName);
+  }
+  return list;
 }
 
 function goHelp(){showPage('help');}
@@ -1212,7 +1559,7 @@ async function init(){
   while(typeof supabase==='undefined'&&tries<30){await new Promise(r=>setTimeout(r,200));tries++;}
   if(typeof supabase==='undefined'){document.getElementById('conn-badge').textContent='✗ failed';return;}
   try{
-    sb=supabase.createClient(SB_URL,SB_KEY);
+    if(!sb)sb=supabase.createClient(SB_URL,SB_KEY);
     await loadReps();
     await loadLeads();
     // Re-render if a lead is selected after reps load
@@ -1351,7 +1698,7 @@ function renderList(){
   const from=document.getElementById('f-from')?.value||'';
   const to=document.getElementById('f-to')?.value||'';
 
-  let list=[...leads];
+  let list=applyUserFilter([...leads]);
   // Apply metric quick filter first
   if(activeMetricFilter==='unassigned') list=list.filter(l=>!l.assigned_sales_rep||!l.assigned_sales_rep.trim());
   else if(activeMetricFilter==='assigned') list=list.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim());
@@ -1948,7 +2295,7 @@ async function importCSV(){
       beverage_needs:col(row,'beverage needs','additional information'),
       notes:col(row,'additional notes','notes'),
       route,current_step:'new_lead',status:'active',
-      program_source:col(row,'distributor program','program source')||'Java Select',
+      program_source:document.getElementById('csv-source')?.value||'Java Select',
       submission_date:col(row,'submission date','created at','date')||null,
       jotform_answers:{},raw_csv:raw,
     });
@@ -2095,6 +2442,10 @@ function addNewRep(){
 
 // SETTINGS
 async function refreshSettings(){
+  // Show user management for admins only
+  const umCard=document.getElementById('user-mgmt-card');
+  if(umCard)umCard.style.display=currentUser?.role==='admin'?'block':'none';
+  if(currentUser?.role==='admin')loadUserList();
   const key=localStorage.getItem('jf_key')||'';
   if(key)document.getElementById('s-key').value=key;
   ['s-sync-btn','s-sync-btn-sledd','s-sync-all-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!key;});
@@ -2230,6 +2581,161 @@ function changePw(){
 }
 
 // HELP PAGE
+// ══════════════════════════════════════════════
+// AUTH SYSTEM
+// ══════════════════════════════════════════════
+// currentUser declared above
+
+async function hashPassword(pw){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pw = document.getElementById('login-pw').value;
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-err');
+  if(!email||!pw){err.style.display='block';err.textContent='Please enter your email and password.';return;}
+  btn.textContent='Signing in…';btn.disabled=true;err.style.display='none';
+  try{
+    if(!sb){
+      let tries=0;
+      while(typeof supabase==='undefined'&&tries<20){await new Promise(r=>setTimeout(r,200));tries++;}
+      sb=supabase.createClient(SB_URL,SB_KEY);
+    }
+    const hash = await hashPassword(pw);
+    const {data,error} = await sb.from('portal_users')
+      .select('*')
+      .eq('email',email)
+      .eq('password_hash',hash)
+      .eq('active',true)
+      .single();
+    if(error||!data){
+      err.style.display='block';
+      err.textContent='Incorrect email or password. Please try again.';
+      btn.textContent='Sign In →';btn.disabled=false;return;
+    }
+    // Save session
+    currentUser = data;
+    sessionStorage.setItem('portal_user', JSON.stringify(data));
+    // Update last login
+    await sb.from('portal_users').update({last_login:new Date().toISOString()}).eq('id',data.id);
+    // Apply role UI
+    applyRoleUI();
+    // Check if must change password
+    if(data.must_change_password){
+      showChangePwModal();return;
+    }
+    // Go to dashboard
+    await init();
+    showPage('main');
+  }catch(e){
+    err.style.display='block';
+    err.textContent='Connection error. Please try again.';
+  }
+  btn.textContent='Sign In →';btn.disabled=false;
+}
+
+function applyRoleUI(){
+  if(!currentUser)return;
+  const r=currentUser.role;
+  const name=currentUser.full_name||currentUser.email;
+  // Update header user display
+  const nd=document.getElementById('user-name-display');if(nd)nd.textContent=name;
+  const rd=document.getElementById('user-role-display');
+  const roleLabels={admin:'Administrator',director:'Director',sales_rep:'Sales Rep',distributor:'Distributor'};
+  if(rd)rd.textContent=roleLabels[r]||r;
+  // Show/hide logout
+  const lb=document.getElementById('logout-btn');if(lb)lb.style.display='inline-block';
+  // Show/hide settings button
+  const sb2=document.getElementById('settings-btn');
+  if(sb2)sb2.style.display=(r==='admin'||r==='director')?'inline-block':'none';
+  // Role buttons — set correct active role
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));
+  const roleMap={admin:'Admin',director:'Director',sales_rep:'Ronnoco Rep',distributor:'Dist Rep'};
+  const targetLabel=roleMap[r]||'Admin';
+  document.querySelectorAll('.rbtn').forEach(b=>{if(b.textContent.trim()===targetLabel)b.classList.add('on');});
+  role=r==='admin'?'admin':r==='director'?'director':r==='sales_rep'?'ronnoco_rep':'dist_rep';
+  // Hide role switcher for non-admins
+  const rolesSwitcher=document.querySelector('.roles');
+  if(rolesSwitcher)rolesSwitcher.style.display=(r==='admin')?'flex':'none';
+}
+
+function doLogout(){
+  currentUser=null;
+  sessionStorage.removeItem('portal_user');
+  leads=[];actMap={};selId=null;salesReps=[];
+  // Reset header
+  const nd=document.getElementById('user-name-display');if(nd)nd.textContent='—';
+  const rd=document.getElementById('user-role-display');if(rd)rd.textContent='—';
+  const lb=document.getElementById('logout-btn');if(lb)lb.style.display='none';
+  // Reset role buttons
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));
+  const first=document.querySelector('.rbtn');if(first)first.classList.add('on');
+  showPage('login');
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pw').value='';
+  document.getElementById('login-err').style.display='none';
+}
+
+// CHANGE PASSWORD MODAL
+function showChangePwModal(){
+  let modal=document.getElementById('change-pw-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='change-pw-modal';
+    modal.className='overlay';
+    modal.innerHTML=`<div class="modal" style="max-width:420px">
+      <div class="mhdr"><div class="mtitle">🔐 Set Your Password</div></div>
+      <p style="font-size:14px;color:#6b7280;margin-bottom:1rem">Welcome! Please set a new password for your account before continuing.</p>
+      <label class="flbl">New Password</label>
+      <input class="finp" type="password" id="cpw-new" placeholder="Min 8 characters"/>
+      <label class="flbl">Confirm Password</label>
+      <input class="finp" type="password" id="cpw-conf" placeholder="Repeat password" style="margin-top:4px"/>
+      <div id="cpw-err" style="font-size:13px;color:#dc2626;margin-top:.5rem;display:none"></div>
+      <div class="mfoot"><button class="btn btn-navy" style="width:100%" onclick="saveNewPassword()">Set Password &amp; Continue →</button></div>
+    </div>`;
+    document.body.appendChild(modal);
+  }
+  modal.style.display='flex';
+}
+
+async function saveNewPassword(){
+  const nw=document.getElementById('cpw-new').value;
+  const cf=document.getElementById('cpw-conf').value;
+  const err=document.getElementById('cpw-err');
+  if(nw.length<8){err.style.display='block';err.textContent='Password must be at least 8 characters.';return;}
+  if(nw!==cf){err.style.display='block';err.textContent='Passwords do not match.';return;}
+  const hash=await hashPassword(nw);
+  await sb.from('portal_users').update({password_hash:hash,must_change_password:false,updated_at:new Date().toISOString()}).eq('id',currentUser.id);
+  currentUser.must_change_password=false;
+  currentUser.password_hash=hash;
+  sessionStorage.setItem('portal_user',JSON.stringify(currentUser));
+  document.getElementById('change-pw-modal').style.display='none';
+  await init();
+  showPage('main');
+  notice('Password set! Welcome to the portal.','ok');
+}
+
+// FILTER LEADS BY USER ROLE
+function filterLeadsByRole(list){
+  if(!currentUser)return list;
+  const r=currentUser.role;
+  if(r==='admin'||r==='director')return list;
+  if(r==='sales_rep'){
+    // Only see leads assigned to them
+    const repName=currentUser.sales_rep_name||currentUser.full_name;
+    return list.filter(l=>l.assigned_sales_rep===repName);
+  }
+  if(r==='distributor'){
+    // Only see leads for their distributor
+    const distName=currentUser.distributor_name;
+    return list.filter(l=>l.distributor===distName||l.distributor_warehouse===distName);
+  }
+  return list;
+}
+
 function goHelp(){showPage('help');}
 function showHelpTab(tab,btn){
   document.querySelectorAll('.help-section').forEach(s=>s.classList.remove('on'));
@@ -2249,7 +2755,140 @@ function toggleFaq(btn){
   if(!isOpen){a.classList.add('open');if(arrow)arrow.classList.add('open');}
 }
 
-document.addEventListener('DOMContentLoaded',()=>init());
+
+// ══════════════════════════════════════════════
+// USER MANAGEMENT
+// ══════════════════════════════════════════════
+
+function updateNewUserFields(){
+  const role=document.getElementById('nu-role').value;
+  const extra=document.getElementById('nu-extra');
+  if(role==='sales_rep'){
+    extra.innerHTML=`<div><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Links to Sales Rep Name</label>
+      <select class="finp" id="nu-rep-link"><option value="">— Select rep —</option>${salesReps.map(r=>`<option value="${r.name}">${r.name}</option>`).join('')}</select></div>
+      <div><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Reports to Director (optional)</label>
+      <select class="finp" id="nu-director"><option value="">— None —</option></select></div>`;
+    loadDirectorOptions();
+  } else if(role==='distributor'){
+    extra.innerHTML=`<div style="grid-column:1/-1"><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Distributor Name (must match leads)</label>
+      <input class="finp" id="nu-dist-name" placeholder="e.g. Sysco, US Foods…"/></div>`;
+  } else {
+    extra.innerHTML='';
+  }
+}
+
+async function loadDirectorOptions(){
+  const{data}=await sb.from('portal_users').select('id,full_name').eq('role','director').eq('active',true);
+  const sel=document.getElementById('nu-director');
+  if(sel&&data)sel.innerHTML='<option value="">— None —</option>'+data.map(d=>`<option value="${d.id}">${d.full_name}</option>`).join('');
+}
+
+async function createUser(){
+  const name=document.getElementById('nu-name').value.trim();
+  const email=document.getElementById('nu-email').value.trim().toLowerCase();
+  const role=document.getElementById('nu-role').value;
+  const pw=document.getElementById('nu-pw').value;
+  const mustChange=document.getElementById('nu-must-change').checked;
+  const errEl=document.getElementById('nu-err');
+  errEl.style.display='none';
+
+  if(!name||!email||!pw){errEl.style.display='block';errEl.textContent='Name, email, and password are required.';return;}
+  if(pw.length<8){errEl.style.display='block';errEl.textContent='Password must be at least 8 characters.';return;}
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)){errEl.style.display='block';errEl.textContent='Please enter a valid email address.';return;}
+
+  const hash=await hashPassword(pw);
+  const userData={
+    email,full_name:name,password_hash:hash,role,
+    must_change_password:mustChange,active:true,
+  };
+
+  if(role==='sales_rep'){
+    const repLink=document.getElementById('nu-rep-link')?.value||'';
+    const dirId=document.getElementById('nu-director')?.value||null;
+    userData.sales_rep_name=repLink||name;
+    if(dirId)userData.director_id=dirId;
+  }
+  if(role==='distributor'){
+    const distName=document.getElementById('nu-dist-name')?.value.trim()||'';
+    userData.distributor_name=distName;
+  }
+
+  const{error}=await sb.from('portal_users').insert(userData);
+  if(error){
+    errEl.style.display='block';
+    errEl.textContent=error.code==='23505'?'That email address is already in use.':'Error: '+error.message;
+    return;
+  }
+  // Clear form
+  ['nu-name','nu-email','nu-pw'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('nu-extra').innerHTML='';
+  document.getElementById('nu-must-change').checked=true;
+  notice(name+' added successfully!','ok','s-notice');
+  await renderUserList();
+}
+
+async function renderUserList(){
+  const{data}=await sb.from('portal_users').select('*').order('role').order('full_name');
+  const box=document.getElementById('user-list');
+  if(!box||!data)return;
+  const roleColors={admin:'#0f2347',director:'#1d4ed8',sales_rep:'#059669',distributor:'#7c3aed'};
+  const roleLabels={admin:'Admin',director:'Director',sales_rep:'Sales Rep',distributor:'Distributor'};
+  box.innerHTML=data.map(u=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;background:${u.active?'#fff':'#f9fafb'}">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:600;color:${u.active?'#111827':'#9ca3af'};${u.active?'':'text-decoration:line-through'}">${u.full_name}</span>
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;color:#fff;background:${roleColors[u.role]||'#6b7280'}">${roleLabels[u.role]||u.role}</span>
+          ${u.must_change_password?'<span style="font-size:10px;color:#d97706;font-weight:600">⚠ Must change pw</span>':''}
+          ${!u.active?'<span style="font-size:10px;color:#dc2626;font-weight:600">Inactive</span>':''}
+        </div>
+        <div style="font-size:12px;color:#6b7280;margin-top:2px">${u.email}${u.sales_rep_name?' · Rep: '+u.sales_rep_name:''}${u.distributor_name?' · Dist: '+u.distributor_name:''}</div>
+        ${u.last_login?`<div style="font-size:11px;color:#9ca3af">Last login: ${new Date(u.last_login).toLocaleString()}</div>`:''}
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0;margin-left:8px">
+        <button class="btn btn-sm" onclick="resetUserPassword('${u.id}','${u.full_name.replace(/'/g,"\\'")}')">Reset pw</button>
+        <button class="btn btn-sm" onclick="toggleUserActive('${u.id}',${u.active})">${u.active?'Deactivate':'Activate'}</button>
+        ${currentUser&&currentUser.id!==u.id?`<button class="btn btn-red btn-sm" onclick="deleteUser('${u.id}','${u.full_name.replace(/'/g,"\\'")}')">Delete</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+async function resetUserPassword(userId, userName){
+  const newPw=window.prompt(`Set new password for ${userName}:
+(Min 8 characters)`);
+  if(!newPw||newPw.length<8){if(newPw!==null)alert('Password must be at least 8 characters.');return;}
+  const hash=await hashPassword(newPw);
+  await sb.from('portal_users').update({password_hash:hash,must_change_password:true,updated_at:new Date().toISOString()}).eq('id',userId);
+  notice('Password reset. User must change it on next login.','ok','s-notice');
+  await renderUserList();
+}
+
+async function toggleUserActive(userId, active){
+  await sb.from('portal_users').update({active:!active,updated_at:new Date().toISOString()}).eq('id',userId);
+  notice(active?'User deactivated.':'User reactivated.','ok','s-notice');
+  await renderUserList();
+}
+
+async function deleteUser(userId, userName){
+  if(!confirm(`Permanently delete user "${userName}"? This cannot be undone.`))return;
+  await sb.from('portal_users').delete().eq('id',userId);
+  notice(userName+' deleted.','warn','s-notice');
+  await renderUserList();
+}
+
+document.addEventListener('DOMContentLoaded',async()=>{
+  // Initialize Supabase first so login works
+  let tries=0;
+  while(typeof supabase==='undefined'&&tries<30){await new Promise(r=>setTimeout(r,200));tries++;}
+  if(typeof supabase!=='undefined')sb=supabase.createClient(SB_URL,SB_KEY);
+  // Check for existing session
+  if(checkSession()&&currentUser){
+    afterLogin();
+  } else {
+    showPage('login');
+    setTimeout(()=>{const e=document.getElementById('login-email');if(e)e.focus();},300);
+  }
+});
 </script>
 </body>
 </html>
