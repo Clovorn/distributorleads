@@ -1456,7 +1456,7 @@ async function doLogin(){
     currentUser = data;
     sessionStorage.setItem('portal_user', JSON.stringify(data));
     // Update last login
-    await sb.from('portal_users').update({last_login:new Date().toISOString()}).eq('id',data.id).catch(()=>{});
+    try{await sb.from('portal_users').update({last_login:new Date().toISOString()}).eq('id',data.id);}catch(e){}
     // Apply role UI
     applyRoleUI();
     // Check if must change password
