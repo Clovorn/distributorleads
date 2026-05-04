@@ -186,30 +186,8 @@ textarea.finp{resize:vertical;min-height:80px}
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
-<div id="pg-login" class="page on">
-  <div class="login-wrap">
-    <div style="width:100%;max-width:420px">
-      <div class="login-card">
-        <div class="login-logo">
-          <img id="login-logo-img" src="data:image/png;base64,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" alt="Ronnoco Beverage Solutions"/>
-        </div>
-        <div class="login-title">Distributor Deal Portal</div>
-        <div class="login-sub">Java Select &amp; Distributor Programs</div>
-        <label class="login-label">Email Address</label>
-        <input class="login-inp" type="email" id="login-email" placeholder="you@ronnoco.com" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pw').focus()"/>
-        <label class="login-label">Password</label>
-        <input class="login-inp" type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-        <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
-        <div class="login-err" id="login-err" style="display:none"></div>
-      </div>
-      <div class="login-version">Ronnoco Distributor Deal Portal · v2.0</div>
-    </div>
-  </div>
-</div>
-
 <!-- MAIN PAGE -->
-<div id="pg-main" class="page">
+<div id="pg-main" class="page on">
   <div class="hdr">
     <div class="hdr-left">
       <img id="main-logo-img" src="" alt="Ronnoco" class="logo"/>
@@ -230,8 +208,7 @@ textarea.finp{resize:vertical;min-height:80px}
         </div>
       </div>
       <button class="hdr-btn" onclick="showPage('help')">❓ Help / Support</button>
-      <button class="hdr-btn" id="settings-btn" onclick="showPage('settings');refreshSettings()">⚙ Settings</button>
-      <button class="hdr-btn" id="logout-btn" onclick="doLogout()" style="background:rgba(220,38,38,.2);border-color:rgba(220,38,38,.4)">Sign out</button>
+      <button class="hdr-btn" onclick="goSettings()">⚙ Settings</button>
     </div>
   </div>
   <div class="toolbar">
@@ -379,8 +356,6 @@ textarea.finp{resize:vertical;min-height:80px}
       <div id="pw-msg" style="font-size:13px;margin-top:.5rem"></div>
     </div>
     <!-- User Management (Admin only) -->
-    <div class="scard2" id="user-mgmt-section" style="display:none">
-      <div class="stitle">👤 User Management</div>
       <div class="ssub">Create and manage portal accounts. Sales Reps see only their leads. Distributors see only their accounts.</div>
       <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem">
         <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:.8rem">➕ Add New User</div>
@@ -742,7 +717,6 @@ function pct(lead){const steps=getSteps(lead.route);const idx=steps.findIndex(s=
 
 let sb=null,leads=[],actMap={},selId=null,role='admin',showLost=false,emailLeadId=null,emailAdvance=false,salesReps=[],activeMetricFilter='';
 let notePending=null,lostLeadId=null,editLeadId=null,csvRows=[],repAssignPending=null;
-let currentUser=null;
 
 const fmtD=ts=>ts?new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
 const fmtT=ts=>ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
@@ -750,7 +724,7 @@ function showModal(id){document.getElementById(id).style.display='flex';}
 function hideModal(id){document.getElementById(id).style.display='none';}
 
 function showPage(n){
-  ['login','main','lock','settings','help'].forEach(p=>{const el=document.getElementById('pg-'+p);if(el)el.classList.remove('on');});
+  ['main','lock','settings','help'].forEach(p=>{const el=document.getElementById('pg-'+p);if(el)el.classList.remove('on');});
   const t=document.getElementById('pg-'+n);if(t)t.classList.add('on');
   window.scrollTo(0,0);
 }
@@ -763,145 +737,17 @@ function notice(msg,type='info',el='notice'){
 }
 
 // AUTH
-async function hashPassword(pw){
-  const buf=await window.crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
 
-async function doLogin(){
-  const emailEl=document.getElementById('login-email');
-  const pwEl=document.getElementById('login-pw');
-  const btn=document.getElementById('login-btn');
-  const errEl=document.getElementById('login-err');
-  const email=(emailEl?.value||'').trim().toLowerCase();
-  const pw=pwEl?.value||'';
-
-  errEl.style.display='none';
-  if(!email||!pw){errEl.textContent='Please enter email and password.';errEl.style.display='block';return;}
-
-  btn.textContent='Signing in…';btn.disabled=true;
-
-  // Simple check first - no Supabase needed
-  if(email==='admin@ronnoco.com'&&pw==='Ronnoco2024!'){
-    currentUser={id:'admin',email:'admin@ronnoco.com',full_name:'Administrator',role:'admin',must_change_password:false,active:true};
-    sessionStorage.setItem('portal_user',JSON.stringify(currentUser));
-    applyRoleUI();
-    try{
-      let t=0;
-      while(typeof supabase==='undefined'&&t<20){await new Promise(r=>setTimeout(r,200));t++;}
-      if(typeof supabase!=='undefined'){
-        if(!sb)sb=supabase.createClient(SB_URL,SB_KEY);
-      }
-    }catch(e){}
-    await init();
-    showPage('main');
-    btn.textContent='Sign In →';btn.disabled=false;
-    return;
-  }
-
-  // For other users - check Supabase
-  try{
-    let t=0;
-    while(typeof supabase==='undefined'&&t<20){await new Promise(r=>setTimeout(r,200));t++;}
-    if(typeof supabase==='undefined'){errEl.textContent='Could not connect. Please refresh.';errEl.style.display='block';btn.textContent='Sign In →';btn.disabled=false;return;}
-    if(!sb)sb=supabase.createClient(SB_URL,SB_KEY);
-    const buf=await window.crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
-    const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    const res=await sb.from('portal_users').select('*').eq('email',email).eq('active',true);
-    if(res.error||!res.data||!res.data.length){errEl.textContent='No account found for that email.';errEl.style.display='block';btn.textContent='Sign In →';btn.disabled=false;return;}
-    const user=res.data[0];
-    if(user.password_hash!==hash){errEl.textContent='Incorrect password.';errEl.style.display='block';btn.textContent='Sign In →';btn.disabled=false;return;}
-    currentUser=user;
-    sessionStorage.setItem('portal_user',JSON.stringify(user));
-    try{await sb.from('portal_users').update({last_login:new Date().toISOString()}).eq('id',user.id);}catch(e){}
-    applyRoleUI();
-    if(user.must_change_password){showChangePwModal();btn.textContent='Sign In →';btn.disabled=false;return;}
-    await init();
-    showPage('main');
-  }catch(e){
-    errEl.textContent='Error: '+e.message;
-    errEl.style.display='block';
-    console.error(e);
-  }
-  btn.textContent='Sign In →';btn.disabled=false;
-}
-
-
-function applyRoleUI(){
-  if(!currentUser)return;
-  const r=currentUser.role;
-  const name=currentUser.full_name||currentUser.email;
-  const nd=document.getElementById('user-name-display');if(nd)nd.textContent=name;
-  const rd=document.getElementById('user-role-display');
-  const roleLabels={admin:'Administrator',director:'Director',sales_rep:'Sales Rep',distributor:'Distributor'};
-  if(rd)rd.textContent=roleLabels[r]||r;
-  const ub=document.getElementById('user-badge');if(ub)ub.style.display='flex';
-  const av=document.getElementById('user-avatar');if(av)av.textContent=(name||'?')[0].toUpperCase();
-  const lb=document.getElementById('logout-btn');if(lb)lb.style.display='inline-block';
-  const sb2=document.getElementById('settings-btn');if(sb2)sb2.style.display=(r==='admin'||r==='director')?'inline-block':'none';
-  const rs=document.getElementById('role-switcher');if(rs)rs.style.display=(r==='admin')?'flex':'none';
-  role=r==='admin'?'admin':r==='director'?'director':r==='sales_rep'?'ronnoco_rep':'dist_rep';
-}
-
-function doLogout(){
-  currentUser=null;
-  sessionStorage.removeItem('portal_user');
-  leads=[];actMap={};selId=null;salesReps=[];
-  const nd=document.getElementById('user-name-display');if(nd)nd.textContent='—';
-  const rd=document.getElementById('user-role-display');if(rd)rd.textContent='—';
-  const lb=document.getElementById('logout-btn');if(lb)lb.style.display='none';
-  const ub=document.getElementById('user-badge');if(ub)ub.style.display='none';
-  showPage('login');
-  document.getElementById('login-email').value='';
-  document.getElementById('login-pw').value='';
-  document.getElementById('login-err').style.display='none';
-}
-
-function showChangePwModal(){
-  const modal=document.getElementById('change-pw-modal');
-  if(modal)modal.style.display='flex';
-}
-
-async function saveFirstPassword(){
-  const nw=document.getElementById('cpw-new').value;
-  const cf=document.getElementById('cpw-conf').value;
-  const err=document.getElementById('cpw-err');
-  if(nw.length<8){err.style.display='block';err.textContent='Password must be at least 8 characters.';return;}
-  if(nw!==cf){err.style.display='block';err.textContent='Passwords do not match.';return;}
-  const hash=await hashPassword(nw);
-  await sb.from('portal_users').update({password_hash:hash,must_change_password:false}).eq('id',currentUser.id);
-  currentUser.must_change_password=false;
-  sessionStorage.setItem('portal_user',JSON.stringify(currentUser));
-  document.getElementById('change-pw-modal').style.display='none';
-  await init();
-  showPage('main');
-  notice('Password set! Welcome.','ok');
-}
-
-function goSettings(){
-  if(currentUser&&(currentUser.role==='admin'||currentUser.role==='director')){
-    showPage('settings');refreshSettings();
-  }else{
-    notice('Settings requires Admin or Director access.','warn');
-  }
-}
+function goSettings(){if(sessionStorage.getItem('unlocked')==='1'){showPage('settings');refreshSettings();}else{showPage('lock');setTimeout(()=>document.getElementById('lock-pw')?.focus(),100);}}
 function goHelp(){showPage('help');}
-function unlock(){goSettings();}
-
-function filterLeadsByRole(list){
-  if(!currentUser)return list;
-  const r=currentUser.role;
-  if(r==='admin'||r==='director')return list;
-  if(r==='sales_rep'){
-    const repName=currentUser.sales_rep_name||currentUser.full_name;
-    return list.filter(l=>l.assigned_sales_rep===repName);
-  }
-  if(r==='distributor'){
-    const distName=currentUser.distributor_name;
-    return list.filter(l=>l.distributor===distName||l.distributor_warehouse===distName);
-  }
-  return list;
+function unlock(){
+  const pw=document.getElementById('lock-pw').value;
+  const stored=localStorage.getItem('admin_pw')||'pipeline2024';
+  if(pw===stored){sessionStorage.setItem('unlocked','1');document.getElementById('lock-pw').value='';document.getElementById('lock-err').style.display='none';showPage('settings');refreshSettings();}
+  else{document.getElementById('lock-err').style.display='block';}
 }
+
+function filterLeadsByRole(list){return list;}
 
 function setRole(r,btn){role=r;document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderList();if(selId)renderMain(selId);}
 function toggleShowLost(){showLost=!showLost;document.getElementById('lost-btn').textContent=showLost?'Hide lost':'Show lost';renderList();}
@@ -1602,12 +1448,7 @@ async function refreshSettings(){
     <span class="sdot sd-g"></span>Forms: <strong>Java Select &amp; Sledd</strong><br>
     <span class="sdot sd-g"></span>Supabase: <strong>Connected</strong>`;
   await renderRepList();
-  const umSection=document.getElementById('user-mgmt-section');
-  if(umSection){
-    const isAdmin=currentUser&&currentUser.role==='admin';
-    umSection.style.display=isAdmin?'block':'none';
-    if(isAdmin){updateNewUserFields();await renderUserList();}
-  }
+
 }
 async function testKey(){
   const key=document.getElementById('s-key').value.trim();
@@ -1723,96 +1564,6 @@ async function deleteRep(id,name){
 }
 
 // USER MANAGEMENT
-function updateNewUserFields(){
-  const role2=document.getElementById('nu-role')?.value;
-  const extra=document.getElementById('nu-extra');if(!extra)return;
-  if(role2==='sales_rep'){
-    extra.innerHTML=`<div><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Links to Sales Rep Name</label>
-      <select class="finp" id="nu-rep-link"><option value="">— Select rep —</option>${salesReps.map(r=>`<option value="${r.name}">${r.name}</option>`).join('')}</select></div>`;
-  }else if(role2==='distributor'){
-    extra.innerHTML=`<div style="grid-column:1/-1"><label style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;display:block;margin-bottom:3px">Distributor Name (must match leads)</label>
-      <input class="finp" id="nu-dist-name" placeholder="e.g. Sysco, US Foods…"/></div>`;
-  }else{
-    extra.innerHTML='';
-  }
-}
-
-async function createUser(){
-  const name=document.getElementById('nu-name').value.trim();
-  const email=document.getElementById('nu-email').value.trim().toLowerCase();
-  const role2=document.getElementById('nu-role').value;
-  const pw=document.getElementById('nu-pw').value;
-  const mustChange=document.getElementById('nu-must-change').checked;
-  const errEl=document.getElementById('nu-err');errEl.style.display='none';
-  if(!name||!email||!pw){errEl.style.display='block';errEl.textContent='Name, email, and password are required.';return;}
-  if(pw.length<8){errEl.style.display='block';errEl.textContent='Password must be at least 8 characters.';return;}
-  const hash=await hashPassword(pw);
-  const userData={email,full_name:name,password_hash:hash,role:role2,must_change_password:mustChange,active:true};
-  if(role2==='sales_rep'){
-    const repLink=document.getElementById('nu-rep-link')?.value||'';
-    userData.sales_rep_name=repLink||name;
-  }
-  if(role2==='distributor'){
-    const distName=document.getElementById('nu-dist-name')?.value.trim()||'';
-    userData.distributor_name=distName;
-  }
-  const{error}=await sb.from('portal_users').insert(userData);
-  if(error){errEl.style.display='block';errEl.textContent=error.code==='23505'?'Email already in use.':'Error: '+error.message;return;}
-  ['nu-name','nu-email','nu-pw'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('nu-extra').innerHTML='';
-  document.getElementById('nu-must-change').checked=true;
-  notice(name+' added!','ok','s-notice');
-  await renderUserList();
-}
-
-async function renderUserList(){
-  const{data}=await sb.from('portal_users').select('*').order('role').order('full_name');
-  const box=document.getElementById('user-list');if(!box||!data)return;
-  const roleColors={admin:'#0f2347',director:'#1d4ed8',sales_rep:'#059669',distributor:'#7c3aed'};
-  const roleLabels={admin:'Admin',director:'Director',sales_rep:'Sales Rep',distributor:'Distributor'};
-  box.innerHTML=data.map(u=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;background:${u.active?'#fff':'#f9fafb'}">
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:14px;font-weight:600;color:${u.active?'#111827':'#9ca3af'}">${u.full_name}</span>
-          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;color:#fff;background:${roleColors[u.role]||'#6b7280'}">${roleLabels[u.role]||u.role}</span>
-          ${u.must_change_password?'<span style="font-size:10px;color:#d97706;font-weight:600">⚠ Must change pw</span>':''}
-          ${!u.active?'<span style="font-size:10px;color:#dc2626;font-weight:600">Inactive</span>':''}
-        </div>
-        <div style="font-size:12px;color:#6b7280;margin-top:2px">${u.email}${u.sales_rep_name?' · Rep: '+u.sales_rep_name:''}${u.distributor_name?' · Dist: '+u.distributor_name:''}</div>
-        ${u.last_login?`<div style="font-size:11px;color:#9ca3af">Last login: ${new Date(u.last_login).toLocaleString()}</div>`:''}
-      </div>
-      <div style="display:flex;gap:6px;flex-shrink:0;margin-left:8px">
-        <button class="btn btn-sm" onclick="resetUserPassword('${u.id}','${(u.full_name||'').replace(/'/g,"\'")}')">Reset pw</button>
-        <button class="btn btn-sm" onclick="toggleUserActive('${u.id}',${u.active})">${u.active?'Deactivate':'Activate'}</button>
-        ${currentUser&&currentUser.id!==u.id?`<button class="btn btn-red btn-sm" onclick="deleteUser('${u.id}','${(u.full_name||'').replace(/'/g,"\'")}')">Delete</button>`:''}
-      </div>
-    </div>`).join('');
-}
-
-async function resetUserPassword(userId,userName){
-  const newPw=window.prompt(`Set new password for ${userName}:
-(Min 8 characters)`);
-  if(!newPw||newPw.length<8){if(newPw!==null)alert('Password must be at least 8 characters.');return;}
-  const hash=await hashPassword(newPw);
-  await sb.from('portal_users').update({password_hash:hash,must_change_password:true}).eq('id',userId);
-  notice('Password reset. User must change on next login.','ok','s-notice');
-  await renderUserList();
-}
-
-async function toggleUserActive(userId,active){
-  await sb.from('portal_users').update({active:!active}).eq('id',userId);
-  notice(active?'User deactivated.':'User reactivated.','ok','s-notice');
-  await renderUserList();
-}
-
-async function deleteUser(userId,userName){
-  if(!confirm(`Permanently delete user "${userName}"?`))return;
-  await sb.from('portal_users').delete().eq('id',userId);
-  notice(userName+' deleted.','warn','s-notice');
-  await renderUserList();
-}
-
 // HELP
 function showHelpTab(tab,btn){
   document.querySelectorAll('.help-section').forEach(s=>s.classList.remove('on'));
@@ -1830,26 +1581,7 @@ function toggleFaq(btn){
 }
 
 // DOMContentLoaded
-document.addEventListener('DOMContentLoaded',async()=>{
-  const saved=sessionStorage.getItem('portal_user');
-  if(saved){
-    try{
-      currentUser=JSON.parse(saved);
-      let t=0;
-      while(typeof supabase==='undefined'&&t<30){await new Promise(r=>setTimeout(r,200));t++;}
-      if(typeof supabase!=='undefined')sb=supabase.createClient(SB_URL,SB_KEY);
-      applyRoleUI();
-      await init();
-      showPage('main');
-      return;
-    }catch(e){sessionStorage.removeItem('portal_user');}
-  }
-  showPage('login');
-  let t=0;
-  while(typeof supabase==='undefined'&&t<30){await new Promise(r=>setTimeout(r,200));t++;}
-  if(typeof supabase!=='undefined')sb=supabase.createClient(SB_URL,SB_KEY);
-  setTimeout(()=>document.getElementById('login-email')?.focus(),300);
-});
+document.addEventListener('DOMContentLoaded',()=>init());
 
 </script>
 </body>
