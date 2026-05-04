@@ -241,7 +241,7 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
       <button class="rbtn" onclick="setRole('dist_rep',this)">Dist Rep</button>
       <button class="rbtn" onclick="setRole('ronnoco_rep',this)">Ronnoco Rep</button>
     </div>
-    <button class="hdr-btn" onclick="goHelp()">&#10067; Help</button>
+    <button class="hdr-btn" onclick="goHelp()">&#10067; Help / Support</button>
     <button class="hdr-btn" onclick="goSettings()">Settings</button>
   </div>
   <div class="toolbar">
@@ -312,6 +312,11 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
             <option value="Full Beverage">Full Beverage</option>
             <option value="Polar Wave">Polar Wave</option>
             <option value="Other">Other</option>
+          </select></div>
+          <div class="fg"><label>&#128204; Distributor Program</label><select id="f-source" onchange="renderList()">
+            <option value="">All programs</option>
+            <option value="Java Select">Java Select</option>
+            <option value="Sledd">Sledd</option>
           </select></div>
         </div>
         <!-- Row 3: Secondary filters (collapsible) -->
@@ -615,6 +620,192 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
   </div>
 </div>
 
+<!-- HELP PAGE -->
+<div id="pg-help" class="page">
+  <div class="hdr">
+    <div class="hdr-left">
+      <img src="data:image/png;base64,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" alt="Ronnoco" class="logo"/>
+      <div class="hdr-divider"></div>
+      <span style="font-size:15px;font-weight:700;color:#fff">Help &amp; Support</span>
+    </div>
+    <button class="hdr-btn" onclick="showPage('main')">&#8592; Back to Dashboard</button>
+  </div>
+
+  <div class="help-wrap">
+    <!-- HERO -->
+    <div class="help-hero">
+      <div style="font-size:36px;margin-bottom:.5rem">📖</div>
+      <h1>Ronnoco Distributor Deal Portal</h1>
+      <p>User Guide &amp; Help Center &nbsp;·&nbsp; Java Select Program &nbsp;·&nbsp; v2.0</p>
+      <p style="font-size:12px;margin-top:.3rem;opacity:.5">Last updated: May 2026</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="help-tabs">
+      <button class="htab on" onclick="showHelpTab('overview',this)">🗺 Overview</button>
+      <button class="htab" onclick="showHelpTab('leads',this)">📋 Leads</button>
+      <button class="htab" onclick="showHelpTab('pipeline',this)">📊 Pipeline</button>
+      <button class="htab" onclick="showHelpTab('reps',this)">👤 Reps</button>
+      <button class="htab" onclick="showHelpTab('filters',this)">🔍 Filters</button>
+      <button class="htab" onclick="showHelpTab('faq',this)">❓ FAQ</button>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div id="help-overview" class="help-section on">
+      <div class="hcard">
+        <h3>👋 Welcome to the Distributor Deal Portal</h3>
+        <p>Think of this portal as your command center for the <strong>Java Select Program</strong> — the place where every lead that comes in through Jotform or manual entry gets tracked, assigned, nurtured, and celebrated when it closes. Nothing falls through the cracks here.</p>
+        <p style="margin-top:.6rem">The portal is built around a simple idea: every potential customer is on a journey, and your job is to guide them from <strong>New Lead</strong> all the way to <strong>Complete</strong>. The pipeline is your roadmap.</p>
+      </div>
+      <div class="hcard">
+        <h3>🖥 The Layout at a Glance</h3>
+        <ul>
+          <li><strong>Metric Cards (top)</strong> — Five clickable tiles showing Total Leads, Needs Assigned, Assigned, Won, and Lost. Click any card to instantly filter the sidebar to that group.</li>
+          <li><strong>Filter &amp; Sort Panel</strong> — Search by name, rep, or anything. Filter by status, route, program, and more. Secondary filters hide behind "More filters" to keep things tidy.</li>
+          <li><strong>Left Sidebar</strong> — Your scrollable list of leads. Each card shows the customer name, assigned rep (blue badge), pipeline step, and submission date. Red badge = needs a rep assigned.</li>
+          <li><strong>Main Panel (right)</strong> — Click any lead card to open its full detail here. This is where you manage everything: route, pipeline, rep assignment, editable fields, submission data, and the activity log.</li>
+        </ul>
+      </div>
+      <div class="hcard">
+        <h3>🎭 Roles</h3>
+        <p>Use the role buttons in the header to switch your view. Each role shows a different perspective on the same data:</p>
+        <ul>
+          <li><span class="badge-pill pill-navy">Admin</span> — Full access. Create, edit, delete, advance, assign, mark lost. The keys to the kingdom.</li>
+          <li><span class="badge-pill pill-blue">Director</span> — Same as Admin but focused on oversight. Full pipeline control.</li>
+          <li><span class="badge-pill pill-amber">Dist Rep</span> — Distributor rep view. Sees active Sales Route leads only (not leasing).</li>
+          <li><span class="badge-pill pill-purple">Ronnoco Rep</span> — Sales rep view. Can advance leads that are assigned to a rep.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- LEADS TAB -->
+    <div id="help-leads" class="help-section">
+      <div class="hcard">
+        <h3>➕ Adding a New Lead Manually</h3>
+        <div class="hstep"><div class="hstep-num">1</div><div class="hstep-body"><strong>Click "+ New lead" in the toolbar</strong><p>A form pops up asking for customer name, store, email, phone, distributor rep, warehouse, program, and customer interest.</p></div></div>
+        <div class="hstep"><div class="hstep-num">2</div><div class="hstep-body"><strong>Fill in what you know</strong><p>Only the customer name is required. Fill in as much as you have — you can always edit it later.</p></div></div>
+        <div class="hstep"><div class="hstep-num">3</div><div class="hstep-body"><strong>Click "Create lead"</strong><p>The lead appears instantly in the sidebar as a New Lead, ready to be assigned.</p></div></div>
+      </div>
+      <div class="hcard">
+        <h3>📤 Importing from Jotform CSV</h3>
+        <div class="hstep"><div class="hstep-num">1</div><div class="hstep-body"><strong>Export from Jotform</strong><p>In Jotform Tables, click the ··· menu → Export as CSV.</p></div></div>
+        <div class="hstep"><div class="hstep-num">2</div><div class="hstep-body"><strong>Click "↑ Import CSV" in the toolbar</strong><p>Upload the CSV file. The portal will show you how many submissions it found.</p></div></div>
+        <div class="hstep"><div class="hstep-num">3</div><div class="hstep-body"><strong>Click "Import"</strong><p>New leads are added. Duplicates (matched by submission ID) are automatically skipped — no double-entries.</p></div></div>
+      </div>
+      <div class="hcard">
+        <h3>✏️ Editing a Lead</h3>
+        <p>Open any lead and scroll down to the <strong>Editable fields</strong> section. You can update the customer name, DBA, email, phone, legal name, address, warehouse, customer distributor number, and notes. Hit <strong>Save changes</strong> when done. Every save is logged in the activity log at the bottom of the lead.</p>
+      </div>
+      <div class="hcard">
+        <h3>🗑 Deleting a Lead</h3>
+        <p>Admin and Director roles see a red <strong>Delete</strong> button in the top-right of the lead panel. Deletion is permanent and cannot be undone — use it carefully. Marking a lead as <strong>Lost</strong> instead of deleting it is usually the better move, since it keeps the history.</p>
+      </div>
+    </div>
+
+    <!-- PIPELINE TAB -->
+    <div id="help-pipeline" class="help-section">
+      <div class="hcard">
+        <h3>🗺 The Two Routes</h3>
+        <p>Every lead follows one of two routes depending on how the customer wants to acquire their equipment:</p>
+        <ul>
+          <li><span class="badge-pill pill-navy">Sales Rep Route</span> — For customers buying outright or using a loaned setup. 13 steps from New Lead to Complete.</li>
+          <li><span class="badge-pill pill-purple">Leasing/Finance Route</span> — For customers leasing or financing through Smarter Equipment Finance. 8 steps from New Lead to Deal Funded.</li>
+        </ul>
+        <p style="margin-top:.6rem">You can switch a lead's route at any time using the Route toggle buttons at the top of the lead panel.</p>
+      </div>
+      <div class="hcard">
+        <h3>⚡ Advancing a Lead</h3>
+        <div class="hstep"><div class="hstep-num">1</div><div class="hstep-body"><strong>Use the "Move to step" dropdown</strong><p>Select any step from the dropdown and click Move → to jump directly to it. A note modal appears — add context about why you're moving the lead.</p></div></div>
+        <div class="hstep"><div class="hstep-num">2</div><div class="hstep-body"><strong>Or use the green Advance button</strong><p>The green button below the pipeline always advances to the very next step. For the Assign Rep step, it opens the rep assignment modal instead.</p></div></div>
+        <div class="hstep"><div class="hstep-num">3</div><div class="hstep-body"><strong>Add a note (optional but encouraged)</strong><p>Every step change prompts you for a note. These notes are saved in the activity log and visible to everyone working the lead.</p></div></div>
+      </div>
+      <div class="hcard">
+        <h3>💸 Leasing &amp; Financing — The Credit Application</h3>
+        <p>If a customer wants to lease or finance, the credit application is the <strong>very next step</strong> after assigning a rep. When you assign a rep to a leasing lead, the notification email pre-fills with the Smarter Equipment Finance link:</p>
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:.8rem 1rem;margin:.6rem 0;font-size:13px">
+          <strong>► Smarter Equipment Finance — Credit Application:</strong><br/>
+          <a href="https://signnow.com/s/YKsq02bU" target="_blank" style="color:#1d4ed8">https://signnow.com/s/YKsq02bU</a>
+        </div>
+        <p>The rep should copy this link and send it to the customer <strong>immediately</strong> after being assigned. The sooner it's submitted, the faster the deal moves.</p>
+      </div>
+      <div class="hcard">
+        <h3>🏆 Won &amp; ✗ Lost</h3>
+        <p><strong>Won:</strong> Certain steps (Customer Won, Complete, Deal Funded) automatically mark the lead as Won when you advance to them.<br/><br/><strong>Lost:</strong> Click the red "✗ Mark lost" button and provide a reason. The lead dims in the sidebar and is hidden by default — click "Show lost" in the toolbar to bring lost leads back into view. Lost leads remain in the database for reporting.</p>
+      </div>
+    </div>
+
+    <!-- REPS TAB -->
+    <div id="help-reps" class="help-section">
+      <div class="hcard">
+        <h3>👤 Assigning a Sales Rep</h3>
+        <p>Assigning a rep is a key step in the pipeline — it triggers an email notification to the rep with everything they need to get started.</p>
+        <div class="hstep"><div class="hstep-num">1</div><div class="hstep-body"><strong>Open the lead and click the green Advance button</strong><p>If the lead is on New Lead, the Advance button says "Advance → 👤 Assign Rep". Click it.</p></div></div>
+        <div class="hstep"><div class="hstep-num">2</div><div class="hstep-body"><strong>Select the rep from the dropdown</strong><p>All active sales reps are listed. Pick the right one for this territory and program.</p></div></div>
+        <div class="hstep"><div class="hstep-num">3</div><div class="hstep-body"><strong>Enter the rep's email address</strong><p>The notification email body pre-fills with all customer info, deal details, distributor info, notes, the portal link, and the Smarter Equipment Finance link for leasing deals.</p></div></div>
+        <div class="hstep"><div class="hstep-num">4</div><div class="hstep-body"><strong>Click "Copy email &amp; assign"</strong><p>The rep is saved to the lead, the pipeline advances to Assign Rep, and the email is copied to your clipboard. Paste it into your email client and send. Direct email sending is coming soon.</p></div></div>
+      </div>
+      <div class="hcard">
+        <h3>📊 Rep Report</h3>
+        <p>Click the <strong>📊 Rep Report</strong> button in the toolbar for a full breakdown of every lead by sales rep — total, won, lost, and active counts, plus a table of each rep's leads with current step and status. Use the dropdown at the top of the report to filter by a single rep. You can also edit leads directly from the report.</p>
+      </div>
+      <div class="hcard">
+        <h3>⚙️ Managing the Rep List</h3>
+        <p>Go to <strong>Settings</strong> (Admin password required) → <strong>Sales Reps</strong> section to add new reps, deactivate reps who are no longer active, reactivate them, or delete them. Deactivated reps are hidden from assignment dropdowns but their leads remain in the system.</p>
+      </div>
+    </div>
+
+    <!-- FILTERS TAB -->
+    <div id="help-filters" class="help-section">
+      <div class="hcard">
+        <h3>🔍 Search</h3>
+        <p>The search bar matches across: customer name, store/DBA, email, phone, assigned rep, distributor rep, warehouse, and program. Just start typing and the sidebar updates instantly. It's not picky about capitalization.</p>
+      </div>
+      <div class="hcard">
+        <h3>📌 Metric Card Quick Filters</h3>
+        <p>Click any of the five metric cards at the top to instantly filter the sidebar:</p>
+        <ul>
+          <li><strong>Total Leads</strong> — Show everything</li>
+          <li><strong>Needs Assigned</strong> — Leads with no rep yet (your priority queue)</li>
+          <li><strong>Assigned</strong> — Leads with a rep actively working them</li>
+          <li><strong>Won</strong> — Closed deals 🏆</li>
+          <li><strong>Lost</strong> — Lost deals (click again to deactivate the filter)</li>
+        </ul>
+      </div>
+      <div class="hcard">
+        <h3>🗂 Filter Panel</h3>
+        <p>The filter panel has two tiers:</p>
+        <ul>
+          <li><strong>Primary filters</strong> (always visible) — Sales Rep, Status, Route, Program</li>
+          <li><strong>More filters</strong> (click to expand) — Interest, Warehouse, Lead Type (tradeshow vs. non-tradeshow), Date range</li>
+        </ul>
+        <p style="margin-top:.5rem">Active filters show a count badge in the panel header. Click <strong>Clear all</strong> to reset everything at once.</p>
+      </div>
+      <div class="hcard">
+        <h3>📅 Sorting</h3>
+        <p>Use the Sort dropdown to order leads by: Submission date (newest or oldest first), Name A→Z, Sales rep A→Z, Distributor rep A→Z, Warehouse A→Z, or Pipeline step. The sort combines with any active filters.</p>
+      </div>
+    </div>
+
+    <!-- FAQ TAB -->
+    <div id="help-faq" class="help-section">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Why is a lead not showing up in the sidebar? <span class="faq-arrow">▾</span></button><div class="faq-a">Check your active filters — a filter might be hiding it. Click "Clear all" in the filter panel, or click the "Total Leads" metric card to show everything. Also check if "Show lost" is needed if the lead was marked lost.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">I assigned a rep but it's not showing on the card. <span class="faq-arrow">▾</span></button><div class="faq-a">Do a hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac). If the rep still doesn't show, the assignment may not have saved — try assigning again via the Advance → Assign Rep button and clicking "Copy email & assign".</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How do I send the financing link to a customer? <span class="faq-arrow">▾</span></button><div class="faq-a">When you assign a rep to a leasing/financing lead, the rep notification email already includes the Smarter Equipment Finance credit application link (https://signnow.com/s/YKsq02bU). The rep should forward that link to the customer right away.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Can I move a lead backwards in the pipeline? <span class="faq-arrow">▾</span></button><div class="faq-a">Yes. Use the "Move to step" dropdown — you can jump to any step, forward or backward. A note modal will prompt you to explain the reason, which is logged in the activity log.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What's the difference between Lost and Deleted? <span class="faq-arrow">▾</span></button><div class="faq-a">Lost keeps the lead in the database — it's just hidden from the default view and shows in reporting. Deleted removes it permanently with no recovery. We strongly recommend marking as Lost rather than deleting, so the history is preserved.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How do I sync new leads from Jotform automatically? <span class="faq-arrow">▾</span></button><div class="faq-a">Go to Settings and enter your Jotform API key (get it from ronnoco.jotform.com → Account → API). Once saved, click "Sync now" or use the ↻ Sync button in the toolbar. New form submissions will also arrive automatically via webhook once it's configured in Jotform.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How do I change the admin password? <span class="faq-arrow">▾</span></button><div class="faq-a">Go to Settings → scroll down to the password section. Enter your current password, your new password, and confirm it. The default password is pipeline2024.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Will reps get emails automatically in the future? <span class="faq-arrow">▾</span></button><div class="faq-a">Yes — direct email sending via Resend is planned. Once connected, clicking "Copy email & assign" will both copy the email AND send it directly to the rep's inbox without needing to paste it into an email client.</div></div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="contact-card" style="margin-top:1.5rem">
+      <div style="font-size:15px;font-weight:700;color:#1e40af;margin-bottom:.3rem">💬 Need more help?</div>
+      <p style="font-size:13px;color:#374151;line-height:1.7">This portal is actively being developed. If something isn't working as expected, or you'd like a feature added, reach out to your portal administrator. New features and improvements are added regularly — check back here for updates.</p>
+    </div>
+  </div>
+</div>
+
 <!-- LOCK PAGE -->
 <div id="pg-lock" class="page">
   <div class="lock-wrap">
@@ -650,8 +841,24 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
       <div style="font-size:12px;color:#9ca3af;margin-top:6px">Get a Full Access key from ronnoco.jotform.com → Account → API</div>
       <div style="display:flex;gap:8px;margin-top:.8rem"><button class="btn btn-blue btn-sm" onclick="testKey()">Test &amp; save key</button></div>
       <div id="key-status" style="font-size:13px;margin-top:.6rem"></div>
-      <div class="ssec">Sync</div>
-      <button class="btn btn-green btn-sm" id="s-sync-btn" onclick="settingsSync()" disabled>&#8635; Sync now</button>
+      <div class="ssec">Sync — Connected Forms</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:.5rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px">
+          <div>
+            <span style="font-size:13px;font-weight:600;color:#0f2347">&#128204; Java Select</span>
+            <span style="font-size:11px;color:#6b7280;margin-left:8px">Form ID: 260045399064863</span>
+          </div>
+          <button class="btn btn-green btn-sm" id="s-sync-btn" onclick="settingsSync('Java Select')" disabled>&#8635; Sync</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px">
+          <div>
+            <span style="font-size:13px;font-weight:600;color:#059669">&#128204; Sledd</span>
+            <span style="font-size:11px;color:#6b7280;margin-left:8px">Form ID: 260696473895880</span>
+          </div>
+          <button class="btn btn-green btn-sm" id="s-sync-btn-sledd" onclick="settingsSync('Sledd')" disabled>&#8635; Sync</button>
+        </div>
+        <button class="btn btn-navy btn-sm" id="s-sync-all-btn" onclick="settingsSync()" disabled>&#8635; Sync all forms</button>
+      </div>
       <div class="ssec">Webhook URL — add in Jotform Settings → Integrations</div>
       <div id="webhook-url" style="font-size:13px;background:#f3f4f6;padding:.6rem .8rem;border-radius:8px;word-break:break-all;color:#374151"></div>
       <div class="ssec">Status</div>
@@ -777,6 +984,11 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
       <option>Medium Coffee - Accounts over $500/Sales/Month</option>
       <option>Full Beverage Bar</option><option>Polar Wave Frozen</option><option>Other</option>
     </select>
+    <label class="flbl">Distributor Program</label>
+    <select class="finp" id="nl-source">
+      <option value="Java Select">Java Select</option>
+      <option value="Sledd">Sledd</option>
+    </select>
     <label class="flbl">Customer interest</label>
     <select class="finp" id="nl-interest">
       <option>Leasing Equipment</option><option>Buying Equipment from Ronnoco</option>
@@ -832,7 +1044,11 @@ textarea.finp{resize:vertical;min-height:110px;line-height:1.6}
 <script>
 const SB_URL='https://opnpyunbccifkdnbljsz.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
-const FORM_ID='260045399064863';
+const FORMS={
+  'Java Select':{id:'260045399064863',color:'#0f2347',badge:'b-navy'},
+  'Sledd':      {id:'260696473895880',color:'#059669',badge:'b-green'},
+};
+const FORM_ID='260045399064863'; // legacy — kept for webhook compat
 const DEFAULT_PW='pipeline2024';
 
 // Pipeline steps
@@ -972,6 +1188,22 @@ function notice(msg,type='info',el='notice'){
   d.className='notice n-'+(type==='ok'?'ok':type==='err'?'err':type==='warn'?'warn':'info');
   d.textContent=msg;d.style.display='block';
   setTimeout(()=>d.style.display='none',6000);
+}
+
+function goHelp(){showPage('help');}
+function showHelpTab(tab,btn){
+  document.querySelectorAll('.help-section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.htab').forEach(b=>b.classList.remove('on'));
+  const el=document.getElementById('help-'+tab);if(el)el.classList.add('on');
+  if(btn)btn.classList.add('on');
+}
+function toggleFaq(btn){
+  const ans=btn.nextElementSibling;
+  const arrow=btn.querySelector('.faq-arrow');
+  const isOpen=ans.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a=>a.classList.remove('open'));
+  document.querySelectorAll('.faq-arrow').forEach(a=>a.classList.remove('open'));
+  if(!isOpen){ans.classList.add('open');if(arrow)arrow.classList.add('open');}
 }
 
 // INIT
@@ -1130,6 +1362,8 @@ function renderList(){
     if(status)list=list.filter(l=>l.status===status);
   }
   if(q)list=list.filter(l=>[l.customer_full_name,l.dba_name,l.legal_business_name,l.contact_email,l.distributor_sales_rep,l.assigned_sales_rep,l.distributor_warehouse,l.which_program,l.phone].some(v=>(v||'').toLowerCase().includes(q)));
+  const source=document.getElementById('f-source')?.value||'';
+  if(source)list=list.filter(l=>(l.program_source||'Java Select')===source);
   if(route)list=list.filter(l=>l.route===route);
   if(prog)list=list.filter(l=>(l.which_program||'').includes(prog));
   if(interest)list=list.filter(l=>(l.customer_interest||'').includes(interest));
@@ -1151,7 +1385,7 @@ function renderList(){
     return new Date(b.submission_date||b.created_at)-new Date(a.submission_date||a.created_at);
   });
 
-  const active=[];if(q)active.push(`"${q}"`);if(route)active.push(route);if(status)active.push(status);if(prog)active.push(prog);if(rep)active.push('Rep: '+rep);if(wh)active.push(wh);if(ts)active.push(ts==='yes'?'Tradeshow':'Non-tradeshow');if(from)active.push('From: '+from);if(to)active.push('To: '+to);
+  const active=[];if(q)active.push(`"${q}"`);if(source)active.push('Program: '+source);if(route)active.push(route);if(status)active.push(status);if(prog)active.push(prog);if(rep)active.push('Rep: '+rep);if(wh)active.push(wh);if(ts)active.push(ts==='yes'?'Tradeshow':'Non-tradeshow');if(from)active.push('From: '+from);if(to)active.push('To: '+to);
   const fs=document.getElementById('f-summary');
   if(fs)fs.textContent=active.length?`Showing ${list.length} of ${leads.length} leads · Active filters: ${active.join(', ')}`:leads.length?`Showing all ${list.length} leads`:'';
   const fc=document.getElementById('f-active-count');
@@ -1171,9 +1405,12 @@ function renderList(){
   sb2.innerHTML=list.map(l=>`<div class="lcard${selId===l.id?' sel':''}${l.status==='lost'?' lost':''}" onclick="selectLead('${l.id}')">
     <div class="lc-name">${l.customer_full_name||l.dba_name||'Unknown'}</div>
     ${l.dba_name&&l.dba_name!==l.customer_full_name?`<div style="font-size:12px;color:#6b7280;margin-bottom:3px">${l.dba_name}</div>`:''}
-    <div style="display:flex;align-items:center;gap:5px;margin:5px 0 2px;padding:4px 7px;border-radius:5px;background:${l.assigned_sales_rep?'#eff6ff':'#fef2f2'};border:1px solid ${l.assigned_sales_rep?'#bfdbfe':'#fecaca'}">
-      <span style="font-size:11px">${l.assigned_sales_rep?'👤':'⚠️'}</span>
-      <span style="font-size:12px;font-weight:600;color:${l.assigned_sales_rep?'#1e40af':'#dc2626'}">${l.assigned_sales_rep||'Needs Rep Assigned'}</span>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:5px 0 2px">
+      <div style="display:flex;align-items:center;gap:5px;padding:3px 7px;border-radius:5px;background:${l.assigned_sales_rep?'#eff6ff':'#fef2f2'};border:1px solid ${l.assigned_sales_rep?'#bfdbfe':'#fecaca'};flex:1;min-width:0">
+        <span style="font-size:11px">${l.assigned_sales_rep?'👤':'⚠️'}</span>
+        <span style="font-size:12px;font-weight:600;color:${l.assigned_sales_rep?'#1e40af':'#dc2626'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.assigned_sales_rep||'Needs Rep Assigned'}</span>
+      </div>
+      <span style="font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;margin-left:5px;flex-shrink:0;background:${(l.program_source||'Java Select')==='Sledd'?'#d1fae5':'#dbeafe'};color:${(l.program_source||'Java Select')==='Sledd'?'#065f46':'#1e40af'}">${l.program_source||'Java Select'}</span>
     </div>
     <div class="lc-foot">${stepBadge(l)}<span style="font-size:11px;color:#6b7280;font-weight:500">&#128197; ${fmtD(l.submission_date||l.created_at)}</span></div>
     <div class="pbar"><div class="pfill ${l.route==='leasing'?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
@@ -1219,7 +1456,7 @@ function renderMain(id){
   add('Locations',lead.num_locations);add('Customer Dist #',lead.customer_distributor_number);
   add('Distributor Rep',lead.distributor_sales_rep);add('Rep Email',lead.distributor_rep_email);
   add('Distributor',lead.distributor);add('Warehouse',lead.distributor_warehouse);
-  add('Tradeshow',lead.tradeshow_lead);add('Program',lead.which_program);add('Interest',lead.customer_interest);
+  add('Distributor Program',lead.program_source);add('Tradeshow',lead.tradeshow_lead);add('Program',lead.which_program);add('Interest',lead.customer_interest);
   add('Beverage Needs',lead.beverage_needs);add('Assigned Sales Rep',lead.assigned_sales_rep);add('Notes',lead.notes);
   if(isLost)add('Lost Reason',lead.lost_reason);
   Object.entries(raw).forEach(([k,v])=>{if(v&&v.trim()&&!rows.find(r=>r[1]===v))rows.push([k.replace(/_/g,' '),v]);});
@@ -1643,6 +1880,7 @@ async function saveNewLead(){
     distributor_warehouse:document.getElementById('nl-wh').value.trim(),
     which_program:document.getElementById('nl-prog').value,
     customer_interest:interest,route,current_step:'new_lead',status:'active',
+    program_source:document.getElementById('nl-source')?.value||'Java Select',
   });
   if(error){notice('Error: '+error.message,'err');return;}
   hideModal('new-modal');notice('Lead created!','ok');
@@ -1710,6 +1948,7 @@ async function importCSV(){
       beverage_needs:col(row,'beverage needs','additional information'),
       notes:col(row,'additional notes','notes'),
       route,current_step:'new_lead',status:'active',
+      program_source:col(row,'distributor program','program source')||'Java Select',
       submission_date:col(row,'submission date','created at','date')||null,
       jotform_answers:{},raw_csv:raw,
     });
@@ -1858,7 +2097,7 @@ function addNewRep(){
 async function refreshSettings(){
   const key=localStorage.getItem('jf_key')||'';
   if(key)document.getElementById('s-key').value=key;
-  document.getElementById('s-sync-btn').disabled=!key;
+  ['s-sync-btn','s-sync-btn-sledd','s-sync-all-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!key;});
   document.getElementById('s-status').innerHTML=`
     <span class="sdot ${key?'sd-g':'sd-r'}"></span>API Key: <strong>${key?'Saved':'Not set'}</strong><br>
     <span class="sdot sd-g"></span>Form: <strong>Java Select Distributor Leads (${FORM_ID})</strong><br>
@@ -1924,54 +2163,60 @@ async function testKey(){
     refreshSettings();
   }catch(e){document.getElementById('key-status').innerHTML=`<span style="color:#dc2626">✗ ${e.message}</span>`;}
 }
-async function settingsSync(){
+async function settingsSync(formName=null){
   const key=localStorage.getItem('jf_key');
   if(!key){notice('Save API key first.','warn','s-notice');return;}
-  notice('Syncing…','info','s-notice');
-  const added=await syncFromAPI(key);
-  notice(`Sync complete — ${added} new leads.`,'ok','s-notice');
+  const label=formName?formName:'all forms';
+  notice(`Syncing ${label}…`,'info','s-notice');
+  const added=await syncFromAPI(key,formName);
+  notice(`Sync complete — ${added} new lead${added!==1?'s':''} added from ${label}.`,'ok','s-notice');
 }
 async function doSync(){
   const key=localStorage.getItem('jf_key');
   if(!key){notice('Configure API key in Settings.','warn');return;}
-  notice('Syncing…','info');
+  notice('Syncing all forms…','info');
   const added=await syncFromAPI(key);
-  notice(`Sync complete — ${added} added.`,'ok');
+  notice(`Sync complete — ${added} added from all forms.`,'ok');
 }
-async function syncFromAPI(key){
+async function syncFromAPI(key, formName=null){
   try{
-    let all=[],offset=0;
-    const filter=JSON.stringify({'formid:eq':FORM_ID});
-    while(true){
-      const params=new URLSearchParams({path:'user/submissions',apiKey:key,offset,limit:100,filter});
-      const r=await fetch(`/.netlify/functions/jotform?${params}`);
-      const d=await r.json();
-      if(d.responseCode!==200||!d.content?.length)break;
-      all=[...all,...d.content];
-      if(d.content.length<100)break;
-      offset+=100;
+    // Sync all forms or a specific one
+    const formsToSync=formName?[[formName,FORMS[formName]]]:Object.entries(FORMS);
+    let totalAdded=0;
+    for(const [name,formCfg] of formsToSync){
+      let offset=0;
+      while(true){
+        const filter=JSON.stringify({'formid:eq':formCfg.id});
+        const params=new URLSearchParams({path:'user/submissions',apiKey:key,offset,limit:100,filter});
+        const r=await fetch(`/.netlify/functions/jotform?${params}`);
+        const d=await r.json();
+        if(d.responseCode!==200||!d.content?.length)break;
+        for(const sub of d.content){
+          const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',sub.id).maybeSingle();
+          if(ex)continue;
+          const ans=sub.answers||{};
+          const g=qid=>{const a=ans[qid];if(!a||!a.answer)return'';if(typeof a.answer==='string')return a.answer.trim();if(typeof a.answer==='object'){if(a.answer.first)return(a.answer.first+' '+a.answer.last).trim();return Object.values(a.answer).filter(Boolean).join(', ');}return '';};
+          const interest=g('36');
+          const route=['Leasing Equipment','Financing Equipment'].includes(interest)?'leasing':'sales';
+          const fullName=g('19');const np=fullName.split(' ');
+          await sb.from('leads').insert({
+            jotform_submission_id:sub.id,customer_full_name:fullName,customer_first_name:np[0]||'',customer_last_name:np.slice(1).join(' ')||'',
+            contact_email:g('6'),contact_number:g('7'),phone:g('13'),legal_business_name:g('8'),dba_name:g('16'),
+            store_address:[ans['5']?.answer?.addr_line1,ans['5']?.answer?.city,ans['5']?.answer?.state,ans['5']?.answer?.zip].filter(Boolean).join(', '),
+            distributor_sales_rep:g('3'),distributor_rep_email:g('9'),distributor:g('28'),distributor_warehouse:g('37')||g('29'),
+            tradeshow_lead:g('38'),num_locations:g('32'),customer_distributor_number:g('34'),which_program:g('31'),
+            customer_interest:interest,beverage_needs:g('30'),notes:g('25'),
+            route,current_step:'new_lead',status:'active',
+            program_source:name,
+            jotform_answers:ans,raw_csv:{},
+          });
+          totalAdded++;
+        }
+        if(d.content.length<100)break;
+        offset+=100;
+      }
     }
-    let added=0;
-    for(const sub of all){
-      const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',sub.id).maybeSingle();
-      if(ex)continue;
-      const ans=sub.answers||{};
-      const g=qid=>{const a=ans[qid];if(!a||!a.answer)return'';if(typeof a.answer==='string')return a.answer.trim();if(typeof a.answer==='object'){if(a.answer.first)return(a.answer.first+' '+a.answer.last).trim();return Object.values(a.answer).filter(Boolean).join(', ');}return '';};
-      const interest=g('36');
-      const route=['Leasing Equipment','Financing Equipment'].includes(interest)?'leasing':'sales';
-      const fullName=g('19');const np=fullName.split(' ');
-      await sb.from('leads').insert({
-        jotform_submission_id:sub.id,customer_full_name:fullName,customer_first_name:np[0]||'',customer_last_name:np.slice(1).join(' ')||'',
-        contact_email:g('6'),contact_number:g('7'),phone:g('13'),legal_business_name:g('8'),dba_name:g('16'),
-        store_address:[ans['5']?.answer?.addr_line1,ans['5']?.answer?.city,ans['5']?.answer?.state,ans['5']?.answer?.zip].filter(Boolean).join(', '),
-        distributor_sales_rep:g('3'),distributor_rep_email:g('9'),distributor:g('28'),distributor_warehouse:g('37')||g('29'),
-        tradeshow_lead:g('38'),num_locations:g('32'),customer_distributor_number:g('34'),which_program:g('31'),
-        customer_interest:interest,beverage_needs:g('30'),notes:g('25'),
-        route,current_step:'new_lead',status:'active',jotform_answers:ans,raw_csv:{},
-      });
-      added++;
-    }
-    return added;
+    return totalAdded;
   }catch(e){console.error(e);return 0;}
 }
 function changePw(){
