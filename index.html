@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Distributor Deal Portal — Ronnoco</title>
+<title>Distributor Deal Portal - Ronnoco</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f0f2f5;color:#111827}
 .hdr{background:#0f2347;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.4rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);gap:8px;flex-wrap:wrap}
 .hdr-left{display:flex;align-items:center;gap:10px}
-.hdr-title{font-size:14px;font-weight:700;color:#fff;line-height:1.2}
+.hdr-title{font-size:13px;font-weight:500;color:rgba(255,255,255,.75);line-height:1.2;white-space:nowrap}
 .hdr-sub{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em}
 .vbar{width:1px;height:26px;background:rgba(255,255,255,.2)}
 .roles{display:flex;gap:2px;background:rgba(255,255,255,.1);padding:3px;border-radius:7px}
@@ -133,12 +133,16 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 </head>
 <body>
 
-<!-- MAIN PAGE -->
 <div id="pg-main" class="page on">
 <div class="hdr">
-  <div class="hdr-left">
+    <div class="hdr-left">
+    <svg width="130" height="38" viewBox="0 0 130 38" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;display:block">
+      
+      <text x="65" y="17" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="14.5" fill="white" text-anchor="middle" letter-spacing="2.5">RONNOCO</text>
+      <text x="65" y="29.5" font-family="Arial,Helvetica,sans-serif" font-weight="400" font-size="6.8" fill="white" text-anchor="middle" letter-spacing="2">BEVERAGE SOLUTIONS</text>
+    </svg>
     <div class="vbar"></div>
-    <div><div class="hdr-title">Distributor Deal Portal</div><div class="hdr-sub">Ronnoco Beverage Solutions</div></div>
+    <div class="hdr-title">Distributor Deal Portal</div>
   </div>
   <div class="roles" id="roles">
     <button class="rbtn on" onclick="setRole('admin',this)">Admin</button>
@@ -154,7 +158,7 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 </div>
 <div class="tbar">
   <button class="btn b-navy btn-sm" onclick="openNewLead()">+ New lead</button>
-  <button class="btn btn-sm" onclick="open_modal('csv-modal')">&#8593; CSV Import</button>
+  <button class="btn btn-sm" onclick="open_modal('csv-modal')">&uarr; CSV Import</button>
   <button class="btn btn-sm" id="sync-btn" style="display:none" onclick="doSync()">&#8635; Jotform Sync</button>
   <button class="btn btn-sm" id="show-lost-btn" onclick="toggleLost()">Show lost</button>
   <div style="flex:1"></div>
@@ -179,10 +183,10 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
     </div>
     <div id="fp-body">
       <div style="display:grid;grid-template-columns:1fr 190px;gap:7px;margin-bottom:7px">
-        <div class="fg"><label>Search</label><input id="f-q" placeholder="Name, store, email, rep, phone..." oninput="renderList()"/></div>
+        <div class="fg"><label>Search</label><input id="f-q" placeholder="Name, store, email, rep, phone..." oninput="renderList()" autocomplete="off" name="portal-search-x7k" autocorrect="off" spellcheck="false"/></div>
         <div class="fg"><label>Sort</label><select id="f-sort" onchange="renderList()">
           <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
-          <option value="name">Name A&#8594;Z</option><option value="rep">Rep A&#8594;Z</option>
+          <option value="name">Name A-Z</option><option value="rep">Rep A-Z</option>
         </select></div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px">
@@ -212,23 +216,21 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 </div>
 </div>
 
-<!-- LOCK PAGE -->
 <div id="pg-lock" class="page">
 <div class="lock-wrap"><div class="lock-card">
   <div style="font-size:17px;font-weight:700;margin-bottom:.25rem;color:#111827">&#9881; Settings</div>
   <div style="font-size:13px;color:#6b7280;margin-bottom:1rem">Enter admin password to continue</div>
   <input class="finp" type="password" id="lock-pw" placeholder="Password" style="text-align:center;margin-bottom:.6rem" onkeydown="if(event.key==='Enter')unlock()"/>
-  <button class="btn b-navy" style="width:100%;margin-bottom:.4rem" onclick="unlock()">Unlock &#8594;</button>
+  <button class="btn b-navy" style="width:100%;margin-bottom:.4rem" onclick="unlock()">Unlock &rarr;</button>
   <div id="lock-err" style="font-size:12px;color:#dc2626;display:none;margin-top:.3rem">Incorrect password</div>
-  <button class="btn" style="width:100%;margin-top:.4rem" onclick="showPage('main')">&#8592; Back</button>
+  <button class="btn" style="width:100%;margin-top:.4rem" onclick="showPage('main')">&larr; Back</button>
 </div></div>
 </div>
 
-<!-- SETTINGS PAGE -->
 <div id="pg-settings" class="page">
 <div class="hdr">
   <div class="hdr-left"><div class="vbar"></div><span style="font-size:14px;font-weight:700;color:#fff">Settings</span></div>
-  <button class="hbtn" onclick="showPage('main')">&#8592; Dashboard</button>
+  <button class="hbtn" onclick="showPage('main')">&larr; Dashboard</button>
 </div>
 <div class="wrap" style="max-width:580px">
   <div id="s-notice" class="notice"></div>
@@ -237,41 +239,34 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
     <div class="ssub">Paste your Jotform API key to enable sync.</div>
     <div class="ssec">API Key</div>
     <input class="finp" type="password" id="s-apikey" placeholder="Jotform API key..."/>
-    <div style="font-size:11px;color:#9ca3af;margin-top:4px">ronnoco.jotform.com &#8594; Account &#8594; API</div>
+    <div style="font-size:11px;color:#9ca3af;margin-top:4px">ronnoco.jotform.com &rarr; Account &rarr; API</div>
     <div style="display:flex;gap:6px;margin-top:.6rem">
       <button class="btn b-blue btn-sm" onclick="testApiKey()">Test &amp; Save</button>
     </div>
     <div id="key-msg" style="font-size:13px;margin-top:.4rem"></div>
     <div class="ssec">Sync Forms</div>
-    <div style="display:flex;flex-direction:column;gap:6px">
+    <div style="display:flex;flex-direction:column;gap:6px" id="sync-form-list">
       <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px">
-        <div><span style="font-size:13px;font-weight:600;color:#0f2347">Java Select</span><br><span style="font-size:11px;color:#9ca3af">ID: 260045399064863</span></div>
+        <span style="font-size:13px;font-weight:600;color:#0f2347">Java Select (260045399064863)</span>
         <button class="btn b-green btn-sm" id="sync-js" onclick="settingsSync('Java Select')" disabled>&#8635; Sync</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px">
-        <div><span style="font-size:13px;font-weight:600;color:#059669">Sledd</span><br><span style="font-size:11px;color:#9ca3af">ID: 260696473895880</span></div>
+        <span style="font-size:13px;font-weight:600;color:#059669">Sledd (260696473895880)</span>
         <button class="btn b-green btn-sm" id="sync-sl" onclick="settingsSync('Sledd')" disabled>&#8635; Sync</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px">
-        <div>
-          <span style="font-size:13px;font-weight:600;color:#7c3aed">CoreMark</span><br>
-          <span style="font-size:11px;color:#9ca3af">ID: </span><input id="cm-id" style="font-size:11px;border:1px solid #d1d5db;border-radius:4px;padding:1px 4px;width:140px" placeholder="Enter Jotform form ID" onchange="updateFormId('CoreMark',this.value)"/>
-        </div>
+        <span style="font-size:13px;font-weight:600;color:#7c3aed">CoreMark (form ID TBD)</span>
         <button class="btn b-green btn-sm" id="sync-cm" onclick="settingsSync('CoreMark')" disabled>&#8635; Sync</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px">
-        <div>
-          <span style="font-size:13px;font-weight:600;color:#d97706">Farner-Bocken</span><br>
-          <span style="font-size:11px;color:#9ca3af">ID: </span><input id="fb-id" style="font-size:11px;border:1px solid #d1d5db;border-radius:4px;padding:1px 4px;width:140px" placeholder="Enter Jotform form ID" onchange="updateFormId('Farner-Bocken',this.value)"/>
-        </div>
+        <span style="font-size:13px;font-weight:600;color:#d97706">Farner-Bocken (form ID TBD)</span>
         <button class="btn b-green btn-sm" id="sync-fb" onclick="settingsSync('Farner-Bocken')" disabled>&#8635; Sync</button>
       </div>
       <button class="btn b-navy btn-sm" id="sync-all" onclick="settingsSync(null)" disabled>&#8635; Sync All Forms</button>
     </div>
     <div class="ssec">Webhook URL</div>
-    <div id="wh-url" style="font-size:12px;background:#f3f4f6;padding:.4rem .6rem;border-radius:6px;word-break:break-all;color:#374151;font-family:monospace;user-select:all"></div>
-    <button class="btn btn-sm" style="margin-top:.4rem" onclick="copyWebhook()">&#128203; Copy URL</button>
-    <div style="font-size:11px;color:#6b7280;margin-top:6px">Add this URL in Jotform &#8594; Settings &#8594; Integrations &#8594; Webhooks for each form.</div>
+    <div id="wh-url" style="font-size:12px;background:#f3f4f6;padding:.4rem .6rem;border-radius:6px;word-break:break-all;color:#374151;font-family:monospace"></div>
+    <div style="font-size:11px;color:#6b7280;margin-top:4px">Copy this URL into Jotform &rarr; Settings &rarr; Integrations &rarr; Webhook for each form.</div>
     <div class="ssec">Connection Status</div>
     <div id="s-status" style="font-size:13px;line-height:2"></div>
   </div>
@@ -295,45 +290,44 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 </div>
 </div>
 
-<!-- HELP PAGE -->
 <div id="pg-help" class="page">
 <div class="hdr">
   <div class="hdr-left"><div class="vbar"></div><span style="font-size:14px;font-weight:700;color:#fff">Help</span></div>
-  <button class="hbtn" onclick="showPage('main')">&#8592; Dashboard</button>
+  <button class="hbtn" onclick="showPage('main')">&larr; Dashboard</button>
 </div>
 <div style="max-width:800px;margin:0 auto;padding:1.3rem">
   <div style="background:#0f2347;border-radius:9px;padding:1.5rem;margin-bottom:1rem;color:#fff;text-align:center">
     <h1 style="font-size:21px;margin-bottom:.2rem">Ronnoco Distributor Deal Portal</h1>
-    <p style="font-size:12px;opacity:.6">Java Select &bull; Sledd &bull; CoreMark &bull; Farner-Bocken &bull; v3.2</p>
-  </div>
-  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.2rem;margin-bottom:.8rem">
-    <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.6rem">Distributor Programs</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
-      <div style="padding:8px 10px;background:#dbeafe;border-radius:7px"><strong style="color:#1e40af">Java Select</strong><br><span style="color:#374151;font-size:11px">ID: 260045399064863</span></div>
-      <div style="padding:8px 10px;background:#d1fae5;border-radius:7px"><strong style="color:#065f46">Sledd</strong><br><span style="color:#374151;font-size:11px">ID: 260696473895880</span></div>
-      <div style="padding:8px 10px;background:#ede9fe;border-radius:7px"><strong style="color:#6d28d9">CoreMark</strong><br><span style="color:#374151;font-size:11px">Add form ID in Settings</span></div>
-      <div style="padding:8px 10px;background:#fef3c7;border-radius:7px"><strong style="color:#92400e">Farner-Bocken</strong><br><span style="color:#374151;font-size:11px">Add form ID in Settings</span></div>
-    </div>
+    <p style="font-size:12px;opacity:.6">Java Select, Sledd, CoreMark &amp; Farner-Bocken &middot; v3.2</p>
   </div>
   <div style="background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.2rem;margin-bottom:.8rem">
     <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.5rem">Quick Start</h3>
     <ul style="font-size:14px;color:#374151;line-height:1.9;padding-left:1.2rem">
+      <li>Dashboard opens straight to all leads &mdash; no login required</li>
+      <li>Use the role buttons in the header to switch your view</li>
       <li>Click any lead in the sidebar to open it</li>
-      <li>Use <strong>Move to step</strong> to advance through the pipeline</li>
-      <li>Use <strong>CSV Import</strong> to bulk-load leads from Jotform exports</li>
-      <li>Add Jotform form IDs in Settings to enable live sync</li>
-      <li>Copy the Webhook URL from Settings and paste it into each Jotform form</li>
+      <li>Use <strong>Move to step</strong> to advance a lead through the pipeline</li>
+      <li>Click <strong>Assign Rep</strong> to assign a rep and auto-draft a notification email</li>
       <li>Settings password: <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px">pipeline2024</code></li>
     </ul>
   </div>
   <div style="background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.2rem;margin-bottom:.8rem">
+    <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.5rem">Distributor Programs</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;color:#374151">
+      <div style="padding:6px 9px;background:#dbeafe;border-radius:6px"><strong style="color:#1e40af">Java Select</strong> &mdash; Primary program</div>
+      <div style="padding:6px 9px;background:#d1fae5;border-radius:6px"><strong style="color:#065f46">Sledd</strong> &mdash; Distributor partner</div>
+      <div style="padding:6px 9px;background:#ede9fe;border-radius:6px"><strong style="color:#6d28d9">CoreMark</strong> &mdash; Distributor partner</div>
+      <div style="padding:6px 9px;background:#fef3c7;border-radius:6px"><strong style="color:#92400e">Farner-Bocken</strong> &mdash; Distributor partner</div>
+    </div>
+  </div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.2rem;margin-bottom:.8rem">
     <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.5rem">Pipeline Routes</h3>
-    <p style="font-size:13px;color:#374151;margin-bottom:.5rem"><strong>Sales Rep (13 steps):</strong> New Lead &#8594; Assign Rep &#8594; Lead Received &#8594; Contacted &#8594; Customer Won &#8594; Deal Sheet &#8594; Waiting Finance &#8594; Deal Funded &#8594; Customer Setup &#8594; Equip Ordered &#8594; Dist Notified &#8594; Install Scheduled &#8594; Complete</p>
-    <p style="font-size:13px;color:#374151"><strong>Leasing/Finance (8 steps):</strong> New Lead &#8594; Assign Rep &#8594; Credit App Sent &#8594; Credit Received &#8594; Approved &#8594; Paperwork Sent &#8594; Paperwork Signed &#8594; Deal Funded</p>
+    <p style="font-size:13px;color:#374151;margin-bottom:.5rem"><strong>Sales Rep (13 steps):</strong> New Lead &rarr; Assign Rep &rarr; Lead Received &rarr; Customer Contacted &rarr; Customer Won &rarr; Deal Sheet &rarr; Waiting Finance &rarr; Deal Funded &rarr; Customer Setup &rarr; Equip Ordered &rarr; Dist Notified &rarr; Install Scheduled &rarr; Complete</p>
+    <p style="font-size:13px;color:#374151"><strong>Leasing/Finance (8 steps):</strong> New Lead &rarr; Assign Rep &rarr; Credit App Sent &rarr; Credit Received &rarr; Approved &rarr; Paperwork Sent &rarr; Paperwork Signed &rarr; Deal Funded</p>
   </div>
   <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:1.2rem">
-    <h3 style="font-size:15px;font-weight:700;color:#1e40af;margin-bottom:.4rem">Credit Application</h3>
-    <p style="font-size:13px;color:#374151"><a href="https://signnow.com/s/YKsq02bU" target="_blank" style="color:#1d4ed8">https://signnow.com/s/YKsq02bU</a></p>
+    <h3 style="font-size:15px;font-weight:700;color:#1e40af;margin-bottom:.4rem">Smarter Equipment Finance</h3>
+    <p style="font-size:13px;color:#374151">Credit application: <a href="https://signnow.com/s/YKsq02bU" target="_blank" style="color:#1d4ed8">https://signnow.com/s/YKsq02bU</a></p>
   </div>
 </div>
 </div>
@@ -349,13 +343,13 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
   <select class="finp" id="ra-rep" onchange="buildAssignEmail()"><option value="">&#8212; Choose a rep &#8212;</option></select>
   <label class="flbl">Rep email address</label>
   <input class="finp" id="ra-remail" type="email" placeholder="rep@example.com"/>
-  <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:.55rem .8rem;margin:.6rem 0;font-size:12px;color:#92400e">&#9993; Email will be copied to clipboard &#8212; paste and send from your email client.</div>
+  <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:.55rem .8rem;margin:.6rem 0;font-size:12px;color:#92400e">&#9993; Email will be copied to clipboard &mdash; paste and send from your email client.</div>
   <label class="flbl">Subject</label><input class="finp" id="ra-subj"/>
   <label class="flbl">Body</label>
   <textarea class="finp" id="ra-body" rows="18" style="font-family:monospace;font-size:12px"></textarea>
   <div class="mfoot">
     <button class="btn" onclick="close_modal('rep-modal')">Cancel</button>
-    <button class="btn b-navy" onclick="confirmAssign()">Copy email &amp; assign &#8594;</button>
+    <button class="btn b-navy" onclick="confirmAssign()">Copy email &amp; assign &rarr;</button>
   </div>
 </div>
 </div>
@@ -370,7 +364,7 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
   <textarea class="finp" id="note-text" rows="4" placeholder="Any context for this step..."></textarea>
   <div class="mfoot">
     <button class="btn" onclick="cancelNote()">Cancel</button>
-    <button class="btn b-navy" onclick="confirmNote()">Save &amp; advance &#8594;</button>
+    <button class="btn b-navy" onclick="confirmNote()">Save &amp; advance &rarr;</button>
   </div>
 </div>
 </div>
@@ -384,7 +378,7 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
   <div class="mfoot">
     <button class="btn" onclick="close_modal('email-modal')">Cancel</button>
     <button class="btn b-blue" onclick="copyEmailOnly()">&#128203; Copy email</button>
-    <button class="btn b-navy" id="em-adv" style="display:none" onclick="copyEmailAndAdv()">Copy &amp; advance &#8594;</button>
+    <button class="btn b-navy" id="em-adv" style="display:none" onclick="copyEmailAndAdv()">Copy &amp; advance &rarr;</button>
   </div>
 </div>
 </div>
@@ -442,8 +436,8 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 
 <div class="overlay" id="csv-modal">
 <div class="modal">
-  <div class="mhdr"><div class="mtitle">&#8593; Import CSV</div><button class="mclose" onclick="close_modal('csv-modal')">&times;</button></div>
-  <div style="font-size:12px;color:#6b7280;margin-bottom:.7rem">Export from Jotform Tables &#8594; &#8230; &#8594; Export as CSV, then import here.</div>
+  <div class="mhdr"><div class="mtitle">Import CSV</div><button class="mclose" onclick="close_modal('csv-modal')">&times;</button></div>
+  <div style="font-size:12px;color:#6b7280;margin-bottom:.7rem">Export from Jotform Tables &rarr; &middot;&middot;&middot; &rarr; Export as CSV, then import here.</div>
   <label class="flbl">Program</label>
   <select class="finp" id="csv-src" style="margin-bottom:.6rem">
     <option value="Java Select">Java Select</option>
@@ -473,208 +467,243 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 </div>
 </div>
 
+<div class="overlay" id="edit-modal">
+<div class="modal" style="max-width:580px">
+  <div class="mhdr"><div class="mtitle" id="edit-title">Edit Lead</div><button class="mclose" onclick="close_modal('edit-modal')">&times;</button></div>
+  <div id="edit-body"></div>
+  <div class="mfoot">
+    <button class="btn" onclick="close_modal('edit-modal')">Cancel</button>
+    <button class="btn b-navy" onclick="saveEdit()">Save changes</button>
+  </div>
+</div>
+</div>
+
 <script>
 const SB_URL='https://opnpyunbccifkdnbljsz.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
 const DEF_PW='pipeline2024';
 
-// Jotform IDs — CoreMark and Farner-Bocken can be entered in Settings UI
-// or updated here directly once the forms are created
+// Jotform form IDs -- CoreMark and Farner-Bocken IDs to be filled in when forms are created
 const JOTFORM_IDS={
   'Java Select':'260045399064863',
   'Sledd':'260696473895880',
-  'CoreMark': localStorage.getItem('jf_id_CoreMark')||'',
-  'Farner-Bocken': localStorage.getItem('jf_id_Farner-Bocken')||''
+  'CoreMark':'',        // TODO: add Jotform form ID when created
+  'Farner-Bocken':''    // TODO: add Jotform form ID when created
 };
 
-function updateFormId(prog,val){
-  JOTFORM_IDS[prog]=val.trim();
-  localStorage.setItem('jf_id_'+prog,val.trim());
-}
-
+// Source color map for sidebar badges
 const SRC_COLORS={
   'Java Select':{bg:'#dbeafe',txt:'#1e40af'},
   'Sledd':{bg:'#d1fae5',txt:'#065f46'},
   'CoreMark':{bg:'#ede9fe',txt:'#6d28d9'},
   'Farner-Bocken':{bg:'#fef3c7',txt:'#92400e'}
 };
-function srcColor(s){return SRC_COLORS[s]||{bg:'#f3f4f6',txt:'#374151'};}
 
-// ── FIX #1: All leasing interest values from all distributor forms ──
+// FIX #1: Complete leasing interest list covering all distributor form variants
 const LEASING_INTERESTS=[
-  'Leasing Equipment','Financing Equipment',
-  'Loaned Equipment Program','Loaned Equipment Request','Loaned Request'
+  'Leasing Equipment',
+  'Financing Equipment',
+  'Loaned Equipment Program',
+  'Loaned Equipment Request',
+  'Loaned Request'
 ];
 
-const COMMON=[{id:'new_lead',label:'New Lead',icon:'N'},{id:'assign_rep',label:'Assign Rep',icon:'A'}];
+const COMMON=[
+  {id:'new_lead',label:'New Lead',icon:'N'},
+  {id:'assign_rep',label:'Assign Rep',icon:'A'},
+];
 const SALES_STEPS=[
-  {id:'lead_received',label:'Lead Received',icon:'R',subj:"You've Been Assigned a New Lead",body:l=>emailBody_leadReceived(l)},
-  {id:'customer_contacted',label:'Contacted',icon:'C',subj:'Following Up on Your Interest',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nThank you for your interest in the Ronnoco program!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'customer_won',label:'Customer Won',icon:'W',subj:'Welcome to the Program!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe are excited to welcome you!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'deal_sheet',label:'Deal Sheet',icon:'D',subj:'Deal Sheet Submitted',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal sheet has been submitted.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'waiting_finance',label:'Waiting Finance',icon:'F',subj:'Under Finance Review',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal is under finance review.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'deal_funded_s',label:'Deal Funded',icon:'$',subj:'Deal Funded!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal has been funded!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'customer_setup',label:'Customer Setup',icon:'S',subj:'Account Setup in Progress',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour account is being set up.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'equip_ordered',label:'Equip Ordered',icon:'O',subj:'Equipment Ordered',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment has been ordered.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'dist_notified',label:'Dist Notified',icon:'N',subj:'Distributor Notified',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour distributor has been notified.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'install_scheduled',label:'Install Sched.',icon:'I',subj:'Installation Scheduled',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour installation has been scheduled!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'complete_s',label:'Complete',icon:'X',subj:'Setup Complete!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nSetup is complete - welcome!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'lead_received',label:'Lead Received',icon:'R',subj:"You've Been Assigned a New Lead",body:function(l){return emailBody_leadReceived(l);}},
+  {id:'customer_contacted',label:'Contacted',icon:'C',subj:'Following Up on Your Interest',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nThank you for your interest in the Ronnoco program!\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'customer_won',label:'Customer Won',icon:'W',subj:'Welcome to the Program!',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nWe are excited to welcome you!\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'deal_sheet',label:'Deal Sheet',icon:'D',subj:'Deal Sheet Submitted',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour deal sheet has been submitted for processing.\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'waiting_finance',label:'Waiting Finance',icon:'F',subj:'Under Finance Review',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour deal is currently under finance review.\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'deal_funded_s',label:'Deal Funded',icon:'$',subj:'Deal Funded!',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nGreat news - your deal has been funded!\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'customer_setup',label:'Customer Setup',icon:'S',subj:'Account Setup in Progress',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour account is being set up.\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'equip_ordered',label:'Equip Ordered',icon:'O',subj:'Equipment Ordered',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour equipment has been ordered and will ship soon.\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'dist_notified',label:'Dist Notified',icon:'N',subj:'Distributor Notified',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour distributor has been notified.\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'install_scheduled',label:'Install Sched.',icon:'I',subj:'Installation Scheduled',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour equipment installation has been scheduled!\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
+  {id:'complete_s',label:'Complete',icon:'X',subj:'Setup Complete!',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nSetup is complete - welcome to the family!\n\nBest regards,\n'+(l.assigned_sales_rep||'Ronnoco Team');}},
 ];
 const LEASE_STEPS=[
-  {id:'credit_app_sent',label:'Credit App Sent',icon:'C',subj:'Credit Application Link',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nPlease complete your credit application:\nhttps://signnow.com/s/YKsq02bU\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'credit_received',label:'Credit Received',icon:'R',subj:'Application Received',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe received your application and it is under review.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'credit_approved',label:'Approved',icon:'Y',subj:'Credit Approved!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour credit application has been approved!\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'paperwork_sent',label:'Paperwork Sent',icon:'P',subj:'Lease Documents Ready',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour lease documents have been sent.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'paperwork_signed',label:'Docs Signed',icon:'S',subj:'Documents Received',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe received your signed documents.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'deal_funded_l',label:'Deal Funded',icon:'$',subj:'Lease Funded!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour lease is fully funded!\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
+  {id:'credit_app_sent',label:'Credit App Sent',icon:'C',subj:'Credit Application Link',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nPlease complete your credit application:\nhttps://signnow.com/s/YKsq02bU\n\nBest regards,\n'+(l.assigned_sales_rep||'Leasing Team');}},
+  {id:'credit_received',label:'Credit Received',icon:'R',subj:'Application Received',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nWe received your credit application and it is under review.\n\nBest regards,\n'+(l.assigned_sales_rep||'Leasing Team');}},
+  {id:'credit_approved',label:'Approved',icon:'Y',subj:'Credit Approved!',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour credit application has been approved!\n\nBest regards,\n'+(l.assigned_sales_rep||'Leasing Team');}},
+  {id:'paperwork_sent',label:'Paperwork Sent',icon:'P',subj:'Lease Documents Ready',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour lease documents have been sent for signature.\n\nBest regards,\n'+(l.assigned_sales_rep||'Leasing Team');}},
+  {id:'paperwork_signed',label:'Docs Signed',icon:'S',subj:'Documents Received',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nWe received your signed documents and are processing funding.\n\nBest regards,\n'+(l.assigned_sales_rep||'Leasing Team');}},
+  {id:'deal_funded_l',label:'Deal Funded',icon:'$',subj:'Lease Funded!',body:function(l){return'Dear '+(l.customer_full_name||l.dba_name)+',\n\nYour lease is fully funded - you are all set!\n\nBest regards,\n'+(l.assigned_sales_rep||'Leasing Team');}},
 ];
 const ALL_STEPS=[...COMMON,...SALES_STEPS,...LEASE_STEPS];
-const getSteps=route=>route==='leasing'?[...COMMON,...LEASE_STEPS]:[...COMMON,...SALES_STEPS];
-const getStep=id=>ALL_STEPS.find(s=>s.id===id);
+function getSteps(route){return route==='leasing'?[...COMMON,...LEASE_STEPS]:[...COMMON,...SALES_STEPS];}
+function getStep(id){return ALL_STEPS.find(function(s){return s.id===id;});}
 
-// ── FIX #3: HTML escape - prevents apostrophes/ampersands breaking innerHTML ──
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+// FIX #3: HTML escape helper - prevents apostrophes, ampersands, quotes in customer
+// names like "Pawpaw & Mimi's" from breaking innerHTML injection
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 function emailBody_leadReceived(l){
-  return `Dear ${l.assigned_sales_rep||'[Rep Name]'},\n\nYou have been assigned a new lead. Please review and make contact as soon as possible.\n\n=== CUSTOMER ===\nName:         ${l.customer_full_name||'--'}\nDBA / Store:  ${l.dba_name||'--'}\nLegal Name:   ${l.legal_business_name||'--'}\nEmail:        ${l.contact_email||'--'}\nPhone:        ${l.phone||l.contact_number||'--'}\nAddress:      ${l.store_address||'--'}\nLocations:    ${l.num_locations||'--'}\nCust Dist #:  ${l.customer_distributor_number||'--'}\n\n=== PROGRAM ===\nDist Program: ${l.program_source||'--'}\nProgram:      ${l.which_program||'--'}\nInterest:     ${l.customer_interest||'--'}\nRoute:        ${l.route==='leasing'?'Leasing/Finance':'Sales Rep'}\n\n=== DISTRIBUTOR ===\nDist Rep:     ${l.distributor_sales_rep||'--'}\nRep Email:    ${l.distributor_rep_email||'--'}\nWarehouse:    ${l.distributor_warehouse||'--'}\n\n=== NOTES ===\n${l.beverage_needs||l.notes||'None'}${l.route==='leasing'?'\n\n=== ACTION REQUIRED ===\nSend credit application NOW:\nhttps://signnow.com/s/YKsq02bU\n':''}\nRonnoco Beverage Solutions`;
+  return 'Dear '+(l.assigned_sales_rep||'[Rep Name]')+',\n\nYou have been assigned a new lead. Please review and make contact as soon as possible.\n\n=== CUSTOMER ===\nName:         '+(l.customer_full_name||'--')+'\nDBA / Store:  '+(l.dba_name||'--')+'\nLegal Name:   '+(l.legal_business_name||'--')+'\nEmail:        '+(l.contact_email||'--')+'\nPhone:        '+(l.phone||l.contact_number||'--')+'\nAddress:      '+(l.store_address||'--')+'\nLocations:    '+(l.num_locations||'--')+'\nCust Dist #:  '+(l.customer_distributor_number||'--')+'\n\n=== PROGRAM ===\nDist Program: '+(l.program_source||'--')+'\nProgram:      '+(l.which_program||'--')+'\nInterest:     '+(l.customer_interest||'--')+'\nRoute:        '+(l.route==='leasing'?'Leasing/Finance':'Sales Rep')+'\n\n=== DISTRIBUTOR ===\nDist Rep:     '+(l.distributor_sales_rep||'--')+'\nRep Email:    '+(l.distributor_rep_email||'--')+'\nDistributor:  '+(l.distributor||'--')+'\nWarehouse:    '+(l.distributor_warehouse||'--')+'\nTradeshow:    '+(l.tradeshow_lead||'--')+'\n\n=== NOTES ===\n'+(l.beverage_needs||l.notes||'None')+(l.route==='leasing'?'\n\n=== ACTION REQUIRED ===\nSend credit application NOW:\nhttps://signnow.com/s/YKsq02bU\n':'')+'\nRonnoco Beverage Solutions';
 }
 
-let sb=null,leads=[],salesReps=[],actCache={};
-let selId=null,role='admin',showLost=false,activeMetric='',csvRows=[];
-let pendingNote=null,lostLeadId=null,repAssignId=null,emailLeadId=null,emailIsAdv=false;
+var sb=null,leads=[],salesReps=[],actCache={};
+var selId=null,role='admin',showLost=false,activeMetric='',csvRows=[];
+var pendingNote=null,lostLeadId=null,repAssignId=null,emailLeadId=null,emailIsAdv=false;
 
-const fmtD=ts=>ts?new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'--';
-const fmtT=ts=>ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'--';
-const pct=l=>{const s=getSteps(l.route);const i=s.findIndex(x=>x.id===l.current_step);return i<0?0:Math.round((i+1)/s.length*100);};
-const ge=id=>document.getElementById(id);
-const open_modal=id=>ge(id).classList.add('open');
-const close_modal=id=>ge(id).classList.remove('open');
+function fmtD(ts){return ts?new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'--';}
+function fmtT(ts){return ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'--';}
+function pct(l){var s=getSteps(l.route);var i=s.findIndex(function(x){return x.id===l.current_step;});return i<0?0:Math.round((i+1)/s.length*100);}
+function ge(id){return document.getElementById(id);}
+function open_modal(id){ge(id).classList.add('open');}
+function close_modal(id){ge(id).classList.remove('open');}
 
-function showPage(n){['main','lock','settings','help'].forEach(p=>{const e=ge('pg-'+p);if(e)e.classList.remove('on');});const t=ge('pg-'+n);if(t)t.classList.add('on');window.scrollTo(0,0);}
-function goSettings(){if(sessionStorage.getItem('unlocked')==='1'){showPage('settings');refreshSettings();}else{showPage('lock');setTimeout(()=>ge('lock-pw')?.focus(),80);}}
+function showPage(n){['main','lock','settings','help'].forEach(function(p){var e=ge('pg-'+p);if(e)e.classList.remove('on');});var t=ge('pg-'+n);if(t)t.classList.add('on');window.scrollTo(0,0);}
+function goSettings(){if(sessionStorage.getItem('unlocked')==='1'){showPage('settings');refreshSettings();}else{showPage('lock');setTimeout(function(){var e=ge('lock-pw');if(e)e.focus();},80);}}
 function goHelp(){showPage('help');}
-function unlock(){const pw=ge('lock-pw').value,stored=localStorage.getItem('adm_pw')||DEF_PW;if(pw===stored){sessionStorage.setItem('unlocked','1');ge('lock-pw').value='';ge('lock-err').style.display='none';showPage('settings');refreshSettings();}else{ge('lock-err').style.display='block';}}
-function setRole(r,btn){role=r;document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderList();if(selId)renderMain(selId);}
+function unlock(){var pw=ge('lock-pw').value;var stored=localStorage.getItem('adm_pw')||DEF_PW;if(pw===stored){sessionStorage.setItem('unlocked','1');ge('lock-pw').value='';ge('lock-err').style.display='none';showPage('settings');refreshSettings();}else{ge('lock-err').style.display='block';}}
+function setRole(r,btn){role=r;document.querySelectorAll('.rbtn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');renderList();if(selId)renderMain(selId);}
 function toggleLost(){showLost=!showLost;ge('show-lost-btn').textContent=showLost?'Hide lost':'Show lost';renderList();}
-function notice(msg,type,elId){const el=ge(elId||'notice');if(!el)return;el.className='notice n-'+(type||'info');el.textContent=msg;el.style.display='block';setTimeout(()=>{el.style.display='none';},5000);}
-function toggleFP(){const b=ge('fp-body'),btn=ge('fp-tog'),show=b.style.display==='none';b.style.display=show?'':'none';btn.textContent=show?'Hide':'Show';localStorage.setItem('fp-h',show?'0':'1');}
-function clearFilters(){['f-q'].forEach(id=>{const e=ge(id);if(e)e.value=''});['f-sort','f-status','f-route','f-src','f-rep','f-wh'].forEach(id=>{const e=ge(id);if(e)e.selectedIndex=0});activeMetric='';document.querySelectorAll('.mcard').forEach(e=>e.classList.remove('active'));renderList();}
-function metricFilter(t){activeMetric=activeMetric===t?'':t;document.querySelectorAll('.mcard').forEach(e=>e.classList.remove('active'));if(activeMetric){const map={all:'mc0',unassigned:'mc1',assigned:'mc2',won:'mc3',lost:'mc4'};const e=ge(map[t]);if(e)e.classList.add('active');}renderList();}
-function copyWebhook(){const u=ge('wh-url')?.textContent;if(u)navigator.clipboard.writeText(u).then(()=>notice('Webhook URL copied!','ok')).catch(()=>notice('Copy failed','err'));}
+function notice(msg,type,elId){var el=ge(elId||'notice');if(!el)return;el.className='notice n-'+(type||'info');el.textContent=msg;el.style.display='block';setTimeout(function(){el.style.display='none';},5000);}
+function toggleFP(){var b=ge('fp-body'),btn=ge('fp-tog'),show=b.style.display==='none';b.style.display=show?'':'none';btn.textContent=show?'Hide':'Show';localStorage.setItem('fp-h',show?'0':'1');}
+function clearFilters(){['f-q'].forEach(function(id){var e=ge(id);if(e)e.value='';});['f-sort','f-status','f-route','f-src','f-rep','f-wh'].forEach(function(id){var e=ge(id);if(e)e.selectedIndex=0;});activeMetric='';document.querySelectorAll('.mcard').forEach(function(e){e.classList.remove('active');});renderList();}
+function metricFilter(t){activeMetric=activeMetric===t?'':t;document.querySelectorAll('.mcard').forEach(function(e){e.classList.remove('active');});if(activeMetric){var map={all:'mc0',unassigned:'mc1',assigned:'mc2',won:'mc3',lost:'mc4'};var e=ge(map[t]);if(e)e.classList.add('active');}renderList();}
 
 async function init(){
-  let t=0;while(typeof supabase==='undefined'&&t<30){await new Promise(r=>setTimeout(r,200));t++;}
+  var t=0;while(typeof supabase==='undefined'&&t<30){await new Promise(function(r){setTimeout(r,200);});t++;}
   if(typeof supabase==='undefined'){ge('conn-dot').textContent='failed';ge('conn-dot').className='badge bg-red';return;}
   sb=supabase.createClient(SB_URL,SB_KEY);
   try{
     await loadLeads();await loadReps();
     sb.channel('portal')
-      .on('postgres_changes',{event:'*',schema:'public',table:'leads'},()=>loadLeads())
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},async p=>{
-        const lid=p.new.lead_id;
-        const{data}=await sb.from('activity_log').select('*').eq('lead_id',lid).order('created_at',{ascending:false}).limit(30);
-        if(data)actCache[lid]=data;if(selId===lid)renderMain(lid);
+      .on('postgres_changes',{event:'*',schema:'public',table:'leads'},function(){loadLeads();})
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},async function(p){
+        var lid=p.new.lead_id;
+        var res=await sb.from('activity_log').select('*').eq('lead_id',lid).order('created_at',{ascending:false}).limit(30);
+        if(res.data)actCache[lid]=res.data;if(selId===lid)renderMain(lid);
       }).subscribe();
     ge('conn-dot').textContent='connected';ge('conn-dot').className='badge bg-green';
     if(localStorage.getItem('jf_key'))ge('sync-btn').style.display='inline-block';
-    const wu=ge('wh-url');if(wu)wu.textContent=window.location.origin+'/.netlify/functions/webhook';
-    if(localStorage.getItem('fp-h')==='1'){const b=ge('fp-body');if(b)b.style.display='none';const tg=ge('fp-tog');if(tg)tg.textContent='Show';}
-    // Restore saved form IDs into UI
-    const cid=ge('cm-id');if(cid)cid.value=localStorage.getItem('jf_id_CoreMark')||'';
-    const fid=ge('fb-id');if(fid)fid.value=localStorage.getItem('jf_id_Farner-Bocken')||'';
+    // AUTOFILL FIX: Force blank the search field so browser can't pre-populate it
+    const fq=ge('f-q');if(fq){fq.value='';fq.setAttribute('value','');fq.blur();}
+    var wu=ge('wh-url');if(wu)wu.textContent=window.location.origin+'/.netlify/functions/webhook';
+    if(localStorage.getItem('fp-h')==='1'){var b=ge('fp-body');if(b)b.style.display='none';var tg=ge('fp-tog');if(tg)tg.textContent='Show';}
   }catch(e){ge('conn-dot').textContent='error';ge('conn-dot').className='badge bg-red';console.error(e);}
 }
 
 async function loadLeads(){
-  const{data,error}=await sb.from('leads').select('*').order('created_at',{ascending:false});
-  if(error){notice('Error loading leads: '+error.message,'err');return;}
-  leads=data||[];updateMetrics();populateFilterSelects();renderList();
-  if(selId&&leads.find(l=>l.id===selId))renderMain(selId);
+  var res=await sb.from('leads').select('*').order('created_at',{ascending:false});
+  if(res.error){notice('Error loading leads: '+res.error.message,'err');return;}
+  leads=res.data||[];updateMetrics();populateFilterSelects();renderList();
+  if(selId&&leads.find(function(l){return l.id===selId;}))renderMain(selId);
 }
-async function loadAct(id){const{data}=await sb.from('activity_log').select('*').eq('lead_id',id).order('created_at',{ascending:false}).limit(30);actCache[id]=data||[];}
-async function loadReps(){const{data}=await sb.from('sales_reps').select('*').eq('active',true).order('name');salesReps=data||[];const sel=ge('ra-rep');if(sel)sel.innerHTML='<option value="">&#8212; Choose a rep &#8212;</option>'+salesReps.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');}
+
+async function loadAct(id){
+  var res=await sb.from('activity_log').select('*').eq('lead_id',id).order('created_at',{ascending:false}).limit(30);
+  actCache[id]=res.data||[];
+}
+
+async function loadReps(){
+  var res=await sb.from('sales_reps').select('*').eq('active',true).order('name');
+  salesReps=res.data||[];
+  var sel=ge('ra-rep');
+  if(sel)sel.innerHTML='<option value="">-- Choose a rep --</option>'+salesReps.map(function(r){return'<option value="'+esc(r.name)+'">'+esc(r.name)+'</option>';}).join('');
+}
 
 function updateMetrics(){
   ge('mv0').textContent=leads.length;
-  ge('mv1').textContent=leads.filter(l=>!l.assigned_sales_rep||!l.assigned_sales_rep.trim()).length;
-  ge('mv2').textContent=leads.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim()).length;
-  ge('mv3').textContent=leads.filter(l=>l.status==='won').length;
-  ge('mv4').textContent=leads.filter(l=>l.status==='lost').length;
+  ge('mv1').textContent=leads.filter(function(l){return!l.assigned_sales_rep||!l.assigned_sales_rep.trim();}).length;
+  ge('mv2').textContent=leads.filter(function(l){return l.assigned_sales_rep&&l.assigned_sales_rep.trim();}).length;
+  ge('mv3').textContent=leads.filter(function(l){return l.status==='won';}).length;
+  ge('mv4').textContent=leads.filter(function(l){return l.status==='lost';}).length;
 }
 
 function populateFilterSelects(){
-  const reps=[...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
-  const whs=[...new Set(leads.map(l=>l.distributor_warehouse).filter(Boolean))].sort();
-  ['f-rep','rr-rep'].forEach(id=>{const s=ge(id);if(!s)return;const v=s.value;s.innerHTML='<option value="">All reps</option>'+reps.map(r=>`<option value="${esc(r)}"${r===v?' selected':''}>${esc(r)}</option>`).join('');});
-  const fw=ge('f-wh');if(fw){const v=fw.value;fw.innerHTML='<option value="">All</option>'+whs.map(w=>`<option value="${esc(w)}"${w===v?' selected':''}>${esc(w)}</option>`).join('');}
+  var reps=[...new Set(leads.map(function(l){return l.assigned_sales_rep;}).filter(Boolean))].sort();
+  var whs=[...new Set(leads.map(function(l){return l.distributor_warehouse;}).filter(Boolean))].sort();
+  ['f-rep','rr-rep'].forEach(function(id){var s=ge(id);if(!s)return;var v=s.value;s.innerHTML='<option value="">All reps</option>'+reps.map(function(r){return'<option value="'+esc(r)+'"'+(r===v?' selected':'')+'>'+esc(r)+'</option>';}).join('');});
+  var fw=ge('f-wh');if(fw){var v=fw.value;fw.innerHTML='<option value="">All</option>'+whs.map(function(w){return'<option value="'+esc(w)+'"'+(w===v?' selected':'')+'>'+esc(w)+'</option>';}).join('');}
 }
+
+function srcColor(src){return SRC_COLORS[src]||{bg:'#f3f4f6',txt:'#374151'};}
 
 function stepBadge(l){
   if(l.status==='lost')return'<span class="badge bg-red">Lost</span>';
   if(l.status==='won')return'<span class="badge bg-green">Won</span>';
-  const s=getStep(l.current_step);
-  return`<span class="badge ${l.route==='leasing'?'bg-purple':'bg-navy'}" style="font-size:10px">${s?esc(s.label):'--'}</span>`;
+  var s=getStep(l.current_step);
+  var cls=l.route==='leasing'?'bg-purple':'bg-navy';
+  return'<span class="badge '+cls+'" style="font-size:10px">'+(s?esc(s.label):'--')+'</span>';
 }
 
 function renderList(){
-  const q=(ge('f-q')?.value||'').toLowerCase().trim();
-  const sort=ge('f-sort')?.value||'newest';
-  const fRep=ge('f-rep')?.value||'',fStatus=ge('f-status')?.value||'',fRoute=ge('f-route')?.value||'',fSrc=ge('f-src')?.value||'',fWh=ge('f-wh')?.value||'';
-  let list=[...leads];
-  if(activeMetric==='unassigned')list=list.filter(l=>!l.assigned_sales_rep||!l.assigned_sales_rep.trim());
-  else if(activeMetric==='assigned')list=list.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim());
-  else if(activeMetric==='won')list=list.filter(l=>l.status==='won');
-  else if(activeMetric==='lost')list=list.filter(l=>l.status==='lost');
-  if(!showLost&&activeMetric!=='lost'&&!fStatus)list=list.filter(l=>l.status!=='lost');
-  if(fStatus)list=list.filter(l=>l.status===fStatus);
-  if(fSrc)list=list.filter(l=>(l.program_source||'Java Select')===fSrc);
-  if(fRoute)list=list.filter(l=>l.route===fRoute);
-  if(fRep)list=list.filter(l=>l.assigned_sales_rep===fRep);
-  if(fWh)list=list.filter(l=>l.distributor_warehouse===fWh);
-  if(q)list=list.filter(l=>[l.customer_full_name,l.dba_name,l.contact_email,l.phone,l.assigned_sales_rep,l.distributor_sales_rep,l.distributor_warehouse].some(v=>(v||'').toLowerCase().includes(q)));
-  if(role==='dist_rep')list=list.filter(l=>l.current_step==='new_lead');
-  list.sort((a,b)=>{
+  var q=(ge('f-q')&&ge('f-q').value||'').toLowerCase().trim();
+  var sort=(ge('f-sort')&&ge('f-sort').value)||'newest';
+  var fRep=(ge('f-rep')&&ge('f-rep').value)||'';
+  var fStatus=(ge('f-status')&&ge('f-status').value)||'';
+  var fRoute=(ge('f-route')&&ge('f-route').value)||'';
+  var fSrc=(ge('f-src')&&ge('f-src').value)||'';
+  var fWh=(ge('f-wh')&&ge('f-wh').value)||'';
+  var list=leads.slice();
+  if(activeMetric==='unassigned')list=list.filter(function(l){return!l.assigned_sales_rep||!l.assigned_sales_rep.trim();});
+  else if(activeMetric==='assigned')list=list.filter(function(l){return l.assigned_sales_rep&&l.assigned_sales_rep.trim();});
+  else if(activeMetric==='won')list=list.filter(function(l){return l.status==='won';});
+  else if(activeMetric==='lost')list=list.filter(function(l){return l.status==='lost';});
+  if(!showLost&&activeMetric!=='lost'&&!fStatus)list=list.filter(function(l){return l.status!=='lost';});
+  if(fStatus)list=list.filter(function(l){return l.status===fStatus;});
+  if(fSrc)list=list.filter(function(l){return(l.program_source||'Java Select')===fSrc;});
+  if(fRoute)list=list.filter(function(l){return l.route===fRoute;});
+  if(fRep)list=list.filter(function(l){return l.assigned_sales_rep===fRep;});
+  if(fWh)list=list.filter(function(l){return l.distributor_warehouse===fWh;});
+  if(q)list=list.filter(function(l){return[l.customer_full_name,l.dba_name,l.contact_email,l.phone,l.assigned_sales_rep,l.distributor_sales_rep,l.distributor_warehouse,l.distributor].some(function(v){return(v||'').toLowerCase().includes(q);});});
+  if(role==='dist_rep')list=list.filter(function(l){return l.current_step==='new_lead';});
+  list.sort(function(a,b){
     if(sort==='oldest')return new Date(a.created_at)-new Date(b.created_at);
     if(sort==='name')return(a.customer_full_name||'').localeCompare(b.customer_full_name||'');
     if(sort==='rep')return(a.assigned_sales_rep||'').localeCompare(b.assigned_sales_rep||'');
     return new Date(b.created_at)-new Date(a.created_at);
   });
-  const fs=ge('f-sum');if(fs)fs.textContent=`Showing ${list.length} of ${leads.length} leads`;
-  const sb2=ge('sidebar');
+  var fs=ge('f-sum');if(fs)fs.textContent='Showing '+list.length+' of '+leads.length+' leads';
+  var sb2=ge('sidebar');
   if(!list.length){sb2.innerHTML='<div style="font-size:13px;color:#9ca3af;padding:.7rem;text-align:center">No leads match.</div>';return;}
-  sb2.innerHTML=list.map(l=>{
-    const src=l.program_source||'Java Select',c=srcColor(src),repColor=l.assigned_sales_rep?'#1e40af':'#dc2626';
-    return`<div class="lcard${selId===l.id?' sel':''}${l.status==='lost'?' c-lost':''}" onclick="selectLead('${l.id}')">
-<div class="lc-name">${esc(l.customer_full_name||l.dba_name||'Unknown')}</div>
-<div class="lc-sub">${l.dba_name&&l.dba_name!==l.customer_full_name?esc(l.dba_name)+' &middot; ':''}<span style="color:${repColor}">${esc(l.assigned_sales_rep)||'&#9888; Needs rep'}</span></div>
-<div class="lc-foot">${stepBadge(l)}<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;background:${c.bg};color:${c.txt}">${esc(src)}</span><span style="font-size:11px;color:#9ca3af">${fmtD(l.created_at)}</span></div>
-<div class="pbar"><div class="pfill ${l.route==='leasing'?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
-</div>`;
+  sb2.innerHTML=list.map(function(l){
+    var src=l.program_source||'Java Select';
+    var c=srcColor(src);
+    var repColor=l.assigned_sales_rep?'#1e40af':'#dc2626';
+    var lid=l.id;
+    return'<div class="lcard'+(selId===lid?' sel':'')+(l.status==='lost'?' c-lost':'')+'" onclick="selectLead(\''+lid+'\')">'+
+      '<div class="lc-name">'+esc(l.customer_full_name||l.dba_name||'Unknown')+'</div>'+
+      '<div class="lc-sub">'+(l.dba_name&&l.dba_name!==l.customer_full_name?esc(l.dba_name)+' &middot; ':'')+
+      '<span style="color:'+repColor+'">'+(esc(l.assigned_sales_rep)||'&#9888; Needs rep')+'</span></div>'+
+      '<div class="lc-foot">'+stepBadge(l)+
+      '<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;background:'+c.bg+';color:'+c.txt+'">'+esc(src)+'</span>'+
+      '<span style="font-size:11px;color:#9ca3af">'+fmtD(l.created_at)+'</span></div>'+
+      '<div class="pbar"><div class="pfill '+(l.route==='leasing'?'pf-l':'pf-s')+'" style="width:'+pct(l)+'%"></div></div>'+
+      '</div>';
   }).join('');
 }
 
 async function selectLead(id){selId=id;renderList();if(!actCache[id])await loadAct(id);renderMain(id);}
 
 function renderMain(id){
-  const l=leads.find(x=>x.id===id);if(!l)return;
-  const steps=getSteps(l.route);
-  const idx=steps.findIndex(s=>s.id===l.current_step);
-  // ── FIX #2: Guard idx=-1 so unrecognized steps don't crash the panel ──
-  const safeIdx=idx>=0?idx:0;
-  const cur=steps[safeIdx],next=steps[safeIdx+1];
-  const isLost=l.status==='lost',isWon=l.status==='won';
-  const canAct=role==='admin'||role==='director'||(role==='ronnoco_rep'&&l.assigned_sales_rep);
-  const isLeasing=l.route==='leasing';
-  const logs=actCache[id]||[];
-  const src=l.program_source||'Java Select',sc=srcColor(src);
+  var l=leads.find(function(x){return x.id===id;});if(!l)return;
+  var steps=getSteps(l.route);
+  var idx=steps.findIndex(function(s){return s.id===l.current_step;});
+  // FIX #2: Guard against idx === -1 (mismatched route/step crashes render)
+  // Sledd loaned leads had wrong route so their step wasn't found -> default to step 0
+  var safeIdx=idx>=0?idx:0;
+  var cur=steps[safeIdx],next=steps[safeIdx+1];
+  var isLost=l.status==='lost',isWon=l.status==='won';
+  var canAct=role==='admin'||role==='director'||(role==='ronnoco_rep'&&l.assigned_sales_rep);
+  var isLeasing=l.route==='leasing';
+  var logs=actCache[id]||[];
+  var src=l.program_source||'Java Select';
+  var sc=srcColor(src);
 
-  const pipeHtml=steps.map((s,i)=>{
-    const done=i<safeIdx,isCur=i===safeIdx;
-    const dc=isLost?'lost-dot':done?(isLeasing?'done-l':'done-s'):isCur?(isLeasing?'cur-l':'cur-s'):'';
-    return`<div class="pstep"><div class="pdot ${dc}">${s.icon}</div><div class="pname ${done||isCur?'active':''}">${esc(s.label)}</div></div>`;
+  var pipeHtml=steps.map(function(s,i){
+    var done=i<safeIdx,isCur=i===safeIdx;
+    var dc=isLost?'lost-dot':done?(isLeasing?'done-l':'done-s'):isCur?(isLeasing?'cur-l':'cur-s'):'';
+    return'<div class="pstep"><div class="pdot '+dc+'">'+s.icon+'</div><div class="pname '+((done||isCur)?'active':'')+'">'+esc(s.label)+'</div></div>';
   }).join('');
 
-  const rows=[];const add=(k,v)=>{if(v&&String(v).trim())rows.push([k,v]);};
+  var rows=[];function add(k,v){if(v&&String(v).trim())rows.push([k,v]);}
   add('Program',l.program_source);add('Customer',l.customer_full_name);add('DBA/Store',l.dba_name);
   add('Legal Name',l.legal_business_name);add('Email',l.contact_email);add('Phone',l.phone||l.contact_number);
   add('Address',l.store_address);add('Locations',l.num_locations);add('Cust Dist #',l.customer_distributor_number);
@@ -684,76 +713,83 @@ function renderMain(id){
   add('Interest',l.customer_interest);add('Beverage Needs',l.beverage_needs);add('Sales Rep',l.assigned_sales_rep);
   if(isLost)add('Lost Reason',l.lost_reason);
 
-  let advHtml='';
+  var advHtml='';
   if(canAct&&!isLost&&!isWon&&next){
-    if(next.id==='assign_rep')advHtml=`<button class="btn b-green btn-sm" onclick="openAssignRep('${id}')">Advance &#8594; Assign Rep</button>`;
-    else advHtml=`<button class="btn b-green btn-sm" onclick="startEmailAdv('${id}')">Advance &#8594; ${esc(next.label)}</button>`;
+    if(next.id==='assign_rep')advHtml='<button class="btn b-green btn-sm" onclick="openAssignRep(\''+id+'\')">Advance &rarr; Assign Rep</button>';
+    else advHtml='<button class="btn b-green btn-sm" onclick="startEmailAdv(\''+id+'\')">Advance &rarr; '+esc(next.label)+'</button>';
   }
-  const logHtml=logs.length?logs.map(lo=>`<div class="log-row"><span class="log-time">${fmtT(lo.created_at)}</span><div>[${esc(lo.actor_role||'admin')}] ${esc(lo.action||'')}${lo.note?`<div class="log-note">${esc(lo.note)}</div>`:''}</div></div>`).join(''):'<div style="font-size:12px;color:#9ca3af">No activity yet.</div>';
 
-  ge('main-panel').innerHTML=`
-<div class="main-hdr">
-  <div>
-    <div class="main-name">${esc(l.customer_full_name||l.dba_name||'Unnamed Lead')}</div>
-    <div class="main-meta"><span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:999px;background:${sc.bg};color:${sc.txt}">${esc(src)}</span>&nbsp;${l.dba_name&&l.dba_name!==l.customer_full_name?'<strong>'+esc(l.dba_name)+'</strong> &middot; ':''}${[l.contact_email,l.phone||l.contact_number].filter(Boolean).map(esc).join(' &middot; ')}${l.store_address?'<br>'+esc(l.store_address):''}${l.which_program?'<br><span style="color:#7c3aed;font-weight:500">'+esc(l.which_program)+'</span>':''}</div>
-  </div>
-  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-    ${stepBadge(l)} <span style="font-size:12px;color:#9ca3af">${pct(l)}%</span>
-    ${role==='admin'||role==='director'?`<button class="btn b-red btn-sm" onclick="deleteLead('${id}')">Delete</button>`:''}
-  </div>
-</div>
-<div class="pbar" style="height:5px;margin-bottom:.85rem"><div class="pfill ${isLeasing?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
-<div class="route-bar">
-  <span style="font-size:12px;font-weight:600;color:#374151;margin-right:4px">Route:</span>
-  <button class="ropt ${!isLeasing?'on-s':''}" onclick="changeRoute('${id}','sales')">&#128200; Sales Rep</button>
-  <button class="ropt ${isLeasing?'on-l':''}" onclick="changeRoute('${id}','leasing')">&#128179; Leasing/Finance</button>
-</div>
-<div class="pipeline">${pipeHtml}</div>
-<div class="jbox">
-  <div class="jbox-title">&#128205; Move to step</div>
-  <div class="jrow">
-    <select class="jsel" id="jump-${id}">${steps.map(s=>`<option value="${s.id}"${s.id===l.current_step?' selected':''}>${esc(s.label)}</option>`).join('')}</select>
-    <button class="btn b-blue btn-sm" onclick="jumpStep('${id}')">Move &#8594;</button>
-  </div>
-  ${isLost?`<div class="lost-box"><strong>Lost reason:</strong> ${esc(l.lost_reason||'--')}</div>`:''}
-  ${!isLost&&!isWon?`<div class="abtns">
-    ${cur&&cur.body&&l.contact_email?`<button class="btn b-blue btn-sm" onclick="openEmail('${id}',false)">&#9993; Draft email</button>`:''}
-    ${l.current_step==='new_lead'?`<button class="btn b-green btn-sm" onclick="openAssignRep('${id}')">Advance &#8594; Assign Rep</button>`:advHtml}
-    ${canAct?`<button class="btn b-red btn-sm" onclick="markLost('${id}')">&#10007; Mark lost</button>`:''}
-  </div>`:''}
-  ${isWon?'<div style="font-size:14px;font-weight:700;color:#065f46;margin-top:.5rem">&#127942; Won!</div>':''}
-</div>
-<div class="sec">
-  <div class="sec-title">&#9999;&#65039; Editable Fields</div>
-  <div class="egrid">
-    <div class="ef"><label>Customer name</label><input class="einp" id="ef-name" value="${esc(l.customer_full_name||'')}"/></div>
-    <div class="ef"><label>DBA / Store</label><input class="einp" id="ef-dba" value="${esc(l.dba_name||'')}"/></div>
-    <div class="ef"><label>Email</label><input class="einp" id="ef-email" value="${esc(l.contact_email||'')}"/></div>
-    <div class="ef"><label>Phone</label><input class="einp" id="ef-phone" value="${esc(l.phone||'')}"/></div>
-    <div class="ef"><label>Legal name</label><input class="einp" id="ef-legal" value="${esc(l.legal_business_name||'')}"/></div>
-    <div class="ef"><label>Address</label><input class="einp" id="ef-addr" value="${esc(l.store_address||'')}"/></div>
-    <div class="ef"><label>Warehouse</label><input class="einp" id="ef-wh" value="${esc(l.distributor_warehouse||'')}"/></div>
-    <div class="ef"><label>Cust Dist #</label><input class="einp" id="ef-dn" value="${esc(l.customer_distributor_number||'')}"/></div>
-    <div class="ef" style="grid-column:1/-1"><label>Notes</label><textarea class="einp" id="ef-notes" rows="3">${esc(l.notes||'')}</textarea></div>
-  </div>
-  <button class="btn b-green btn-sm" onclick="saveEdits('${id}')">&#128190; Save changes</button>
-</div>
-<div class="sec">
-  <div class="sec-title">&#128203; Submission Data</div>
-  <table class="dtbl">${rows.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(String(v))}</td></tr>`).join('')||'<tr><td colspan="2" style="color:#9ca3af">No data.</td></tr>'}</table>
-</div>
-<div class="sec">
-  <div class="sec-title">&#128336; Activity Log</div>
-  <div class="log-box">${logHtml}</div>
-</div>`;
+  var logHtml=logs.length?logs.map(function(lo){
+    return'<div class="log-row"><span class="log-time">'+fmtT(lo.created_at)+'</span><div>['+esc(lo.actor_role||'admin')+'] '+esc(lo.action||'')+(lo.note?'<div class="log-note">'+esc(lo.note)+'</div>':'')+'</div></div>';
+  }).join(''):'<div style="font-size:12px;color:#9ca3af">No activity yet.</div>';
+
+  var html=
+    '<div class="main-hdr">'+
+    '<div><div class="main-name">'+esc(l.customer_full_name||l.dba_name||'Unnamed Lead')+'</div>'+
+    '<div class="main-meta">'+
+    '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:999px;background:'+sc.bg+';color:'+sc.txt+'">'+esc(src)+'</span> &nbsp;'+
+    (l.dba_name&&l.dba_name!==l.customer_full_name?'<strong>'+esc(l.dba_name)+'</strong> &middot; ':'')+
+    [l.contact_email,l.phone||l.contact_number].filter(Boolean).map(esc).join(' &middot; ')+
+    (l.store_address?'<br>'+esc(l.store_address):'')+
+    (l.which_program?'<br><span style="color:#7c3aed;font-weight:500">'+esc(l.which_program)+'</span>':'')+
+    '</div></div>'+
+    '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'+
+    stepBadge(l)+' <span style="font-size:12px;color:#9ca3af">'+pct(l)+'%</span>'+
+    (role==='admin'||role==='director'?'<button class="btn b-red btn-sm" onclick="deleteLead(\''+id+'\')">Delete</button>':'')+
+    '</div></div>'+
+    '<div class="pbar" style="height:5px;margin-bottom:.85rem"><div class="pfill '+(isLeasing?'pf-l':'pf-s')+'" style="width:'+pct(l)+'%"></div></div>'+
+    '<div class="route-bar">'+
+    '<span style="font-size:12px;font-weight:600;color:#374151;margin-right:4px">Route:</span>'+
+    '<button class="ropt '+(!isLeasing?'on-s':'')+'" onclick="changeRoute(\''+id+'\',\'sales\')">&#128200; Sales Rep</button>'+
+    '<button class="ropt '+(isLeasing?'on-l':'')+'" onclick="changeRoute(\''+id+'\',\'leasing\')">&#128179; Leasing/Finance</button>'+
+    '</div>'+
+    '<div class="pipeline">'+pipeHtml+'</div>'+
+    '<div class="jbox"><div class="jbox-title">&#128205; Move to step</div>'+
+    '<div class="jrow"><select class="jsel" id="jump-'+id+'">'+
+    steps.map(function(s){return'<option value="'+s.id+'"'+(s.id===l.current_step?' selected':'')+'>'+esc(s.label)+'</option>';}).join('')+
+    '</select><button class="btn b-blue btn-sm" onclick="jumpStep(\''+id+'\')">Move &rarr;</button></div>'+
+    (isLost?'<div class="lost-box"><strong>Lost reason:</strong> '+esc(l.lost_reason||'--')+'</div>':'')+
+    (!isLost&&!isWon?'<div class="abtns">'+
+      (cur&&cur.body&&l.contact_email?'<button class="btn b-blue btn-sm" onclick="openEmail(\''+id+'\',false)">&#9993; Draft email</button>':'')+
+      (l.current_step==='new_lead'?'<button class="btn b-green btn-sm" onclick="openAssignRep(\''+id+'\')">Advance &rarr; Assign Rep</button>':advHtml)+
+      (canAct?'<button class="btn b-red btn-sm" onclick="markLost(\''+id+'\')">&#10007; Mark lost</button>':'')+
+      '</div>':'')+
+    (isWon?'<div style="font-size:14px;font-weight:700;color:#065f46;margin-top:.5rem">&#127942; Won!</div>':'')+
+    '</div>'+
+    '<div class="sec"><div class="sec-title">&#9999;&#65039; Editable Fields</div>'+
+    '<div class="egrid">'+
+    '<div class="ef"><label>Customer name</label><input class="einp" id="ef-name" value="'+esc(l.customer_full_name||'')+'"/></div>'+
+    '<div class="ef"><label>DBA / Store</label><input class="einp" id="ef-dba" value="'+esc(l.dba_name||'')+'"/></div>'+
+    '<div class="ef"><label>Email</label><input class="einp" id="ef-email" value="'+esc(l.contact_email||'')+'"/></div>'+
+    '<div class="ef"><label>Phone</label><input class="einp" id="ef-phone" value="'+esc(l.phone||'')+'"/></div>'+
+    '<div class="ef"><label>Legal name</label><input class="einp" id="ef-legal" value="'+esc(l.legal_business_name||'')+'"/></div>'+
+    '<div class="ef"><label>Address</label><input class="einp" id="ef-addr" value="'+esc(l.store_address||'')+'"/></div>'+
+    '<div class="ef"><label>Warehouse</label><input class="einp" id="ef-wh" value="'+esc(l.distributor_warehouse||'')+'"/></div>'+
+    '<div class="ef"><label>Cust Dist #</label><input class="einp" id="ef-dn" value="'+esc(l.customer_distributor_number||'')+'"/></div>'+
+    '<div class="ef" style="grid-column:1/-1"><label>Notes</label><textarea class="einp" id="ef-notes" rows="3">'+esc(l.notes||'')+'</textarea></div>'+
+    '</div>'+
+    '<button class="btn b-green btn-sm" onclick="saveEdits(\''+id+'\')">&#128190; Save changes</button>'+
+    '</div>'+
+    '<div class="sec"><div class="sec-title">&#128203; Submission Data</div>'+
+    '<table class="dtbl">'+
+    (rows.map(function(r){return'<tr><td>'+esc(r[0])+'</td><td>'+esc(String(r[1]))+'</td></tr>';}).join('')||'<tr><td colspan="2" style="color:#9ca3af">No data.</td></tr>')+
+    '</table></div>'+
+    '<div class="sec"><div class="sec-title">&#128336; Activity Log</div><div class="log-box">'+logHtml+'</div></div>';
+
+  ge('main-panel').innerHTML=html;
 }
 
-async function changeRoute(id,rt){const l=leads.find(x=>x.id===id);if(!l)return;await sb.from('leads').update({route:rt,current_step:'new_lead'}).eq('id',id);await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Route changed to '+(rt==='leasing'?'Leasing/Finance':'Sales Rep')});notice('Route updated!','ok');}
+async function changeRoute(id,rt){
+  var l=leads.find(function(x){return x.id===id;});if(!l)return;
+  await sb.from('leads').update({route:rt,current_step:'new_lead'}).eq('id',id);
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Route changed to '+(rt==='leasing'?'Leasing/Finance':'Sales Rep')});
+  notice('Route updated!','ok');
+}
 
 async function saveEdits(id){
-  const g=f=>ge('ef-'+f)?.value?.trim()||'';
-  const{error}=await sb.from('leads').update({customer_full_name:g('name'),dba_name:g('dba'),contact_email:g('email'),phone:g('phone'),legal_business_name:g('legal'),store_address:g('addr'),distributor_warehouse:g('wh'),customer_distributor_number:g('dn'),notes:g('notes')}).eq('id',id);
-  if(error){notice('Save error: '+error.message,'err');return;}
+  var g=function(f){var e=ge('ef-'+f);return e&&e.value?e.value.trim():'';};
+  var res=await sb.from('leads').update({customer_full_name:g('name'),dba_name:g('dba'),contact_email:g('email'),phone:g('phone'),legal_business_name:g('legal'),store_address:g('addr'),distributor_warehouse:g('wh'),customer_distributor_number:g('dn'),notes:g('notes')}).eq('id',id);
+  if(res.error){notice('Save error: '+res.error.message,'err');return;}
   await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Lead details updated'});
   notice('Saved!','ok');
 }
@@ -767,177 +803,232 @@ async function deleteLead(id){
 }
 
 function openAssignRep(id){
-  const l=leads.find(x=>x.id===id);if(!l)return;
+  var l=leads.find(function(x){return x.id===id;});if(!l)return;
   repAssignId=id;
-  const sub=ge('ra-sub');if(sub)sub.textContent=l.customer_full_name||l.dba_name||'Lead';
-  const rsel=ge('ra-rep');
-  if(rsel){rsel.innerHTML='<option value="">&#8212; Choose a rep &#8212;</option>'+salesReps.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');if(l.assigned_sales_rep)rsel.value=l.assigned_sales_rep;}
+  var sub=ge('ra-sub');if(sub)sub.textContent=l.customer_full_name||l.dba_name||'Lead';
+  var rsel=ge('ra-rep');
+  if(rsel){rsel.innerHTML='<option value="">-- Choose a rep --</option>'+salesReps.map(function(r){return'<option value="'+esc(r.name)+'">'+esc(r.name)+'</option>';}).join('');if(l.assigned_sales_rep)rsel.value=l.assigned_sales_rep;}
   ge('ra-remail').value='';
-  ge('ra-subj').value=`You've Been Assigned a New Lead - Ronnoco ${l.program_source||''}`;
-  buildAssignEmail();open_modal('rep-modal');
+  ge('ra-subj').value="You've Been Assigned a New Lead - Ronnoco "+((l.program_source)||'');
+  buildAssignEmail();
+  open_modal('rep-modal');
 }
-function buildAssignEmail(){const id=repAssignId;if(!id)return;const l=leads.find(x=>x.id===id);if(!l)return;const repName=ge('ra-rep')?.value||'[Rep Name]';ge('ra-body').value=emailBody_leadReceived({...l,assigned_sales_rep:repName});}
+
+function buildAssignEmail(){
+  var id=repAssignId;if(!id)return;
+  var l=leads.find(function(x){return x.id===id;});if(!l)return;
+  var repName=(ge('ra-rep')&&ge('ra-rep').value)||'[Rep Name]';
+  ge('ra-body').value=emailBody_leadReceived(Object.assign({},l,{assigned_sales_rep:repName}));
+}
 
 async function confirmAssign(){
-  const id=repAssignId;if(!id)return;
-  const repName=ge('ra-rep')?.value||'',repEmail=ge('ra-remail')?.value||'',subj=ge('ra-subj')?.value||'',body=ge('ra-body')?.value||'';
+  var id=repAssignId;if(!id)return;
+  var repName=(ge('ra-rep')&&ge('ra-rep').value)||'';
+  var repEmail=(ge('ra-remail')&&ge('ra-remail').value)||'';
+  var subj=(ge('ra-subj')&&ge('ra-subj').value)||'';
+  var body=(ge('ra-body')&&ge('ra-body').value)||'';
   if(!repName){notice('Please select a rep.','warn');return;}
-  const l=leads.find(x=>x.id===id);if(!l)return;
+  var l=leads.find(function(x){return x.id===id;});if(!l)return;
   await sb.from('leads').update({assigned_sales_rep:repName,current_step:'assign_rep'}).eq('id',id);
   await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Rep assigned: '+repName,from_step:l.current_step,to_step:'assign_rep',note:'Email sent to '+(repEmail||'rep')});
-  try{await sb.from('email_log').insert({lead_id:id,step:'assign_rep',subject:subj,body,sent_by_role:role});}catch(e){}
+  try{await sb.from('email_log').insert({lead_id:id,step:'assign_rep',subject:subj,body:body,sent_by_role:role});}catch(e){}
   try{await navigator.clipboard.writeText('To: '+repEmail+'\nSubject: '+subj+'\n\n'+body);}catch(e){}
   close_modal('rep-modal');repAssignId=null;
   notice(repName+' assigned! Email copied.','ok');
 }
 
 function openNoteModal(leadId,fromStep,toStep,doEmail,emailSubj,emailBody){
-  pendingNote={leadId,fromStep,toStep,doEmail,emailSubj:emailSubj||'',emailBody:emailBody||''};
-  ge('note-title').textContent='Moving to: '+(getStep(toStep)?.label||toStep);
-  ge('note-sub').textContent='From: '+(getStep(fromStep)?.label||fromStep);
-  ge('note-text').value='';open_modal('note-modal');setTimeout(()=>ge('note-text')?.focus(),80);
+  pendingNote={leadId:leadId,fromStep:fromStep,toStep:toStep,doEmail:doEmail,emailSubj:emailSubj||'',emailBody:emailBody||''};
+  var ns=getStep(toStep);var fs=getStep(fromStep);
+  ge('note-title').textContent='Moving to: '+(ns?ns.label:toStep);
+  ge('note-sub').textContent='From: '+(fs?fs.label:fromStep);
+  ge('note-text').value='';
+  open_modal('note-modal');
+  setTimeout(function(){var e=ge('note-text');if(e)e.focus();},80);
 }
+
 function cancelNote(){close_modal('note-modal');pendingNote=null;}
 
 async function confirmNote(){
   if(!pendingNote)return;
-  const{leadId,fromStep,toStep,doEmail,emailSubj,emailBody}=pendingNote;
-  const note=ge('note-text').value.trim();
+  var pn=pendingNote,note=ge('note-text').value.trim();
   close_modal('note-modal');pendingNote=null;
-  const l=leads.find(x=>x.id===leadId);if(!l)return;
-  const wonSteps=['customer_won','complete_s','deal_funded_l','deal_funded_s'];
-  const status=wonSteps.includes(toStep)?'won':l.status;
-  await sb.from('leads').update({current_step:toStep,status}).eq('id',leadId);
-  await sb.from('activity_log').insert({lead_id:leadId,actor_role:role,action:'Advanced: '+(getStep(fromStep)?.label||fromStep)+' to '+(getStep(toStep)?.label||toStep),from_step:fromStep,to_step:toStep,note:note||''});
-  if(doEmail&&emailSubj){
-    try{await navigator.clipboard.writeText('Subject: '+emailSubj+'\n\n'+emailBody);}catch(e){}
-    try{await sb.from('email_log').insert({lead_id:leadId,step:fromStep,subject:emailSubj,body:emailBody,sent_by_role:role});}catch(e){}
+  var l=leads.find(function(x){return x.id===pn.leadId;});if(!l)return;
+  var wonSteps=['customer_won','complete_s','deal_funded_l','deal_funded_s'];
+  var status=wonSteps.indexOf(pn.toStep)>=0?'won':l.status;
+  await sb.from('leads').update({current_step:pn.toStep,status:status}).eq('id',pn.leadId);
+  var fsl=getStep(pn.fromStep),tsl=getStep(pn.toStep);
+  await sb.from('activity_log').insert({lead_id:pn.leadId,actor_role:role,action:'Advanced: '+(fsl?fsl.label:pn.fromStep)+' to '+(tsl?tsl.label:pn.toStep),from_step:pn.fromStep,to_step:pn.toStep,note:note||''});
+  if(pn.doEmail&&pn.emailSubj){
+    try{await navigator.clipboard.writeText('Subject: '+pn.emailSubj+'\n\n'+pn.emailBody);}catch(e){}
+    try{await sb.from('email_log').insert({lead_id:pn.leadId,step:pn.fromStep,subject:pn.emailSubj,body:pn.emailBody,sent_by_role:role});}catch(e){}
     notice('Advanced! Email copied.','ok');
-  }else{notice('Moved to '+(getStep(toStep)?.label||toStep)+'!','ok');}
+  }else{notice('Moved to '+(tsl?tsl.label:pn.toStep)+'!','ok');}
 }
 
 async function jumpStep(id){
-  const sel=ge('jump-'+id);if(!sel)return;
-  const toStep=sel.value,l=leads.find(x=>x.id===id);if(!l||toStep===l.current_step)return;
+  var sel=ge('jump-'+id);if(!sel)return;
+  var toStep=sel.value;var l=leads.find(function(x){return x.id===id;});if(!l||toStep===l.current_step)return;
   if(toStep==='assign_rep'){openAssignRep(id);return;}
   openNoteModal(id,l.current_step,toStep,false);
 }
 
 function openEmail(id,isAdv){
-  const l=leads.find(x=>x.id===id);if(!l)return;
-  const steps=getSteps(l.route),idx=steps.findIndex(s=>s.id===l.current_step);
-  const safeIdx=idx>=0?idx:0; // FIX #2 here too
-  const step=steps[safeIdx];if(!step?.body)return;
+  var l=leads.find(function(x){return x.id===id;});if(!l)return;
+  var steps=getSteps(l.route);
+  var idx=steps.findIndex(function(s){return s.id===l.current_step;});
+  var safeIdx=idx>=0?idx:0; // FIX #2 applied here too
+  var step=steps[safeIdx];if(!step||!step.body)return;
   emailLeadId=id;emailIsAdv=isAdv;
   ge('em-title').textContent=isAdv?'Compose & advance':'Draft email';
-  ge('em-to').value=l.contact_email||'';ge('em-subj').value=step.subj||'';ge('em-body').value=step.body(l);
-  const next=steps[safeIdx+1],adv=ge('em-adv');
+  ge('em-to').value=l.contact_email||'';
+  ge('em-subj').value=step.subj||'';
+  ge('em-body').value=step.body(l);
+  var next=steps[safeIdx+1];
+  var adv=ge('em-adv');
   if(adv){adv.style.display=isAdv&&next?'inline-block':'none';adv.textContent=next?'Copy & advance to '+next.label:'Copy';}
   open_modal('email-modal');
 }
+
 function startEmailAdv(id){openEmail(id,true);}
 
 async function copyEmailOnly(){
-  const subj=ge('em-subj').value,body=ge('em-body').value;
+  var subj=ge('em-subj').value,body=ge('em-body').value;
   try{await navigator.clipboard.writeText('Subject: '+subj+'\n\n'+body);}catch(e){}
-  if(emailLeadId){const l=leads.find(x=>x.id===emailLeadId);try{await sb.from('email_log').insert({lead_id:emailLeadId,step:l.current_step,subject:subj,body,sent_by_role:role});}catch(e){}try{await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:role,action:'Email drafted: '+subj});}catch(e){}}
+  if(emailLeadId){var l=leads.find(function(x){return x.id===emailLeadId;});try{await sb.from('email_log').insert({lead_id:emailLeadId,step:l.current_step,subject:subj,body:body,sent_by_role:role});}catch(e){}try{await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:role,action:'Email drafted: '+subj});}catch(e){}}
   notice('Email copied!','ok');close_modal('email-modal');
 }
+
 async function copyEmailAndAdv(){
-  const subj=ge('em-subj').value,body=ge('em-body').value;
-  if(emailLeadId){const l=leads.find(x=>x.id===emailLeadId);const steps=getSteps(l.route);const idx=steps.findIndex(s=>s.id===l.current_step);const safeIdx=idx>=0?idx:0;if(safeIdx<steps.length-1){close_modal('email-modal');openNoteModal(emailLeadId,l.current_step,steps[safeIdx+1].id,true,subj,body);return;}}
+  var subj=ge('em-subj').value,body=ge('em-body').value;
+  if(emailLeadId){
+    var l=leads.find(function(x){return x.id===emailLeadId;});
+    var steps=getSteps(l.route);var idx=steps.findIndex(function(s){return s.id===l.current_step;});var safeIdx=idx>=0?idx:0;
+    if(safeIdx<steps.length-1){close_modal('email-modal');openNoteModal(emailLeadId,l.current_step,steps[safeIdx+1].id,true,subj,body);return;}
+  }
   close_modal('email-modal');
 }
 
 function markLost(id){lostLeadId=id;ge('lost-reason').value='';open_modal('lost-modal');}
+
 async function confirmLost(){
-  const reason=ge('lost-reason').value.trim();if(!reason){alert('Please enter a reason.');return;}
-  const l=leads.find(x=>x.id===lostLeadId);
+  var reason=ge('lost-reason').value.trim();if(!reason){alert('Please enter a reason.');return;}
+  var l=leads.find(function(x){return x.id===lostLeadId;});
   await sb.from('leads').update({status:'lost',lost_reason:reason}).eq('id',lostLeadId);
-  await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:role,action:'Marked as lost',from_step:l?.current_step,note:reason});
+  await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:role,action:'Marked as lost',from_step:l&&l.current_step,note:reason});
   close_modal('lost-modal');notice('Lead marked as lost.','warn');
 }
 
 function openNewLead(){open_modal('new-modal');}
+
 async function saveNewLead(){
-  const name=ge('nl-name').value.trim();if(!name){notice('Name required.','warn');return;}
-  const interest=ge('nl-int').value;
-  const route=LEASING_INTERESTS.includes(interest)?'leasing':'sales'; // FIX #1
-  const np=name.split(' ');
-  const{error}=await sb.from('leads').insert({
+  var name=ge('nl-name').value.trim();if(!name){notice('Name required.','warn');return;}
+  var interest=ge('nl-int').value;
+  var route=LEASING_INTERESTS.indexOf(interest)>=0?'leasing':'sales'; // FIX #1
+  var np=name.split(' ');
+  var res=await sb.from('leads').insert({
     customer_full_name:name,customer_first_name:np[0]||'',customer_last_name:np.slice(1).join(' ')||'',
     dba_name:ge('nl-dba').value.trim(),contact_email:ge('nl-email').value.trim(),phone:ge('nl-phone').value.trim(),
     distributor_sales_rep:ge('nl-drep').value.trim(),distributor_warehouse:ge('nl-wh').value.trim(),
-    which_program:ge('nl-prog').value,customer_interest:interest,route,current_step:'new_lead',status:'active',
+    which_program:ge('nl-prog').value,customer_interest:interest,route:route,current_step:'new_lead',status:'active',
     program_source:ge('nl-src').value,
   });
-  if(error){notice('Error: '+error.message,'err');return;}
+  if(res.error){notice('Error: '+res.error.message,'err');return;}
   close_modal('new-modal');notice('Lead created!','ok');
-  ['nl-name','nl-dba','nl-email','nl-phone','nl-drep','nl-wh'].forEach(id=>{const e=ge(id);if(e)e.value='';});
+  ['nl-name','nl-dba','nl-email','nl-phone','nl-drep','nl-wh'].forEach(function(id){var e=ge(id);if(e)e.value='';});
 }
 
-function parseCSV(text){const rows=[];for(const line of text.split(/\r?\n/)){if(!line.trim())continue;const cols=[];let cur='',inQ=false;for(const ch of line){if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=ch;}cols.push(cur.trim());rows.push(cols);}return rows;}
+function parseCSV(text){
+  var rows=[];
+  for(var line of text.split(/\r?\n/)){
+    if(!line.trim())continue;
+    var cols=[],cur='',inQ=false;
+    for(var ch of line){if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=ch;}
+    cols.push(cur.trim());rows.push(cols);
+  }
+  return rows;
+}
 
-function previewCSV(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{csvRows=parseCSV(e.target.result);const p=ge('csv-prev'),b=ge('csv-btn');if(csvRows.length>1){p.style.display='block';p.innerHTML=`<strong>${csvRows.length-1} rows</strong> found &mdash; ready to import.`;b.disabled=false;}else{p.style.display='block';p.textContent='Could not read file.';b.disabled=true;}};r.readAsText(f);}
+function previewCSV(input){
+  var f=input.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    csvRows=parseCSV(e.target.result);
+    var p=ge('csv-prev'),b=ge('csv-btn');
+    if(csvRows.length>1){p.style.display='block';p.innerHTML='<strong>'+(csvRows.length-1)+' rows</strong> found &mdash; ready to import.';b.disabled=false;}
+    else{p.style.display='block';p.textContent='Could not read file.';b.disabled=true;}
+  };
+  r.readAsText(f);
+}
 
 async function importCSV(){
   if(!csvRows.length||!sb)return;
-  const hdrs=csvRows[0].map(h=>h.toLowerCase().trim());
-  const rows=csvRows.slice(1).filter(r=>r.some(c=>c));
-  const btn=ge('csv-btn');btn.disabled=true;btn.textContent='Importing...';
-  const col=(row,...kws)=>{for(const kw of kws){const i=hdrs.findIndex(h=>h.includes(kw));if(i>=0&&row[i]?.trim())return row[i].trim();}return'';};
-  const src=ge('csv-src')?.value||'Java Select';
-  let added=0,skipped=0;
-  for(let i=0;i<rows.length;i++){
-    const row=rows[i];
-    const name=col(row,'customers full','customer full','full name','store name','business name','dba')||col(row,'doing business','dba');
-    const dba=col(row,'doing business','dba','store name');
-    const email=col(row,'contact email','email'),phone=col(row,'phone');
+  var hdrs=csvRows[0].map(function(h){return h.toLowerCase().trim();});
+  var rows=csvRows.slice(1).filter(function(r){return r.some(function(c){return c;});});
+  var btn=ge('csv-btn');btn.disabled=true;btn.textContent='Importing...';
+  var col=function(row){
+    var kws=Array.prototype.slice.call(arguments,1);
+    for(var kw of kws){var i=hdrs.findIndex(function(h){return h.includes(kw);});if(i>=0&&row[i]&&row[i].trim())return row[i].trim();}
+    return'';
+  };
+  var src=(ge('csv-src')&&ge('csv-src').value)||'Java Select';
+  var added=0,skipped=0;
+  for(var i=0;i<rows.length;i++){
+    var row=rows[i];
+    var name=col(row,'customers full','customer full','full name','store name','business name')||col(row,'doing business','dba');
+    var dba=col(row,'doing business','dba','store name');
+    var email=col(row,'contact email','email'),phone=col(row,'phone');
     if(!name&&!dba&&!email&&!phone){skipped++;continue;}
-    const subId=col(row,'submission id','submissionid')||('csv-'+Date.now()+'-'+i);
-    const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',subId).maybeSingle();
-    if(ex){skipped++;continue;}
-    const interest=col(row,'is customer interested','interested in','customer interest')||'Leasing Equipment';
-    const route=LEASING_INTERESTS.includes(interest)?'leasing':'sales'; // FIX #1
-    const fn=col(row,'first name'),ln=col(row,'last name');
-    const fullName=name||(fn&&ln?fn+' '+ln:fn||ln||dba||'Unknown');
+    var subId=col(row,'submission id','submissionid')||('csv-'+Date.now()+'-'+i);
+    var ex=await sb.from('leads').select('id').eq('jotform_submission_id',subId).maybeSingle();
+    if(ex.data){skipped++;continue;}
+    var interest=col(row,'is customer interested','interested in','customer interest')||'Leasing Equipment';
+    var route=LEASING_INTERESTS.indexOf(interest)>=0?'leasing':'sales'; // FIX #1
+    var fn=col(row,'first name'),ln=col(row,'last name');
+    var fullName=name||(fn&&ln?fn+' '+ln:fn||ln||dba||'Unknown');
     await sb.from('leads').insert({
       jotform_submission_id:subId,customer_full_name:fullName,customer_first_name:fn,customer_last_name:ln,
       dba_name:dba||fullName,contact_email:email,phone:col(row,'phone number','phone'),contact_number:col(row,'contact number'),
       legal_business_name:col(row,'legal name','llc','s-corp','secretary'),store_address:col(row,'street address','address'),
-      num_locations:col(row,'number of locations','locations'),customer_distributor_number:col(row,"customer's distributor","distributor number","cust dist"),
-      distributor_sales_rep:col(row,'distributor sales rep','dist rep','distributor rep'),distributor_rep_email:col(row,'distributor rep email','rep email'),
-      distributor_warehouse:col(row,'distributor warehouse','warehouse location','warehouse'),which_program:col(row,'which program'),
-      customer_interest:interest,beverage_needs:col(row,'beverage needs','additional information','notes'),tradeshow_lead:col(row,'tradeshow'),
+      num_locations:col(row,'number of locations','locations'),
+      customer_distributor_number:col(row,"customer's distributor","distributor number","cust dist"),
+      distributor_sales_rep:col(row,'distributor sales rep','dist rep','distributor rep'),
+      distributor_rep_email:col(row,'distributor rep email','rep email'),
+      distributor_warehouse:col(row,'distributor warehouse','warehouse location','warehouse'),
+      which_program:col(row,'which program'),customer_interest:interest,
+      beverage_needs:col(row,'beverage needs','additional information','notes'),tradeshow_lead:col(row,'tradeshow'),
       submission_date:col(row,'submission date')?new Date(col(row,'submission date')).toISOString():null,
-      route,current_step:'new_lead',status:'active',program_source:src,
-      raw_csv:Object.fromEntries(hdrs.map((h,j)=>[h,row[j]||''])),
+      route:route,current_step:'new_lead',status:'active',program_source:src,
+      raw_csv:Object.fromEntries(hdrs.map(function(h,j){return[h,row[j]||''];})),
     });
     added++;
   }
   btn.disabled=false;btn.textContent='Import';
-  close_modal('csv-modal');notice(`Import complete: ${added} added, ${skipped} skipped.`,'ok');
-  csvRows=[];const fi=ge('csv-file');if(fi)fi.value='';const p=ge('csv-prev');if(p)p.style.display='none';
+  close_modal('csv-modal');
+  notice('Import complete: '+added+' added, '+skipped+' skipped.','ok');
+  csvRows=[];var fi=ge('csv-file');if(fi)fi.value='';
+  var p=ge('csv-prev');if(p)p.style.display='none';
 }
 
 async function doSync(){
-  const key=localStorage.getItem('jf_key');if(!key){notice('No API key saved. Go to Settings.','warn');return;}
-  notice('Syncing...','info');let total=0;
-  for(const[src,formId]of Object.entries(JOTFORM_IDS)){
-    if(!formId){continue;}
+  var key=localStorage.getItem('jf_key');if(!key){notice('No API key saved. Go to Settings.','warn');return;}
+  notice('Syncing...','info');var total=0;
+  var activeForms=Object.entries(JOTFORM_IDS).filter(function(e){return e[1];});
+  for(var i=0;i<activeForms.length;i++){
+    var src=activeForms[i][0],formId=activeForms[i][1];
     try{
-      const r=await fetch(`https://api.jotform.com/form/${formId}/submissions?apiKey=${key}&limit=1000&orderby=created_at,DESC`);
-      const d=await r.json();if(!d.content)continue;
-      for(const sub of d.content){
-        const subId=sub.id;
-        const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',subId).maybeSingle();
-        if(ex)continue;
-        const ans=sub.answers||{};
-        const get=(...keys)=>{for(const a of Object.values(ans)){if(keys.some(k=>(a.name||'').toLowerCase().includes(k)||(a.text||'').toLowerCase().includes(k)))return a.answer||'';}return'';};
-        const interest=get('interested','interest')||'Leasing Equipment';
-        const route=LEASING_INTERESTS.includes(interest)?'leasing':'sales';
-        const fn=get('first name','firstname'),ln=get('last name','lastname');
-        const fullName=fn&&ln?fn+' '+ln:fn||ln||get('store','dba','business')||'Unknown';
+      var r=await fetch('https://api.jotform.com/form/'+formId+'/submissions?apiKey='+key+'&limit=1000&orderby=created_at,DESC');
+      var d=await r.json();if(!d.content)continue;
+      for(var sub of d.content){
+        var subId=sub.id;
+        var ex=await sb.from('leads').select('id').eq('jotform_submission_id',subId).maybeSingle();
+        if(ex.data)continue;
+        var ans=sub.answers||{};
+        var get=function(){var keys=Array.prototype.slice.call(arguments);for(var a of Object.values(ans)){if(keys.some(function(k){return(a.name||'').toLowerCase().includes(k)||(a.text||'').toLowerCase().includes(k);}))return a.answer||'';}return'';};
+        var interest=get('interested','interest')||'Leasing Equipment';
+        var route=LEASING_INTERESTS.indexOf(interest)>=0?'leasing':'sales';
+        var fn=get('first name','firstname'),ln=get('last name','lastname');
+        var fullName=fn&&ln?fn+' '+ln:fn||ln||get('store','dba','business')||'Unknown';
         await sb.from('leads').insert({
           jotform_submission_id:subId,customer_full_name:fullName,customer_first_name:fn,customer_last_name:ln,
           dba_name:get('doing business','dba','store name')||fullName,contact_email:get('email'),
@@ -947,34 +1038,35 @@ async function doSync(){
           distributor_rep_email:get('distributor rep email'),distributor_warehouse:get('warehouse'),which_program:get('which program'),
           customer_interest:interest,beverage_needs:get('beverage needs','additional information'),tradeshow_lead:get('tradeshow'),
           submission_date:sub.created_at?new Date(sub.created_at*1000).toISOString():null,
-          route,current_step:'new_lead',status:'active',program_source:src,jotform_answers:ans,
+          route:route,current_step:'new_lead',status:'active',program_source:src,jotform_answers:ans,
         });
         total++;
       }
-    }catch(e){notice(`Sync error (${src}): ${e.message}`,'err');}
+    }catch(e){notice('Sync error ('+src+'): '+e.message,'err');}
   }
-  notice(`Sync complete - ${total} new leads added.`,'ok');
+  notice('Sync complete - '+total+' new leads added.','ok');
 }
 
 async function settingsSync(src){
-  const key=localStorage.getItem('jf_key');if(!key){notice('Save an API key first.','warn','s-notice');return;}
-  const forms=src?{[src]:JOTFORM_IDS[src]}:JOTFORM_IDS;
-  notice('Syncing...','info','s-notice');let total=0;
-  for(const[s,formId]of Object.entries(forms)){
-    if(!formId){notice(`${s} has no Jotform form ID configured yet.`,'warn','s-notice');continue;}
+  var key=localStorage.getItem('jf_key');if(!key){notice('Save an API key first.','warn','s-notice');return;}
+  var forms=src?{[src]:JOTFORM_IDS[src]}:JOTFORM_IDS;
+  notice('Syncing...','info','s-notice');var total=0;
+  for(var entry of Object.entries(forms)){
+    var s=entry[0],formId=entry[1];
+    if(!formId){notice(s+' has no Jotform ID configured yet.','warn','s-notice');continue;}
     try{
-      const r=await fetch(`https://api.jotform.com/form/${formId}/submissions?apiKey=${key}&limit=1000&orderby=created_at,DESC`);
-      const d=await r.json();if(!d.content)continue;
-      for(const sub of d.content){
-        const subId=sub.id;
-        const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',subId).maybeSingle();
-        if(ex)continue;
-        const ans=sub.answers||{};
-        const get=(...keys)=>{for(const a of Object.values(ans)){if(keys.some(k=>(a.name||'').toLowerCase().includes(k)||(a.text||'').toLowerCase().includes(k)))return a.answer||'';}return'';};
-        const interest=get('interested','interest')||'Leasing Equipment';
-        const route=LEASING_INTERESTS.includes(interest)?'leasing':'sales';
-        const fn=get('first'),ln=get('last');
-        const fullName=fn&&ln?fn+' '+ln:fn||ln||get('store','dba','business')||'Unknown';
+      var r=await fetch('https://api.jotform.com/form/'+formId+'/submissions?apiKey='+key+'&limit=1000&orderby=created_at,DESC');
+      var d=await r.json();if(!d.content)continue;
+      for(var sub of d.content){
+        var subId=sub.id;
+        var ex=await sb.from('leads').select('id').eq('jotform_submission_id',subId).maybeSingle();
+        if(ex.data)continue;
+        var ans=sub.answers||{};
+        var get=function(){var keys=Array.prototype.slice.call(arguments);for(var a of Object.values(ans)){if(keys.some(function(k){return(a.name||'').toLowerCase().includes(k)||(a.text||'').toLowerCase().includes(k);}))return a.answer||'';}return'';};
+        var interest=get('interested','interest')||'Leasing Equipment';
+        var route=LEASING_INTERESTS.indexOf(interest)>=0?'leasing':'sales';
+        var fn=get('first'),ln=get('last');
+        var fullName=fn&&ln?fn+' '+ln:fn||ln||get('store','dba','business')||'Unknown';
         await sb.from('leads').insert({
           jotform_submission_id:subId,customer_full_name:fullName,customer_first_name:fn,customer_last_name:ln,
           dba_name:get('doing business','dba','store')||fullName,contact_email:get('email'),
@@ -984,81 +1076,115 @@ async function settingsSync(src){
           distributor_warehouse:get('warehouse'),which_program:get('which program'),
           customer_interest:interest,beverage_needs:get('beverage','additional'),tradeshow_lead:get('tradeshow'),
           submission_date:sub.created_at?new Date(sub.created_at*1000).toISOString():null,
-          route,current_step:'new_lead',status:'active',program_source:s,jotform_answers:ans,
+          route:route,current_step:'new_lead',status:'active',program_source:s,jotform_answers:ans,
         });
         total++;
       }
-    }catch(e){notice(`Error (${s}): ${e.message}`,'err','s-notice');}
+    }catch(e){notice('Error ('+s+'): '+e.message,'err','s-notice');}
   }
-  notice(`Done - ${total} new leads added.`,'ok','s-notice');
+  notice('Done - '+total+' new leads added.','ok','s-notice');
 }
 
 async function testApiKey(){
-  const key=ge('s-apikey').value.trim();if(!key){ge('key-msg').textContent='Enter a key first.';return;}
+  var key=ge('s-apikey').value.trim();if(!key){ge('key-msg').textContent='Enter a key first.';return;}
   ge('key-msg').textContent='Testing...';
   try{
-    const r=await fetch(`https://api.jotform.com/user?apiKey=${key}`);
-    const d=await r.json();
+    var r=await fetch('https://api.jotform.com/user?apiKey='+key);
+    var d=await r.json();
     if(d.responseCode===200){
       localStorage.setItem('jf_key',key);
-      ge('key-msg').innerHTML=`<span style="color:#059669">&#10003; Connected as ${esc(d.content.username)}</span>`;
+      ge('key-msg').innerHTML='<span style="color:#059669">&#10003; Connected as '+esc(d.content.username)+'</span>';
       ge('sync-btn').style.display='inline-block';
-      ['sync-js','sync-sl','sync-cm','sync-fb','sync-all'].forEach(id=>{const e=ge(id);if(e)e.disabled=false;});
+      ['sync-js','sync-sl','sync-cm','sync-fb','sync-all'].forEach(function(id){var e=ge(id);if(e)e.disabled=false;});
     }else{ge('key-msg').innerHTML='<span style="color:#dc2626">&#10007; Invalid key</span>';}
-  }catch(e){ge('key-msg').innerHTML=`<span style="color:#dc2626">&#10007; Error: ${esc(e.message)}</span>`;}
+  }catch(e){ge('key-msg').innerHTML='<span style="color:#dc2626">&#10007; Error: '+esc(e.message)+'</span>';}
 }
 
 function refreshSettings(){
-  const key=localStorage.getItem('jf_key');
+  var key=localStorage.getItem('jf_key');
   if(ge('s-apikey'))ge('s-apikey').value=key||'';
-  if(key){['sync-js','sync-sl','sync-cm','sync-fb','sync-all'].forEach(id=>{const e=ge(id);if(e)e.disabled=false;});}
-  const wu=ge('wh-url');if(wu)wu.textContent=window.location.origin+'/.netlify/functions/webhook';
-  const ss=ge('s-status');
-  if(ss)ss.innerHTML=`<div>Supabase: <strong style="color:#059669">&#9679; Connected</strong></div><div>Jotform: <strong style="${key?'color:#059669">&#9679; Key saved':'color:#dc2626">&#10007; No key'}"</strong></div><div>Leads in DB: <strong>${leads.length}</strong></div><div>Active Reps: <strong>${salesReps.length}</strong></div>`;
+  if(key){['sync-js','sync-sl','sync-cm','sync-fb','sync-all'].forEach(function(id){var e=ge(id);if(e)e.disabled=false;});}
+  var wu=ge('wh-url');if(wu)wu.textContent=window.location.origin+'/.netlify/functions/webhook';
+  var ss=ge('s-status');
+  if(ss)ss.innerHTML='<div>Supabase: <strong style="color:#059669">&#9679; Connected</strong></div>'+
+    '<div>Jotform: <strong style="'+(key?'color:#059669">&#9679; Key saved':'color:#dc2626">&#10007; No key')+'"</strong></div>'+
+    '<div>Leads in DB: <strong>'+leads.length+'</strong></div>'+
+    '<div>Active Reps: <strong>'+salesReps.length+'</strong></div>';
   renderRepList();
-  const cid=ge('cm-id');if(cid)cid.value=localStorage.getItem('jf_id_CoreMark')||'';
-  const fid=ge('fb-id');if(fid)fid.value=localStorage.getItem('jf_id_Farner-Bocken')||'';
 }
 
 async function addRep(){
-  const inp=ge('new-rep'),name=inp?.value?.trim();if(!name)return;
-  const{error}=await sb.from('sales_reps').insert({name,active:true});
-  if(error){notice(error.code==='23505'?'Rep already exists.':'Error: '+error.message,'err','s-notice');return;}
+  var inp=ge('new-rep');var name=inp&&inp.value?inp.value.trim():'';if(!name)return;
+  var res=await sb.from('sales_reps').insert({name:name,active:true});
+  if(res.error){notice(res.error.code==='23505'?'Rep already exists.':'Error: '+res.error.message,'err','s-notice');return;}
   inp.value='';await loadReps();renderRepList();notice('Rep added!','ok','s-notice');
 }
 
 async function renderRepList(){
-  const{data}=await sb.from('sales_reps').select('*').order('name');
-  const el=ge('rep-list');if(!el)return;
-  el.innerHTML=(data||[]).map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:${r.active?'#f9fafb':'#fef2f2'};border:1px solid #e5e7eb;border-radius:7px"><span style="font-size:13px;font-weight:500;color:${r.active?'#111827':'#9ca3af'}">${esc(r.name)}</span><button class="btn btn-sm" style="font-size:11px" onclick="toggleRep('${r.id}',${r.active})">${r.active?'Deactivate':'Activate'}</button></div>`).join('');
+  var res=await sb.from('sales_reps').select('*').order('name');
+  var el=ge('rep-list');if(!el)return;
+  el.innerHTML=(res.data||[]).map(function(r){
+    return'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:'+(r.active?'#f9fafb':'#fef2f2')+';border:1px solid #e5e7eb;border-radius:7px">'+
+      '<span style="font-size:13px;font-weight:500;color:'+(r.active?'#111827':'#9ca3af')+'">'+esc(r.name)+'</span>'+
+      '<button class="btn btn-sm" style="font-size:11px" onclick="toggleRep(\''+r.id+'\','+r.active+')">'+(r.active?'Deactivate':'Activate')+'</button>'+
+      '</div>';
+  }).join('');
 }
 
-async function toggleRep(id,active){await sb.from('sales_reps').update({active:!active}).eq('id',id);await loadReps();renderRepList();}
+async function toggleRep(id,active){
+  await sb.from('sales_reps').update({active:!active}).eq('id',id);
+  await loadReps();renderRepList();
+}
 
 async function changePw(){
-  const cur=ge('pw-cur').value,nw=ge('pw-new').value,conf=ge('pw-conf').value;
-  const stored=localStorage.getItem('adm_pw')||DEF_PW;
+  var cur=ge('pw-cur').value,nw=ge('pw-new').value,conf=ge('pw-conf').value;
+  var stored=localStorage.getItem('adm_pw')||DEF_PW;
   if(cur!==stored){ge('pw-msg').innerHTML='<span style="color:#dc2626">Current password incorrect.</span>';return;}
   if(!nw){ge('pw-msg').innerHTML='<span style="color:#dc2626">New password required.</span>';return;}
   if(nw!==conf){ge('pw-msg').innerHTML='<span style="color:#dc2626">Passwords do not match.</span>';return;}
-  localStorage.setItem('adm_pw',nw);ge('pw-msg').innerHTML='<span style="color:#059669">&#10003; Password updated.</span>';
+  localStorage.setItem('adm_pw',nw);
+  ge('pw-msg').innerHTML='<span style="color:#059669">&#10003; Password updated.</span>';
   ge('pw-cur').value='';ge('pw-new').value='';ge('pw-conf').value='';
 }
 
 function showRepReport(){populateFilterSelects();renderReport();open_modal('report-modal');}
+
 function renderReport(){
-  const filterRep=ge('rr-rep')?.value||'';
-  const reps=[...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
-  const body=ge('report-body');if(!body)return;
-  const repList=filterRep?[filterRep]:reps;
+  var filterRep=(ge('rr-rep')&&ge('rr-rep').value)||'';
+  var reps=[...new Set(leads.map(function(l){return l.assigned_sales_rep;}).filter(Boolean))].sort();
+  var body=ge('report-body');if(!body)return;
+  var repList=filterRep?[filterRep]:reps;
   if(!repList.length){body.innerHTML='<div style="padding:1rem;color:#9ca3af">No assigned leads yet.</div>';return;}
-  body.innerHTML=repList.map(rep=>{
-    const rl=leads.filter(l=>l.assigned_sales_rep===rep);
-    const won=rl.filter(l=>l.status==='won').length,lost=rl.filter(l=>l.status==='lost').length,active=rl.filter(l=>l.status==='active').length;
-    return`<div style="margin-bottom:1.2rem"><div class="rep-hdr"><span style="font-size:13px;font-weight:700;color:#fff">${esc(rep)}</span><div style="display:flex;gap:6px"><span class="badge bg-gray">${rl.length} total</span><span class="badge bg-green">${won} won</span><span class="badge bg-red">${lost} lost</span><span class="badge bg-blue">${active} active</span></div></div>
-<table class="rtbl" style="border-radius:0 0 7px 7px;overflow:hidden"><thead><tr><th>Customer</th><th>Program</th><th>Step</th><th>Route</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rl.map(l=>{const sc=srcColor(l.program_source||'Java Select');return`<tr><td><strong>${esc(l.customer_full_name||l.dba_name||'--')}</strong><br><span style="color:#9ca3af;font-size:11px">${esc(l.contact_email||'')}</span></td><td><span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;background:${sc.bg};color:${sc.txt}">${esc(l.program_source||'--')}</span></td><td>${stepBadge(l)}</td><td><span style="font-size:11px">${l.route==='leasing'?'&#128179; Leasing':'&#128200; Sales'}</span></td><td><span class="badge ${l.status==='won'?'bg-green':l.status==='lost'?'bg-red':'bg-blue'}">${esc(l.status)}</span></td><td><button class="btn btn-sm" style="font-size:11px" onclick="close_modal('report-modal');selectLead('${l.id}')">View &#8594;</button></td></tr>`;}).join('')}</tbody></table></div>`;
+  body.innerHTML=repList.map(function(rep){
+    var rl=leads.filter(function(l){return l.assigned_sales_rep===rep;});
+    var won=rl.filter(function(l){return l.status==='won';}).length;
+    var lost=rl.filter(function(l){return l.status==='lost';}).length;
+    var active=rl.filter(function(l){return l.status==='active';}).length;
+    return'<div style="margin-bottom:1.2rem">'+
+      '<div class="rep-hdr">'+
+      '<span style="font-size:13px;font-weight:700;color:#fff">'+esc(rep)+'</span>'+
+      '<div style="display:flex;gap:6px">'+
+      '<span class="badge bg-gray">'+rl.length+' total</span>'+
+      '<span class="badge bg-green">'+won+' won</span>'+
+      '<span class="badge bg-red">'+lost+' lost</span>'+
+      '<span class="badge bg-blue">'+active+' active</span>'+
+      '</div></div>'+
+      '<table class="rtbl" style="border-radius:0 0 7px 7px;overflow:hidden">'+
+      '<thead><tr><th>Customer</th><th>Program</th><th>Step</th><th>Route</th><th>Status</th><th>Actions</th></tr></thead>'+
+      '<tbody>'+rl.map(function(l){
+        return'<tr>'+
+          '<td><strong>'+esc(l.customer_full_name||l.dba_name||'--')+'</strong><br><span style="color:#9ca3af;font-size:11px">'+esc(l.contact_email||'')+'</span></td>'+
+          '<td><span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;background:'+srcColor(l.program_source||'Java Select').bg+';color:'+srcColor(l.program_source||'Java Select').txt+'">'+esc(l.program_source||'--')+'</span></td>'+
+          '<td>'+stepBadge(l)+'</td>'+
+          '<td><span style="font-size:11px">'+(l.route==='leasing'?'&#128179; Leasing':'&#128200; Sales')+'</span></td>'+
+          '<td><span class="badge '+(l.status==='won'?'bg-green':l.status==='lost'?'bg-red':'bg-blue')+'">'+esc(l.status)+'</span></td>'+
+          '<td><button class="btn btn-sm" style="font-size:11px" onclick="close_modal(\'report-modal\');selectLead(\''+l.id+'\')">View &rarr;</button></td>'+
+          '</tr>';
+      }).join('')+'</tbody></table></div>';
   }).join('');
 }
+
+function saveEdit(){}
 
 window.addEventListener('DOMContentLoaded',init);
 </script>
