@@ -1,66 +1,173 @@
-exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') return { statusCode: 200, body: 'Webhook ready' };
+// netlify/functions/webhook.js
+// Receives Jotform webhook POSTs and inserts leads into Supabase
+// Deploy this file to: netlify/functions/webhook.js in your GitHub repo
+
+const SB_URL = 'https://opnpyunbccifkdnbljsz.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
+
+// Map Jotform form IDs to program names
+const FORM_PROGRAM_MAP = {
+  '260045399064863': 'Java Select',
+  '260696473895880': 'Sledd',
+  // Add CoreMark and Farner-Bocken IDs here when you have them:
+  // 'YOUR_COREMARK_FORM_ID': 'CoreMark',
+  // 'YOUR_FARNER_BOCKEN_FORM_ID': 'Farner-Bocken',
+};
+
+const LEASING_INTERESTS = [
+  'Leasing Equipment',
+  'Financing Equipment',
+  'Loaned Equipment Program',
+  'Loaned Equipment Request',
+  'Loaned Request',
+];
+
+// Extract a value from Jotform's answers object by keyword matching on field names
+function getAnswer(answers, ...keywords) {
+  for (const field of Object.values(answers)) {
+    const name = (field.name || field.text || '').toLowerCase();
+    if (keywords.some(kw => name.includes(kw.toLowerCase())) && field.answer) {
+      const a = field.answer;
+      if (typeof a === 'object') {
+        if (a.first || a.last) return `${a.first || ''} ${a.last || ''}`.trim();
+        return Object.values(a).filter(Boolean).join(', ');
+      }
+      return String(a).trim();
+    }
+  }
+  return '';
+}
+
+// Parse Jotform's URL-encoded POST body
+function parseFormBody(body) {
+  const params = {};
+  for (const pair of body.split('&')) {
+    const [k, v] = pair.split('=').map(decodeURIComponent);
+    params[k] = v;
+  }
+  return params;
+}
+
+exports.handler = async function (event) {
+  // Handle preflight / health check
+  if (event.httpMethod === 'GET') {
+    return { statusCode: 200, body: 'Webhook ready' };
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method not allowed' };
+  }
+
   try {
-    const params = new URLSearchParams(event.body);
-    const formID = params.get('formID');
-    const submissionID = params.get('submissionID');
-    const rawRequest = params.get('rawRequest');
-    if (formID && formID !== '260045399064863') return { statusCode: 200, body: 'Wrong form' };
-    const s = rawRequest ? JSON.parse(rawRequest) : {};
-    const get = (name) => {
-      const val = s[name];
-      if (!val) return '';
-      if (typeof val === 'string') return val.trim();
-      if (typeof val === 'object') return Object.values(val).filter(Boolean).join(', ').trim();
-      return '';
-    };
-    const SB_URL = 'https://opnpyunbccifkdnbljsz.supabase.co';
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
-    const checkRes = await fetch(`${SB_URL}/rest/v1/leads?jotform_submission_id=eq.${submissionID}&select=id`, {
-      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-    });
+    // Jotform sends URL-encoded form data
+    let rawAnswers = {};
+    let formId = '';
+    let submissionId = '';
+
+    const contentType = event.headers['content-type'] || '';
+
+    if (contentType.includes('application/json')) {
+      // Some Jotform webhook configs send JSON
+      const body = JSON.parse(event.body || '{}');
+      rawAnswers = body.rawRequest ? JSON.parse(body.rawRequest) : body;
+      formId = String(body.formID || body.form_id || '');
+      submissionId = String(body.submissionID || body.submission_id || '');
+    } else {
+      // Default: URL-encoded
+      const params = parseFormBody(event.body || '');
+      formId = params.formID || params.form_id || '';
+      submissionId = params.submissionID || params.submission_id || '';
+
+      // Jotform encodes answers as a JSON string in rawRequest
+      if (params.rawRequest) {
+        try { rawAnswers = JSON.parse(params.rawRequest); } catch (_) {}
+      } else {
+        rawAnswers = params;
+      }
+    }
+
+    // Determine program from form ID
+    const programSource = FORM_PROGRAM_MAP[formId] || 'Java Select';
+
+    // Check for duplicate submission
+    const checkRes = await fetch(
+      `${SB_URL}/rest/v1/leads?jotform_submission_id=eq.${encodeURIComponent(submissionId)}&select=id`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    );
     const existing = await checkRes.json();
-    const fullName = get('customersFull');
-    const nameParts = fullName.trim().split(' ');
-    const interest = get('isCustomer');
-    const route = ['Leasing Equipment','Financing Equipment'].includes(interest) ? 'leasing' : 'sales';
+    if (Array.isArray(existing) && existing.length > 0) {
+      console.log('Duplicate submission, skipping:', submissionId);
+      return { statusCode: 200, body: 'Duplicate — skipped' };
+    }
+
+    // Parse answers
+    const gv = (...kws) => getAnswer(rawAnswers, ...kws);
+
+    const name = (
+      gv('customer full', 'customer name', 'full name') ||
+      gv('store name', 'business name', 'dba') ||
+      gv('doing business')
+    ).trim();
+
+    const interest = gv('interest', 'customer interest');
+    const isLeasing = LEASING_INTERESTS.some(li =>
+      interest.toLowerCase().includes(li.toLowerCase())
+    );
+    const route = isLeasing ? 'leasing' : 'sales';
+
     const lead = {
-      jotform_submission_id: submissionID,
-      customer_full_name: fullName,
-      customer_first_name: nameParts[0] || '',
-      customer_last_name: nameParts.slice(1).join(' ') || '',
-      contact_email: get('contactEmail'),
-      contact_number: get('contactName7'),
-      phone: get('phoneNumber'),
-      legal_business_name: get('storeName8'),
-      dba_name: get('whatIs'),
-      store_address: [s['storeLocation_addr_line1'],s['storeLocation_city'],s['storeLocation_state'],s['storeLocation_zip']].filter(Boolean).join(', '),
-      distributor_sales_rep: get('distributorSales'),
-      distributor_rep_email: get('hthRep9'),
-      distributor: get('distributor'),
-      distributor_warehouse: get('distributorWarehouse37') || get('distributorWarehouse'),
-      tradeshow_lead: get('tradeshowLead'),
-      num_locations: get('numberOf'),
-      customer_distributor_number: get('customersDistributor'),
-      which_program: get('whichProgram'),
+      jotform_submission_id: submissionId,
+      program_source: programSource,
+      customer_full_name: name,
+      customer_first_name: gv('first name'),
+      customer_last_name: gv('last name'),
+      contact_email: gv('email', 'contact email'),
+      phone: gv('phone', 'contact number'),
+      contact_number: gv('phone', 'contact number'),
+      legal_business_name: gv('legal business', 'legal name'),
+      dba_name: gv('dba', 'store name', 'doing business') || name,
+      store_address: gv('address', 'store address', 'location'),
+      num_locations: gv('locations', 'num location', 'how many location'),
+      customer_distributor_number: gv('distributor number', 'dist number', 'customer dist'),
+      distributor_sales_rep: gv('dist rep', 'distributor sales rep', 'rep name'),
+      distributor_rep_email: gv('rep email', 'distributor rep email'),
+      distributor: gv('distributor name', 'which distributor'),
+      distributor_warehouse: gv('warehouse', 'dist warehouse'),
+      tradeshow_lead: gv('tradeshow', 'trade show'),
+      which_program: gv('which program', 'program', 'coffee program'),
       customer_interest: interest,
-      beverage_needs: get('pleaseProvide'),
-      notes: get('typeA'),
-      route, current_step: 'new_lead', status: 'active',
-      submission_date: params.get('created_at') ? new Date(parseInt(params.get('created_at'))*1000).toISOString() : new Date().toISOString(),
-      jotform_answers: s, raw_csv: {},
+      beverage_needs: gv('beverage', 'beverage needs'),
+      notes: gv('notes', 'comments', 'additional'),
+      route,
+      current_step: 'new_lead',
+      status: 'active',
+      submission_date: new Date().toISOString(),
+      jotform_answers: rawAnswers,
     };
-    const method = existing && existing.length > 0 ? 'PATCH' : 'POST';
-    const url = existing && existing.length > 0
-      ? `${SB_URL}/rest/v1/leads?jotform_submission_id=eq.${submissionID}`
-      : `${SB_URL}/rest/v1/leads`;
-    await fetch(url, {
-      method,
-      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+
+    // Insert into Supabase
+    const insertRes = await fetch(`${SB_URL}/rest/v1/leads`, {
+      method: 'POST',
+      headers: {
+        apikey: SB_KEY,
+        Authorization: `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
       body: JSON.stringify(lead),
     });
+
+    if (!insertRes.ok) {
+      const err = await insertRes.text();
+      console.error('Supabase insert error:', err);
+      return { statusCode: 500, body: 'Insert failed: ' + err };
+    }
+
+    console.log('Lead inserted:', name, '|', programSource, '|', submissionId);
     return { statusCode: 200, body: 'OK' };
+
   } catch (err) {
-    return { statusCode: 500, body: err.message };
+    console.error('Webhook error:', err);
+    return { statusCode: 500, body: 'Error: ' + err.message };
   }
 };
