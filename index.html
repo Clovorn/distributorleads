@@ -700,6 +700,7 @@ const safeIdx=idx>=0?idx:0;
 const cur=steps[safeIdx];const next=steps[safeIdx+1];
 const isLost=l.status==='lost',isWon=l.status==='won';
 const canAct=role==='admin'||role==='director'||(role==='ronnoco_rep'&&l.assigned_sales_rep);
+const logs=actCache[id]||[];
 const pipeHtml=steps.map((s,i)=>{
   const done=i<safeIdx,isCur=i===safeIdx;
   let dc=isLost?'lost-dot':done?'done-s':isCur?'cur-s':'';
