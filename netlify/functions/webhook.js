@@ -1,5 +1,5 @@
 // netlify/functions/webhook.js
-// Receives Jotform webhook POSTs and inserts leads into Supabase
+// DIAGNOSTIC VERSION — logs raw Jotform POST body to Supabase so we can see exactly what's sent
 
 const SB_URL = 'https://opnpyunbccifkdnbljsz.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
@@ -7,23 +7,16 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const FORM_PROGRAM_MAP = {
   '260045399064863': 'Java Select',
   '260696473895880': 'Sledd',
-  // Add CoreMark and Farner-Bocken IDs here when you have them
 };
 
 const LEASING_INTERESTS = [
-  'Leasing Equipment',
-  'Financing Equipment',
-  'Loaned Equipment Program',
-  'Loaned Equipment Request',
-  'Loaned Request',
+  'Leasing Equipment', 'Financing Equipment',
+  'Loaned Equipment Program', 'Loaned Equipment Request', 'Loaned Request',
 ];
 
-// Jotform sends URL-encoded bodies. This correctly decodes them
-// including the nested rawRequest JSON string.
-function parseJotformBody(rawBody) {
+function parseUrlEncoded(rawBody) {
   const params = {};
-  const pairs = rawBody.split('&');
-  for (const pair of pairs) {
+  for (const pair of rawBody.split('&')) {
     const eqIdx = pair.indexOf('=');
     if (eqIdx === -1) continue;
     const key = decodeURIComponent(pair.slice(0, eqIdx).replace(/\+/g, ' '));
@@ -33,18 +26,14 @@ function parseJotformBody(rawBody) {
   return params;
 }
 
-// Extract answer from Jotform's rawRequest answers object.
-// Each field looks like: { name: "fieldName", text: "Label", answer: "value" | {first,last} }
 function getAnswer(answers, ...keywords) {
   for (const field of Object.values(answers)) {
     const fieldName = (field.name || field.text || '').toLowerCase();
-    const matches = keywords.some(kw => fieldName.includes(kw.toLowerCase()));
-    if (matches && field.answer) {
+    if (keywords.some(kw => fieldName.includes(kw.toLowerCase())) && field.answer) {
       const a = field.answer;
       if (typeof a === 'object' && a !== null) {
-        if (a.first !== undefined || a.last !== undefined) {
+        if (a.first !== undefined || a.last !== undefined)
           return `${a.first || ''} ${a.last || ''}`.trim();
-        }
         return Object.values(a).filter(Boolean).join(', ');
       }
       return String(a).trim();
@@ -53,63 +42,63 @@ function getAnswer(answers, ...keywords) {
   return '';
 }
 
-// Fallback: search the flat params for a matching key (q3_fieldName style)
 function getFlatParam(params, ...keywords) {
   for (const [key, val] of Object.entries(params)) {
-    const k = key.toLowerCase();
-    if (keywords.some(kw => k.includes(kw.toLowerCase())) && val && val.trim()) {
-      return val.trim();
-    }
+    if (keywords.some(kw => key.toLowerCase().includes(kw.toLowerCase())) && val && String(val).trim())
+      return String(val).trim();
   }
   return '';
 }
 
 exports.handler = async function (event) {
-  // Health check
-  if (event.httpMethod === 'GET') {
-    return { statusCode: 200, body: 'Webhook ready' };
-  }
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method not allowed' };
-  }
+  if (event.httpMethod === 'GET') return { statusCode: 200, body: 'Webhook ready' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
+
+  const rawBody = event.body || '';
+  const contentType = (event.headers['content-type'] || '').toLowerCase();
+
+  let params = {};
+  let answers = {};
+  let formId = '';
+  let submissionId = '';
 
   try {
-    const body = event.body || '';
-    const contentType = (event.headers['content-type'] || '').toLowerCase();
-
-    let params = {};
-    let answers = {};
-    let formId = '';
-    let submissionId = '';
-
     if (contentType.includes('application/json')) {
-      const json = JSON.parse(body);
+      const json = JSON.parse(rawBody);
       formId = String(json.formID || json.form_id || '');
       submissionId = String(json.submissionID || json.submission_id || '');
       if (json.rawRequest) {
-        try { answers = JSON.parse(json.rawRequest); } catch (_) { answers = json.rawRequest || {}; }
+        try { answers = JSON.parse(json.rawRequest); } catch (_) { answers = {}; }
       } else {
-        answers = json.answers || json;
+        answers = json.answers || {};
       }
       params = json;
     } else {
-      // Standard Jotform webhook: application/x-www-form-urlencoded
-      // with a rawRequest field containing JSON-encoded answers
-      params = parseJotformBody(body);
+      params = parseUrlEncoded(rawBody);
       formId = params.formID || params.form_id || '';
       submissionId = params.submissionID || params.submission_id || '';
-
       if (params.rawRequest) {
-        try {
-          answers = JSON.parse(params.rawRequest);
-        } catch (e) {
-          console.error('Failed to parse rawRequest:', e.message);
-          answers = {};
-        }
+        try { answers = JSON.parse(params.rawRequest); } catch (_) { answers = {}; }
       }
     }
 
-    console.log('Webhook received - formID:', formId, 'submissionID:', submissionId, 'answer fields:', Object.keys(answers).length);
+    // LOG the raw body to Supabase so we can inspect it
+    await fetch(`${SB_URL}/rest/v1/webhook_log`, {
+      method: 'POST',
+      headers: {
+        apikey: SB_KEY,
+        Authorization: `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({
+        content_type: contentType,
+        raw_body: rawBody.slice(0, 8000), // cap at 8KB
+        parsed_params: params,
+        form_id: formId,
+        submission_id: submissionId,
+      }),
+    });
 
     const programSource = FORM_PROGRAM_MAP[formId] || 'Java Select';
 
@@ -120,13 +109,10 @@ exports.handler = async function (event) {
         { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
       );
       const existing = await checkRes.json();
-      if (Array.isArray(existing) && existing.length > 0) {
-        console.log('Duplicate submission, skipping:', submissionId);
+      if (Array.isArray(existing) && existing.length > 0)
         return { statusCode: 200, body: 'Duplicate — skipped' };
-      }
     }
 
-    // Try answers object first, then flat params as fallback
     const gv = (...kws) => getAnswer(answers, ...kws) || getFlatParam(params, ...kws);
 
     const name = (
@@ -136,10 +122,8 @@ exports.handler = async function (event) {
     ).trim();
 
     const interest = gv('interest', 'customer interest', 'customerinterest');
-    const isLeasing = LEASING_INTERESTS.some(li =>
-      interest.toLowerCase().includes(li.toLowerCase())
-    );
-    const route = isLeasing ? 'leasing' : 'sales';
+    const route = LEASING_INTERESTS.some(li => interest.toLowerCase().includes(li.toLowerCase()))
+      ? 'leasing' : 'sales';
 
     const lead = {
       jotform_submission_id: submissionId || null,
@@ -150,19 +134,19 @@ exports.handler = async function (event) {
       contact_email: gv('email', 'contact email', 'contactemail'),
       phone: gv('phone', 'contact number', 'contactnumber', 'phonenumber'),
       contact_number: gv('phone', 'contact number', 'contactnumber'),
-      legal_business_name: gv('legal business', 'legal name', 'legalname', 'legalbusiness'),
+      legal_business_name: gv('legal business', 'legal name', 'legalname'),
       dba_name: gv('dba', 'store name', 'doing business', 'dbaname', 'storename') || name,
       store_address: gv('address', 'store address', 'storeaddress', 'location'),
       num_locations: gv('locations', 'num location', 'how many location', 'numlocations'),
-      customer_distributor_number: gv('distributor number', 'dist number', 'customer dist', 'distributornumber'),
-      distributor_sales_rep: gv('dist rep', 'distributor sales rep', 'rep name', 'distrep', 'salesrep'),
+      customer_distributor_number: gv('distributor number', 'dist number', 'customer dist'),
+      distributor_sales_rep: gv('dist rep', 'distributor sales rep', 'rep name', 'distrep'),
       distributor_rep_email: gv('rep email', 'distributor rep email', 'repemail'),
       distributor: gv('distributor name', 'which distributor', 'distributorname'),
-      distributor_warehouse: gv('warehouse', 'dist warehouse', 'distributorwarehouse'),
+      distributor_warehouse: gv('warehouse', 'dist warehouse'),
       tradeshow_lead: gv('tradeshow', 'trade show'),
       which_program: gv('which program', 'program', 'coffee program', 'whichprogram'),
       customer_interest: interest,
-      beverage_needs: gv('beverage', 'beverage needs', 'beverageneeds'),
+      beverage_needs: gv('beverage', 'beverage needs'),
       notes: gv('notes', 'comments', 'additional'),
       route,
       current_step: 'new_lead',
@@ -170,8 +154,6 @@ exports.handler = async function (event) {
       submission_date: new Date().toISOString(),
       jotform_answers: answers,
     };
-
-    console.log('Inserting lead:', lead.customer_full_name, '|', lead.contact_email, '|', programSource);
 
     const insertRes = await fetch(`${SB_URL}/rest/v1/leads`, {
       method: 'POST',
@@ -186,15 +168,20 @@ exports.handler = async function (event) {
 
     if (!insertRes.ok) {
       const err = await insertRes.text();
-      console.error('Supabase insert error:', insertRes.status, err);
       return { statusCode: 500, body: 'Insert failed: ' + err };
     }
 
-    console.log('Lead inserted successfully:', name);
     return { statusCode: 200, body: 'OK' };
 
   } catch (err) {
-    console.error('Webhook exception:', err.message, err.stack);
+    // Log the error too
+    try {
+      await fetch(`${SB_URL}/rest/v1/webhook_log`, {
+        method: 'POST',
+        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ content_type: contentType, raw_body: 'ERROR: ' + err.message + '\n\nBODY: ' + rawBody.slice(0, 4000), form_id: '', submission_id: '' }),
+      });
+    } catch (_) {}
     return { statusCode: 500, body: 'Error: ' + err.message };
   }
 };
