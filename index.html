@@ -317,9 +317,8 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
       <p style="font-size:13px;color:#374151">CSV Import checks by <strong>name + email</strong> before inserting. Leads already in the system are automatically skipped — even if you upload the same file again. Leads with an assigned rep or pipeline progress are <strong>never overwritten</strong>.</p>
     </div>
     <div style="background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.2rem;margin-bottom:.8rem">
-      <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.5rem">Pipeline Routes</h3>
-      <p style="font-size:13px;color:#374151;margin-bottom:.5rem"><strong>Sales Rep (13 steps):</strong> New Lead → Assign Rep → Lead Received → Customer Contacted → Customer Won → Deal Sheet → Waiting Finance → Deal Funded → Customer Setup → Equip Ordered → Dist Notified → Install Scheduled → Complete</p>
-      <p style="font-size:13px;color:#374151"><strong>Leasing/Finance (8 steps):</strong> New Lead → Assign Rep → Credit App Sent → Credit Received → Approved → Paperwork Sent → Paperwork Signed → Deal Funded</p>
+      <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.5rem">Pipeline (15 Steps — All Leads)</h3>
+      <p style="font-size:13px;color:#374151">New Lead → Assign Rep → Customer Contacted → Customer Won → Deal Sheet Submitted → Credit App Sent → Credit Approved → Paperwork Sent → Docs Signed → Deal Funded → Customer Set Up → Equipment Ordered → Install Scheduled → Dist Notified / Product Ordered → Install Complete</p>
     </div>
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:1.2rem">
       <h3 style="font-size:15px;font-weight:700;color:#1e40af;margin-bottom:.4rem">Smarter Equipment Finance</h3>
@@ -483,34 +482,34 @@ const JOTFORM_IDS = {'Java Select':'260045399064863','Sledd':'260696473895880','
 const DEF_PW = 'pipeline2024';
 const LEASING_INTERESTS = ['Leasing Equipment','Financing Equipment','Loaned Equipment Program','Loaned Equipment Request','Loaned Request'];
 
-const COMMON = [
-  {id:'new_lead',label:'New Lead',icon:'🆕'},
-  {id:'assign_rep',label:'Assign Rep',icon:'👤'},
+// Single unified pipeline — all leads follow the same route.
+const ALL_STEPS = [
+  {id:'new_lead',          label:'New Lead',              icon:'🆕'},
+  {id:'assign_rep',        label:'Assign Rep',            icon:'👤'},
+  {id:'customer_contacted',label:'Customer Contacted',    icon:'📞', subj:'Following Up on Your Interest',   body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nThank you for your interest in the Ronnoco program! I wanted to follow up and answer any questions you may have.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'customer_won',      label:'Customer Won',          icon:'🏆', subj:'Welcome to Ronnoco!',             body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe're excited to welcome you to the Ronnoco program!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'deal_sheet',        label:'Deal Sheet Submitted',  icon:'📋', subj:'Deal Sheet Submitted',            body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal sheet has been submitted for processing.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'credit_app_sent',   label:'Credit App Sent',       icon:'📤', subj:'Credit Application — Action Required', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nPlease complete your credit application at the link below:\nhttps://signnow.com/s/YKsq02bU\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'credit_approved',   label:'Credit Approved',       icon:'✅', subj:'Credit Approved!',              body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nGreat news — your credit application has been approved!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'paperwork_sent',    label:'Paperwork Sent',        icon:'🖊️', subj:'Lease Documents Ready for Signature', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour lease documents have been sent for your signature. Please review and sign at your earliest convenience.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'paperwork_signed',  label:'Docs Signed',           icon:'✍️', subj:'Documents Received — Thank You', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe have received your signed documents and are processing funding.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'deal_funded_s',     label:'Deal Funded',           icon:'💰', subj:'Deal Funded!',                  body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nGreat news — your deal has been funded!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'customer_setup',    label:'Customer Set Up',       icon:'⚙️', subj:'Account Setup in Progress',     body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour account is being set up in our system.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'equip_ordered',     label:'Equipment Ordered',     icon:'🛒', subj:'Equipment Ordered',             body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment has been ordered and will ship soon.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'install_scheduled', label:'Install Scheduled',     icon:'📅', subj:'Installation Scheduled',        body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment installation has been scheduled. We will be in touch with the details.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'dist_notified',     label:'Dist Notified / Product Ordered', icon:'📦', subj:'Distributor Notified — Product Ordered', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour distributor has been notified and your product has been ordered.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+  {id:'complete_s',        label:'Install Complete',      icon:'🏁', subj:'Installation Complete!',        body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour installation is complete — welcome to the Ronnoco family!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
 ];
-const SALES_STEPS = [
-  {id:'lead_received',label:'Lead Received',icon:'📥',subj:"You've Been Assigned a New Lead",body:l=>emailBody_leadReceived(l)},
-  {id:'customer_contacted',label:'Contacted',icon:'📞',subj:'Following Up on Your Interest',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nThank you for your interest in the program!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'customer_won',label:'Customer Won',icon:'🏆',subj:'Welcome!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe're excited to welcome you to the program!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'deal_sheet',label:'Deal Sheet',icon:'📋',subj:'Deal Sheet Submitted',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal sheet has been submitted for processing.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'waiting_finance',label:'Waiting Finance',icon:'⏳',subj:'Under Finance Review',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal is currently under finance review.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'deal_funded_s',label:'Deal Funded',icon:'💰',subj:'Deal Funded!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nGreat news — your deal has been funded!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'customer_setup',label:'Customer Setup',icon:'⚙️',subj:'Account Setup in Progress',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour account is being set up.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'equip_ordered',label:'Equip Ordered',icon:'🛒',subj:'Equipment Ordered',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment has been ordered and will ship soon.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'dist_notified',label:'Dist Notified',icon:'📡',subj:'Distributor Notified',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour distributor has been notified and will be in touch.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'install_scheduled',label:'Install Sched.',icon:'📅',subj:'Installation Scheduled',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment installation has been scheduled!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'complete_s',label:'Complete',icon:'🏁',subj:'Setup Complete!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nSetup is complete — welcome to the family!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-];
-const LEASE_STEPS = [
-  {id:'credit_app_sent',label:'Credit App Sent',icon:'📤',subj:'Credit Application Link',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nPlease complete your credit application:\nhttps://signnow.com/s/YKsq02bU\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'credit_received',label:'Credit Received',icon:'📩',subj:'Application Received',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe received your credit application and it is under review.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'credit_approved',label:'Approved',icon:'✅',subj:'Credit Approved!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour credit application has been approved!\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'paperwork_sent',label:'Paperwork Sent',icon:'📋',subj:'Lease Documents Ready',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour lease documents have been sent for signature.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'paperwork_signed',label:'Docs Signed',icon:'✍️',subj:'Documents Received',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe received your signed documents and are processing funding.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-  {id:'deal_funded_l',label:'Deal Funded',icon:'💰',subj:'Lease Funded!',body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour lease is fully funded — you're all set!\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}`},
-];
-const ALL_STEPS=[...COMMON,...SALES_STEPS,...LEASE_STEPS];
-function getSteps(route){return route==='leasing'?[...COMMON,...LEASE_STEPS]:[...COMMON,...SALES_STEPS];}
-function getStep(id){return ALL_STEPS.find(s=>s.id===id);}
+// Aliases keep existing leads on old step IDs working without data migration
+const STEP_ALIASES = {
+  deal_funded_l:    'deal_funded_s',
+  waiting_finance:  'credit_app_sent',
+  credit_received:  'credit_approved',
+  lead_received:    'customer_contacted',
+  complete_s:       'complete_s',
+};
+function getSteps(){return ALL_STEPS;}
+function getStep(id){return ALL_STEPS.find(s=>s.id===(STEP_ALIASES[id]||id));}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 function emailBody_leadReceived(l){
@@ -564,7 +563,7 @@ let pendingNote=null,lostLeadId=null,repAssignId=null,emailLeadId=null,emailIsAd
 // ─── UTILS ────────────────────────────────────────────────────
 const fmtD=ts=>ts?new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
 const fmtT=ts=>ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
-const pct=l=>{const s=getSteps(l.route);const i=s.findIndex(x=>x.id===l.current_step);return i<0?0:Math.round((i+1)/s.length*100);};
+const pct=l=>{const s=getSteps();const id=STEP_ALIASES[l.current_step]||l.current_step;const i=s.findIndex(x=>x.id===id);return i<0?0:Math.round((i+1)/s.length*100);};
 const ge=id=>document.getElementById(id);
 const open_modal=id=>ge(id).classList.add('open');
 const close_modal=id=>ge(id).classList.remove('open');
@@ -633,8 +632,8 @@ const fw=ge('f-wh');if(fw){const v=fw.value;fw.innerHTML='<option value="">All</
 function stepBadge(l){
 if(l.status==='lost')return'<span class="badge bg-red">Lost</span>';
 if(l.status==='won')return'<span class="badge bg-green">Won</span>';
-const s=getStep(l.current_step);const cls=l.route==='leasing'?'bg-purple':'bg-navy';
-return`<span class="badge ${cls}" style="font-size:10px">${s?esc(s.icon+' '+s.label):'—'}</span>`;
+const sid=STEP_ALIASES[l.current_step]||l.current_step;const s=getStep(sid);
+return`<span class="badge bg-navy" style="font-size:10px">${s?esc(s.icon+' '+s.label):'—'}</span>`;
 }
 
 function srcColor(src){
@@ -684,7 +683,7 @@ ${stepBadge(l)}
 <span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;background:${sc.bg};color:${sc.txt}">${esc(l.program_source||'Java Select')}</span>
 <span style="font-size:11px;color:#9ca3af">${fmtD(l.created_at)}</span>
 </div>
-<div class="pbar"><div class="pfill ${l.route==='leasing'?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
+<div class="pbar"><div class="pfill pf-s" style="width:${pct(l)}%"></div></div>
 </div>`;
 }).join('');
 }
@@ -694,18 +693,16 @@ async function selectLead(id){selId=id;renderList();if(!actCache[id])await loadA
 
 function renderMain(id){
 const l=leads.find(x=>x.id===id);if(!l)return;
-const steps=getSteps(l.route);
-const idx=steps.findIndex(s=>s.id===l.current_step);
+const steps=getSteps();
+const curId=STEP_ALIASES[l.current_step]||l.current_step;
+const idx=steps.findIndex(s=>s.id===curId);
 const safeIdx=idx>=0?idx:0;
 const cur=steps[safeIdx];const next=steps[safeIdx+1];
 const isLost=l.status==='lost',isWon=l.status==='won';
 const canAct=role==='admin'||role==='director'||(role==='ronnoco_rep'&&l.assigned_sales_rep);
-const isLeasing=l.route==='leasing';
-const logs=actCache[id]||[];
-
 const pipeHtml=steps.map((s,i)=>{
   const done=i<safeIdx,isCur=i===safeIdx;
-  let dc=isLost?'lost-dot':done?(isLeasing?'done-l':'done-s'):isCur?(isLeasing?'cur-l':'cur-s'):'';
+  let dc=isLost?'lost-dot':done?'done-s':isCur?'cur-s':'';
   return`<div class="pstep"><div class="pdot ${dc}">${s.icon}</div><div class="pname ${done||isCur?'active':''}">${esc(s.label)}</div></div>`;
 }).join('');
 
@@ -738,17 +735,12 @@ ge('main-panel').innerHTML=`
     ${role==='admin'||role==='director'?`<button class="btn b-red btn-sm" onclick="deleteLead('${id}')">Delete</button>`:''}
   </div>
 </div>
-<div class="pbar" style="height:5px;margin-bottom:.85rem"><div class="pfill ${isLeasing?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
-<div class="route-bar">
-  <span style="font-size:12px;font-weight:600;color:#374151;margin-right:4px">Route:</span>
-  <button class="ropt ${!isLeasing?'on-s':''}" onclick="changeRoute('${id}','sales')">📈 Sales Rep</button>
-  <button class="ropt ${isLeasing?'on-l':''}" onclick="changeRoute('${id}','leasing')">💳 Leasing/Finance</button>
-</div>
+<div class="pbar" style="height:5px;margin-bottom:.85rem"><div class="pfill pf-s" style="width:${pct(l)}%"></div></div>
 <div class="pipeline">${pipeHtml}</div>
 <div class="jbox">
   <div class="jbox-title">📍 Move to step</div>
   <div class="jrow">
-    <select class="jsel" id="jump-${id}">${steps.map(s=>`<option value="${s.id}" ${s.id===l.current_step?'selected':''}>${s.icon} ${esc(s.label)}</option>`).join('')}</select>
+    <select class="jsel" id="jump-${id}">${steps.map(s=>`<option value="${s.id}" ${s.id===curId?'selected':''}>${s.icon} ${esc(s.label)}</option>`).join('')}</select>
     <button class="btn b-blue btn-sm" onclick="jumpStep('${id}')">Move →</button>
   </div>
   ${isLost?`<div class="lost-box"><strong>Lost reason:</strong> ${esc(l.lost_reason||'—')}</div>`:''}
@@ -786,10 +778,10 @@ ge('main-panel').innerHTML=`
 
 // ─── ACTIONS ─────────────────────────────────────────────────
 async function changeRoute(id,route){
-const l=leads.find(x=>x.id===id);if(!l)return;
-await sb.from('leads').update({route,current_step:'new_lead'}).eq('id',id);
-await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Route changed to '+(route==='leasing'?'Leasing/Finance':'Sales Rep')});
-notice('Route updated!','ok');
+// Route toggle kept for data purposes but pipeline is now unified
+await sb.from('leads').update({route}).eq('id',id);
+await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Route noted: '+(route==='leasing'?'Leasing/Finance':'Sales Rep')});
+notice('Route updated.','ok');
 }
 
 async function saveEdits(id){
@@ -855,7 +847,7 @@ const{leadId,fromStep,toStep,doEmail,emailSubj,emailBody}=pendingNote;
 const note=ge('note-text').value.trim();
 close_modal('note-modal');pendingNote=null;
 const l=leads.find(x=>x.id===leadId);if(!l)return;
-const wonSteps=['customer_won','complete_s','deal_funded_l','deal_funded_s'];
+const wonSteps=['customer_won','complete_s','deal_funded_s','deal_funded_l'];
 const status=wonSteps.includes(toStep)?'won':l.status;
 await sb.from('leads').update({current_step:toStep,status}).eq('id',leadId);
 await sb.from('activity_log').insert({lead_id:leadId,actor_role:role,action:'Advanced: '+(getStep(fromStep)?.label||fromStep)+' → '+(getStep(toStep)?.label||toStep),from_step:fromStep,to_step:toStep,note:note||''});
@@ -876,7 +868,7 @@ openNoteModal(id,l.current_step,toStep,false);
 // ─── EMAIL MODAL ─────────────────────────────────────────────
 function openEmail(id,isAdv){
 const l=leads.find(x=>x.id===id);if(!l)return;
-const steps=getSteps(l.route);const idx=steps.findIndex(s=>s.id===l.current_step);
+const steps=getSteps();const curId2=STEP_ALIASES[l.current_step]||l.current_step;const idx=steps.findIndex(s=>s.id===curId2);
 const safeIdx2=idx>=0?idx:0;const step=steps[safeIdx2];if(!step||!step.body)return;
 emailLeadId=id;emailIsAdv=isAdv;
 ge('em-title').textContent=isAdv?'Compose & advance':'Draft email';
@@ -894,7 +886,7 @@ notice('Email copied!','ok');close_modal('email-modal');
 }
 async function copyEmailAndAdv(){
 const subj=ge('em-subj').value,body=ge('em-body').value;
-if(emailLeadId){const l=leads.find(x=>x.id===emailLeadId);const steps=getSteps(l.route);const idx=steps.findIndex(s=>s.id===l.current_step);const si=idx>=0?idx:0;if(si<steps.length-1){close_modal('email-modal');openNoteModal(emailLeadId,l.current_step,steps[si+1].id,true,subj,body);return;}}
+if(emailLeadId){const l=leads.find(x=>x.id===emailLeadId);const steps=getSteps();const curId3=STEP_ALIASES[l.current_step]||l.current_step;const idx=steps.findIndex(s=>s.id===curId3);const si=idx>=0?idx:0;if(si<steps.length-1){close_modal('email-modal');openNoteModal(emailLeadId,l.current_step,steps[si+1].id,true,subj,body);return;}}
 close_modal('email-modal');
 }
 
