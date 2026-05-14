@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -355,23 +355,59 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 <!-- MODALS -->
 <!-- Assign Rep -->
 <div class="overlay" id="rep-modal">
-  <div class="modal" style="max-width:600px">
+  <div class="modal" style="max-width:680px">
     <div class="mhdr">
       <div><div class="mtitle">👤 Assign Sales Rep</div><div id="ra-sub" style="font-size:12px;color:#6b7280;margin-top:2px"></div></div>
       <button class="mclose" onclick="close_modal('rep-modal')">✕</button>
     </div>
-    <label class="flbl">Select rep *</label>
-    <select class="finp" id="ra-rep" onchange="buildAssignEmail()"><option value="">— Choose a rep —</option></select>
-    <label class="flbl">Rep email address</label>
-    <input class="finp" id="ra-remail" type="email" placeholder="rep@example.com"/>
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:.55rem .8rem;margin:.6rem 0;font-size:12px;color:#92400e">✉ Email will be copied to clipboard — paste and send from your email client.</div>
-    <label class="flbl">Subject</label>
-    <input class="finp" id="ra-subj"/>
-    <label class="flbl">Body</label>
-    <textarea class="finp" id="ra-body" rows="18" style="font-family:monospace;font-size:12px"></textarea>
+    <!-- Rep selector -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:.6rem">
+      <div>
+        <label class="flbl">Select rep *</label>
+        <select class="finp" id="ra-rep" onchange="buildAssignEmail()"><option value="">— Choose a rep —</option></select>
+      </div>
+      <div>
+        <label class="flbl">Rep email address</label>
+        <input class="finp" id="ra-remail" type="email" placeholder="rep@example.com" oninput="buildAssignEmail()"/>
+      </div>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:.5rem .8rem;margin-bottom:.7rem;font-size:12px;color:#92400e">✉ Click a button below to copy that email — then paste and send from your email client.</div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;border-bottom:2px solid #e5e7eb;margin-bottom:.8rem">
+      <button id="ra-tab1" onclick="raTab(1)" style="font-size:13px;font-weight:600;padding:.45rem 1rem;border:none;border-bottom:2px solid #0f2347;margin-bottom:-2px;background:none;color:#0f2347;cursor:pointer">📋 Rep Email</button>
+      <button id="ra-tab2" onclick="raTab(2)" style="font-size:13px;font-weight:600;padding:.45rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;color:#9ca3af;cursor:pointer">📡 Distributor Email</button>
+    </div>
+    <!-- Tab 1: Rep email -->
+    <div id="ra-pane1">
+      <label class="flbl">Subject</label>
+      <input class="finp" id="ra-subj" style="margin-bottom:.4rem"/>
+      <label class="flbl">Body</label>
+      <textarea class="finp" id="ra-body" rows="16" style="font-family:monospace;font-size:12px"></textarea>
+      <div style="display:flex;gap:7px;align-items:center;margin-top:.5rem;flex-wrap:wrap">
+        <button class="btn b-green btn-sm" onclick="sendRepEmail()">✉ Send to rep</button>
+        <button class="btn b-blue btn-sm" onclick="copyRepEmail()">📋 Copy</button>
+        <span id="ra-send1-msg" style="font-size:12px;display:none"></span>
+      </div>
+    </div>
+    <!-- Tab 2: Distributor email -->
+    <div id="ra-pane2" style="display:none">
+      <label class="flbl">Distributor rep name</label>
+      <input class="finp" id="ra-drep-name" style="margin-bottom:.4rem" readonly style="background:#f9fafb"/>
+      <label class="flbl">Distributor rep email</label>
+      <input class="finp" id="ra-dremail" type="email" placeholder="distrep@distributor.com" style="margin-bottom:.4rem"/>
+      <label class="flbl">Subject</label>
+      <input class="finp" id="ra-dsubj" style="margin-bottom:.4rem"/>
+      <label class="flbl">Body</label>
+      <textarea class="finp" id="ra-dbody" rows="12" style="font-family:monospace;font-size:12px"></textarea>
+      <div style="display:flex;gap:7px;align-items:center;margin-top:.5rem;flex-wrap:wrap">
+        <button class="btn b-green btn-sm" onclick="sendDistEmail()">✉ Send to distributor rep</button>
+        <button class="btn b-blue btn-sm" onclick="copyDistEmail()">📋 Copy</button>
+        <span id="ra-send2-msg" style="font-size:12px;display:none"></span>
+      </div>
+    </div>
     <div class="mfoot">
       <button class="btn" onclick="close_modal('rep-modal')">Cancel</button>
-      <button class="btn b-navy" onclick="confirmAssign()">Copy email &amp; assign →</button>
+      <button class="btn b-navy" onclick="confirmAssign()">✓ Assign &amp; send emails</button>
     </div>
   </div>
 </div>
@@ -855,16 +891,125 @@ function openAssignRep(id) {
   const rsel=ge('ra-rep');
   if(rsel){rsel.innerHTML='<option value="">— Choose a rep —</option>'+salesReps.map(r=>`<option value="${r.name}">${r.name}</option>`).join('');if(l.assigned_sales_rep)rsel.value=l.assigned_sales_rep;}
   ge('ra-remail').value='';
-  ge('ra-subj').value="You've Been Assigned a New Lead — Ronnoco Java Select Program";
+  ge('ra-dremail').value=l.distributor_rep_email||'';
+  ge('ra-drep-name').value=l.distributor_sales_rep||'—';
+  ge('ra-subj').value="You've Been Assigned a New Lead — Ronnoco "+(l.program_source||'Java Select')+" Program";
+  raTab(1);
   buildAssignEmail();
   open_modal('rep-modal');
+}
+
+function raTab(n) {
+  ge('ra-pane1').style.display=n===1?'block':'none';
+  ge('ra-pane2').style.display=n===2?'block':'none';
+  ge('ra-tab1').style.color=n===1?'#0f2347':'#9ca3af';
+  ge('ra-tab1').style.borderBottomColor=n===1?'#0f2347':'transparent';
+  ge('ra-tab2').style.color=n===2?'#0f2347':'#9ca3af';
+  ge('ra-tab2').style.borderBottomColor=n===2?'#0f2347':'transparent';
 }
 
 function buildAssignEmail() {
   const id=repAssignId; if(!id) return;
   const l=leads.find(x=>x.id===id); if(!l) return;
   const repName=ge('ra-rep')?.value||'[Rep Name]';
+  const repEmail=ge('ra-remail')?.value||'[rep email]';
+  // Rep email
   ge('ra-body').value=emailBody_leadReceived({...l, assigned_sales_rep:repName});
+  // Distributor notification email
+  const distRepName=l.distributor_sales_rep||'[Distributor Rep]';
+  const prog=l.program_source||'Java Select';
+  ge('ra-dsubj').value='Lead Assignment Notification — Ronnoco '+prog+' Program';
+  ge('ra-dbody').value=`Dear ${distRepName},
+
+We wanted to let you know that the following lead has been assigned to a Ronnoco sales rep who will be making contact shortly.
+
+━━━ LEAD DETAILS ━━━
+Customer:       ${l.customer_full_name||l.dba_name||'—'}
+DBA / Store:    ${l.dba_name||'—'}
+Email:          ${l.contact_email||'—'}
+Phone:          ${l.phone||l.contact_number||'—'}
+Address:        ${l.store_address||'—'}
+Program:        ${l.which_program||'—'}
+Interest:       ${l.customer_interest||'—'}
+Dist Program:   ${prog}
+Warehouse:      ${l.distributor_warehouse||'—'}
+
+━━━ ASSIGNED RONNOCO REP ━━━
+Rep Name:       ${repName}
+Rep Email:      ${repEmail}
+
+The rep will be reaching out to the customer directly. Please feel free to coordinate with them if needed.
+
+Thank you for submitting this lead!
+
+Ronnoco Beverage Solutions`;
+}
+
+async function sendEmail(to, subject, body) {
+  if(!to||!to.trim()){return{ok:false,error:'No recipient email address entered.'};}
+  try{
+    const r=await fetch('/.netlify/functions/send-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({to,subject,body,from_name:'Ronnoco Beverage Solutions'})
+    });
+    const d=await r.json();
+    if(!r.ok)return{ok:false,error:d.error||('Server error '+r.status)};
+    return{ok:true};
+  }catch(e){return{ok:false,error:e.message};}
+}
+
+function showSendMsg(elId, ok, errMsg) {
+  const el=ge(elId);if(!el)return;
+  el.style.display='inline';
+  el.style.color=ok?'#059669':'#dc2626';
+  el.textContent=ok?'✓ Sent!':'✗ '+(errMsg||'Failed');
+  setTimeout(()=>el.style.display='none',5000);
+}
+
+async function sendRepEmail() {
+  const to=ge('ra-remail')?.value||'';
+  const subj=ge('ra-subj')?.value||'';
+  const body=ge('ra-body')?.value||'';
+  const btn=event.target;btn.disabled=true;btn.textContent='Sending…';
+  const r=await sendEmail(to,subj,body);
+  btn.disabled=false;btn.textContent='✉ Send to rep';
+  showSendMsg('ra-send1-msg',r.ok,r.error);
+  if(r.ok&&repAssignId){
+    const l=leads.find(x=>x.id===repAssignId);
+    try{await sb.from('email_log').insert({lead_id:repAssignId,step:'assign_rep',subject:subj,body,sent_by_role:role});}catch(e){}
+    try{await sb.from('activity_log').insert({lead_id:repAssignId,actor_role:role,action:'Rep notification email sent to '+(to||'rep')});}catch(e){}
+  }
+}
+
+async function sendDistEmail() {
+  const to=ge('ra-dremail')?.value||'';
+  const subj=ge('ra-dsubj')?.value||'';
+  const body=ge('ra-dbody')?.value||'';
+  const btn=event.target;btn.disabled=true;btn.textContent='Sending…';
+  const r=await sendEmail(to,subj,body);
+  btn.disabled=false;btn.textContent='✉ Send to distributor rep';
+  showSendMsg('ra-send2-msg',r.ok,r.error);
+  if(r.ok&&repAssignId){
+    try{await sb.from('email_log').insert({lead_id:repAssignId,step:'assign_rep_dist',subject:subj,body,sent_by_role:role});}catch(e){}
+    try{await sb.from('activity_log').insert({lead_id:repAssignId,actor_role:role,action:'Distributor rep notification email sent to '+(to||'dist rep')});}catch(e){}
+  }
+}
+
+async function copyRepEmail() {
+  const repEmail=ge('ra-remail')?.value||'';
+  const subj=ge('ra-subj')?.value||'';
+  const body=ge('ra-body')?.value||'';
+  try{await navigator.clipboard.writeText('To: '+repEmail+'\nSubject: '+subj+'\n\n'+body);}catch(e){}
+  const msg=ge('ra-send1-msg');if(msg){msg.style.display='inline';msg.style.color='#6b7280';msg.textContent='📋 Copied';setTimeout(()=>msg.style.display='none',2500);}
+}
+
+async function copyDistEmail() {
+  const distEmail=ge('ra-dremail')?.value||'';
+  const subj=ge('ra-dsubj')?.value||'';
+  const body=ge('ra-dbody')?.value||'';
+  try{await navigator.clipboard.writeText('To: '+distEmail+'\nSubject: '+subj+'\n\n'+body);}catch(e){}
+  const msg=ge('ra-send2-msg');if(msg){msg.style.display='inline';msg.style.color='#6b7280';msg.textContent='📋 Copied';setTimeout(()=>msg.style.display='none',2500);}
 }
 
 async function confirmAssign() {
@@ -873,14 +1018,24 @@ async function confirmAssign() {
   const repEmail=ge('ra-remail')?.value||'';
   const subj=ge('ra-subj')?.value||'';
   const body=ge('ra-body')?.value||'';
+  const distEmail=ge('ra-dremail')?.value||'';
+  const dsubj=ge('ra-dsubj')?.value||'';
+  const dbody=ge('ra-dbody')?.value||'';
   if(!repName){notice('Please select a rep.','warn');return;}
   const l=leads.find(x=>x.id===id); if(!l) return;
   await sb.from('leads').update({assigned_sales_rep:repName,current_step:'assign_rep'}).eq('id',id);
-  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Rep assigned: '+repName,from_step:l.current_step,to_step:'assign_rep',note:'Email sent to '+(repEmail||'rep')});
+  const noteText='Rep: '+repName+(repEmail?' <'+repEmail+'>':'')+'. Dist rep: '+(l.distributor_sales_rep||'—')+(distEmail?' <'+distEmail+'>':'');
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Rep assigned: '+repName,from_step:l.current_step,to_step:'assign_rep',note:noteText});
   try{await sb.from('email_log').insert({lead_id:id,step:'assign_rep',subject:subj,body,sent_by_role:role});}catch(e){}
-  try{await navigator.clipboard.writeText('To: '+repEmail+'\nSubject: '+subj+'\n\n'+body);}catch(e){}
-  close_modal('rep-modal');repAssignId=null;
-  notice(repName+' assigned! Email copied to clipboard.','ok');
+  try{await sb.from('email_log').insert({lead_id:id,step:'assign_rep_dist',subject:dsubj,body:dbody,sent_by_role:role});}catch(e){}
+  close_modal('rep-modal');
+  // Auto-send both emails if addresses are present
+  const _repEmail=repEmail, _distEmail=distEmail, _subj=subj, _body=body, _dsubj=dsubj, _dbody=dbody, _lid=id;
+  repAssignId=null;
+  if(_repEmail){const r=await sendEmail(_repEmail,_subj,_body);if(r.ok){try{await sb.from('email_log').insert({lead_id:_lid,step:'assign_rep',subject:_subj,body:_body,sent_by_role:role});}catch(e){}};}
+  if(_distEmail){const r=await sendEmail(_distEmail,_dsubj,_dbody);if(r.ok){try{await sb.from('email_log').insert({lead_id:_lid,step:'assign_rep_dist',subject:_dsubj,body:_dbody,sent_by_role:role});}catch(e){}};}
+  const sent=[];if(_repEmail)sent.push('rep');if(_distEmail)sent.push('distributor rep');
+  notice(repName+' assigned!'+(sent.length?' Emails sent to '+sent.join(' & ')+'.':[' Add email addresses to send notifications.']),'ok');
 }
 
 // ─── NOTE MODAL ───────────────────────────────────────────────
