@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -8,6 +8,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f0f2f5;color:#111827}
+/* HEADER */
 .hdr{background:#0f2347;display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.4rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);gap:8px;flex-wrap:wrap}
 .hdr-left{display:flex;align-items:center;gap:10px}
 .hdr-title{font-size:14px;font-weight:700;color:#fff;line-height:1.2}
@@ -19,8 +20,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .rbtn:hover:not(.on){background:rgba(255,255,255,.15);color:#fff}
 .hbtn{font-size:12px;padding:5px 12px;border:1px solid rgba(255,255,255,.3);border-radius:6px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-family:inherit;transition:background .15s}
 .hbtn:hover{background:rgba(255,255,255,.2)}
+/* TOOLBAR */
 .tbar{background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:7px;padding:.5rem 1.4rem;flex-wrap:wrap}
+/* CONTENT */
 .wrap{padding:1.1rem 1.4rem;max-width:1440px;margin:0 auto}
+/* BUTTONS */
 .btn{font-size:13px;padding:5px 13px;border:1px solid #d1d5db;border-radius:7px;background:#fff;color:#374151;cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap;transition:all .12s}
 .btn:hover{background:#f9fafb}
 .btn-sm{font-size:12px;padding:3px 9px}
@@ -30,11 +34,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .b-red{background:#dc2626;color:#fff;border-color:#dc2626}.b-red:hover{background:#b91c1c}
 .b-amber{background:#d97706;color:#fff;border-color:#d97706}
 .b-purple{background:#7c3aed;color:#fff;border-color:#7c3aed}
+/* NOTICES */
 .notice{font-size:13px;padding:8px 12px;border-radius:7px;margin-bottom:.8rem;border:1px solid transparent;display:none}
 .n-ok{background:#ecfdf5;color:#065f46;border-color:#6ee7b7;display:block}
 .n-err{background:#fef2f2;color:#991b1b;border-color:#fca5a5;display:block}
 .n-info{background:#eff6ff;color:#1e40af;border-color:#bfdbfe;display:block}
 .n-warn{background:#fffbeb;color:#92400e;border-color:#fde68a;display:block}
+/* BADGES */
 .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;display:inline-block;white-space:nowrap}
 .bg-navy{background:#0f2347;color:#fff}
 .bg-blue{background:#dbeafe;color:#1e40af}
@@ -43,22 +49,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .bg-amber{background:#fef3c7;color:#92400e}
 .bg-purple{background:#ede9fe;color:#6d28d9}
 .bg-gray{background:#f3f4f6;color:#374151}
+/* METRICS */
 .metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.1rem}
 @media(max-width:900px){.metrics{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:500px){.metrics{grid-template-columns:repeat(2,1fr)}}
 .mcard{background:#fff;border:1px solid #e5e7eb;border-top:3px solid #e5e7eb;border-radius:9px;padding:.75rem .9rem;cursor:pointer;transition:box-shadow .15s}
 .mcard:hover,.mcard.active{box-shadow:0 0 0 2px #1d4ed8}
-.mcard.c0{border-top-color:#0f2347}.mcard.c1{border-top-color:#d97706}.mcard.c2{border-top-color:#1d4ed8}.mcard.c3{border-top-color:#059669}.mcard.c4{border-top-color:#dc2626}
+.mcard.c0{border-top-color:#0f2347}
+.mcard.c1{border-top-color:#d97706}
+.mcard.c2{border-top-color:#1d4ed8}
+.mcard.c3{border-top-color:#059669}
+.mcard.c4{border-top-color:#dc2626}
 .m-lbl{font-size:10px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
 .m-val{font-size:24px;font-weight:700;color:#111827}
+/* FILTER */
 .fp{background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:.85rem 1rem;margin-bottom:1rem}
 .fp-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
 .fp-title{font-size:13px;font-weight:700}
 .fg label{font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:3px}
 .fg input,.fg select{width:100%;font-size:13px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-family:inherit;outline:none;background:#fff}
 .fg input:focus,.fg select:focus{border-color:#1d4ed8}
+/* LAYOUT */
 .layout{display:grid;grid-template-columns:280px 1fr;gap:11px;align-items:start}
 @media(max-width:700px){.layout{grid-template-columns:1fr}}
+/* SIDEBAR */
 .sidebar{display:flex;flex-direction:column;gap:5px;max-height:calc(100vh - 320px);overflow-y:auto}
 .lcard{background:#fff;border:1px solid #e5e7eb;border-left:4px solid #d1d5db;border-radius:0 8px 8px 0;padding:.7rem .85rem;cursor:pointer;transition:all .12s}
 .lcard:hover{border-left-color:#1d4ed8}
@@ -69,11 +83,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .lc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:3px}
 .pbar{height:3px;background:#e5e7eb;border-radius:2px;margin-top:6px}
 .pfill{height:100%;border-radius:2px;transition:width .3s}
-.pf-s{background:#0f2347}.pf-l{background:#7c3aed}
+.pf-s{background:#0f2347}
+.pf-l{background:#7c3aed}
+/* MAIN */
 .main{background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.3rem;min-height:400px}
 .main-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:1px solid #e5e7eb;flex-wrap:wrap;gap:8px}
 .main-name{font-size:20px;font-weight:700;color:#111827}
 .main-meta{font-size:12px;color:#6b7280;margin-top:3px;line-height:1.7}
+/* PIPELINE */
 .route-bar{display:flex;gap:6px;align-items:center;padding:.65rem .85rem;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:.85rem;flex-wrap:wrap}
 .ropt{font-size:12px;padding:4px 11px;border:1px solid #d1d5db;border-radius:6px;background:#fff;cursor:pointer;font-family:inherit;font-weight:500;color:#374151;transition:all .12s}
 .ropt.on-s{background:#0f2347;color:#fff;border-color:#0f2347}
@@ -83,17 +100,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .pstep+.pstep::before{content:"";position:absolute;top:13px;left:0;right:50%;height:2px;background:#e5e7eb;z-index:0}
 .pstep:not(:last-child)::after{content:"";position:absolute;top:13px;left:50%;right:0;height:2px;background:#e5e7eb;z-index:0}
 .pdot{width:28px;height:28px;border-radius:50%;background:#f3f4f6;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;font-size:11px;position:relative;z-index:1;flex-shrink:0}
-.done-s{background:#dbeafe;border-color:#1d4ed8}.done-l{background:#ede9fe;border-color:#7c3aed}
+.done-s{background:#dbeafe;border-color:#1d4ed8}
+.done-l{background:#ede9fe;border-color:#7c3aed}
 .cur-s{background:#0f2347;border-color:#0f2347;box-shadow:0 0 0 3px rgba(15,35,71,.15)}
 .cur-l{background:#7c3aed;border-color:#6d28d9;box-shadow:0 0 0 3px rgba(124,58,237,.15)}
 .lost-dot{background:#fee2e2;border-color:#dc2626}
 .pname{font-size:9px;color:#9ca3af;text-align:center;margin-top:3px;line-height:1.3;max-width:66px}
 .pname.active{color:#374151;font-weight:600}
+/* JUMP BOX */
 .jbox{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:.85rem;margin:.6rem 0}
 .jbox-title{font-size:13px;font-weight:600;margin-bottom:.5rem;color:#111827}
 .jrow{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
 .jsel{flex:1;min-width:170px;font-size:13px;padding:5px 8px;border:1px solid #d1d5db;border-radius:6px;font-family:inherit;outline:none;background:#fff}
 .abtns{display:flex;gap:6px;margin-top:.6rem;flex-wrap:wrap}
+/* SECTIONS */
 .sec{border-top:1px solid #f3f4f6;margin-top:.9rem;padding-top:.85rem}
 .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin-bottom:.65rem}
 .egrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.6rem}
@@ -112,6 +132,7 @@ textarea.einp{resize:vertical;line-height:1.5}
 .log-note{font-size:11px;color:#1e40af;font-style:italic;padding:2px 6px;background:#eff6ff;border-left:2px solid #1d4ed8;border-radius:0 3px 3px 0;margin-top:2px}
 .lost-box{background:#fef2f2;border:1px solid #fca5a5;border-radius:7px;padding:.7rem;font-size:13px;color:#991b1b;margin-top:.5rem}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:220px;color:#9ca3af;font-size:14px;gap:8px;text-align:center}
+/* OVERLAYS */
 .overlay{position:fixed;inset:0;background:rgba(15,35,71,.45);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
 .overlay.open{display:flex}
 .modal{background:#fff;border-radius:11px;padding:1.3rem;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
@@ -125,16 +146,21 @@ textarea.einp{resize:vertical;line-height:1.5}
 .finp:focus{border-color:#1d4ed8}
 textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 .mfoot{display:flex;gap:7px;justify-content:flex-end;margin-top:1rem;padding-top:.85rem;border-top:1px solid #e5e7eb}
-.page{display:none}.page.on{display:block}
+/* PAGES */
+.page{display:none}
+.page.on{display:block}
+/* SETTINGS */
 .scard{background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.3rem;max-width:520px;margin:1.3rem auto}
 .stitle{font-size:17px;font-weight:700;color:#111827;margin-bottom:.25rem}
 .ssub{font-size:13px;color:#6b7280;margin-bottom:.9rem;line-height:1.6}
 .ssec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin:1rem 0 .45rem;padding-top:.85rem;border-top:1px solid #f3f4f6}
+/* REP REPORT TABLE */
 .rtbl{width:100%;border-collapse:collapse;font-size:12px}
 .rtbl th{padding:6px 10px;text-align:left;font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;background:#f9fafb;border-bottom:1px solid #e5e7eb}
 .rtbl td{padding:7px 10px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
 .rtbl tr:hover td{background:#f9fafb}
 .rep-hdr{display:flex;justify-content:space-between;align-items:center;padding:.55rem .85rem;background:#0f2347;border-radius:7px 7px 0 0;flex-wrap:wrap;gap:6px}
+/* LOCK */
 .lock-wrap{min-height:100vh;background:#0f2347;display:flex;align-items:center;justify-content:center;padding:1rem}
 .lock-card{background:#fff;border-radius:11px;padding:2rem;width:100%;max-width:340px;text-align:center}
 </style>
@@ -143,95 +169,98 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 
 <!-- MAIN PAGE -->
 <div id="pg-main" class="page on">
-<div class="hdr">
-  <div class="hdr-left">
-    <div class="vbar"></div>
-    <div>
-      <div class="hdr-title">Distributor Deal Portal</div>
-      <div class="hdr-sub">Ronnoco Beverage Solutions</div>
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="vbar"></div>
+      <div>
+        <div class="hdr-title">Distributor Deal Portal</div>
+        <div class="hdr-sub">Ronnoco Beverage Solutions</div>
+      </div>
+    </div>
+    <div class="roles" id="roles">
+      <button class="rbtn on" onclick="setRole('admin',this)">Admin</button>
+      <button class="rbtn" onclick="setRole('director',this)">Director</button>
+      <button class="rbtn" onclick="setRole('dist_rep',this)">Dist Rep</button>
+      <button class="rbtn" onclick="setRole('ronnoco_rep',this)">Ronnoco Rep</button>
+    </div>
+    <div style="display:flex;gap:6px">
+      <span id="conn-dot" class="badge bg-amber">connecting…</span>
+      <button class="hbtn" onclick="goHelp()">Help</button>
+      <button class="hbtn" onclick="goSettings()">⚙ Settings</button>
     </div>
   </div>
-  <div class="roles" id="roles">
-    <button class="rbtn on" onclick="setRole('admin',this)">Admin</button>
-    <button class="rbtn" onclick="setRole('director',this)">Director</button>
-    <button class="rbtn" onclick="setRole('dist_rep',this)">Dist Rep</button>
-    <button class="rbtn" onclick="setRole('ronnoco_rep',this)">Ronnoco Rep</button>
-  </div>
-  <div style="display:flex;gap:6px">
-    <span id="conn-dot" class="badge bg-amber">connecting…</span>
-    <button class="hbtn" onclick="goHelp()">Help</button>
-    <button class="hbtn" onclick="goSettings()">⚙ Settings</button>
-  </div>
-</div>
 
-<div class="tbar">
-  <button class="btn b-navy btn-sm" onclick="openNewLead()">+ New lead</button>
-  <button class="btn btn-sm" onclick="open_modal('csv-modal')">↑ CSV Import</button>
-  <button class="btn btn-sm" id="sync-btn" style="display:none" onclick="doSync()">↻ Jotform Sync</button>
-  <button class="btn btn-sm" id="show-lost-btn" onclick="toggleLost()">Show lost</button>
-  <div style="flex:1"></div>
-  <button class="btn b-blue btn-sm" onclick="showRepReport()">📊 Rep Report</button>
-</div>
+  <div class="tbar">
+    <button class="btn b-navy btn-sm" onclick="openNewLead()">+ New lead</button>
+    <button class="btn btn-sm" onclick="open_modal('csv-modal')">↑ CSV Import</button>
+    <button class="btn btn-sm" id="sync-btn" style="display:none" onclick="doSync()">↻ Jotform Sync</button>
+    <button class="btn btn-sm" id="show-lost-btn" onclick="toggleLost()">Show lost</button>
+    <div style="flex:1"></div>
+    <button class="btn b-blue btn-sm" onclick="showRepReport()">📊 Rep Report</button>
+  </div>
 
-<div class="wrap">
-  <div id="notice" class="notice"></div>
-  <div class="metrics">
-    <div class="mcard c0" onclick="metricFilter('all')" id="mc0"><div class="m-lbl">Total</div><div class="m-val" id="mv0">…</div></div>
-    <div class="mcard c1" onclick="metricFilter('unassigned')" id="mc1"><div class="m-lbl">Needs Assigned</div><div class="m-val" id="mv1">…</div></div>
-    <div class="mcard c2" onclick="metricFilter('assigned')" id="mc2"><div class="m-lbl">Assigned</div><div class="m-val" id="mv2">…</div></div>
-    <div class="mcard c3" onclick="metricFilter('won')" id="mc3"><div class="m-lbl">Won</div><div class="m-val" id="mv3">…</div></div>
-    <div class="mcard c4" onclick="metricFilter('lost')" id="mc4"><div class="m-lbl">Lost</div><div class="m-val" id="mv4">…</div></div>
-  </div>
-  <div class="fp">
-    <div class="fp-hdr">
-      <span class="fp-title">🔍 Filter &amp; Sort</span>
-      <div style="display:flex;gap:5px">
-        <button class="btn btn-sm" onclick="clearFilters()">Clear</button>
-        <button class="btn btn-sm" id="fp-tog" onclick="toggleFP()">Hide</button>
+  <div class="wrap">
+    <div id="notice" class="notice"></div>
+    <!-- METRICS -->
+    <div class="metrics">
+      <div class="mcard c0" onclick="metricFilter('all')" id="mc0"><div class="m-lbl">Total</div><div class="m-val" id="mv0">…</div></div>
+      <div class="mcard c1" onclick="metricFilter('unassigned')" id="mc1"><div class="m-lbl">Needs Assigned</div><div class="m-val" id="mv1">…</div></div>
+      <div class="mcard c2" onclick="metricFilter('assigned')" id="mc2"><div class="m-lbl">Assigned</div><div class="m-val" id="mv2">…</div></div>
+      <div class="mcard c3" onclick="metricFilter('won')" id="mc3"><div class="m-lbl">Won</div><div class="m-val" id="mv3">…</div></div>
+      <div class="mcard c4" onclick="metricFilter('lost')" id="mc4"><div class="m-lbl">Lost</div><div class="m-val" id="mv4">…</div></div>
+    </div>
+    <!-- FILTERS -->
+    <div class="fp">
+      <div class="fp-hdr">
+        <span class="fp-title">🔍 Filter &amp; Sort</span>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-sm" onclick="clearFilters()">Clear</button>
+          <button class="btn btn-sm" id="fp-tog" onclick="toggleFP()">Hide</button>
+        </div>
+      </div>
+      <div id="fp-body">
+        <div style="display:grid;grid-template-columns:1fr 190px;gap:7px;margin-bottom:7px">
+          <div class="fg"><label>Search</label><input id="f-q" placeholder="Name, store, email, rep, phone…" oninput="renderList()"/></div>
+          <div class="fg"><label>Sort</label><select id="f-sort" onchange="renderList()">
+            <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
+            <option value="name">Name A→Z</option><option value="rep">Rep A→Z</option>
+          </select></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px">
+          <div class="fg"><label>Sales Rep</label><select id="f-rep" onchange="renderList()"><option value="">All reps</option></select></div>
+          <div class="fg"><label>Status</label><select id="f-status" onchange="renderList()">
+            <option value="">All</option><option value="active">Active</option><option value="won">Won</option><option value="lost">Lost</option>
+          </select></div>
+          <div class="fg"><label>Route</label><select id="f-route" onchange="renderList()">
+            <option value="">All routes</option><option value="sales">Sales Rep</option><option value="leasing">Leasing</option>
+          </select></div>
+          <div class="fg"><label>Program</label><select id="f-src" onchange="renderList()">
+            <option value="">All</option><option value="Java Select">Java Select</option><option value="Sledd">Sledd</option>
+          </select></div>
+          <div class="fg"><label>Warehouse</label><select id="f-wh" onchange="renderList()"><option value="">All</option></select></div>
+        </div>
+        <div id="f-sum" style="font-size:11px;color:#9ca3af;margin-top:.45rem;padding-top:.4rem;border-top:1px solid #f3f4f6"></div>
       </div>
     </div>
-    <div id="fp-body">
-      <div style="display:grid;grid-template-columns:1fr 190px;gap:7px;margin-bottom:7px">
-        <div class="fg"><label>Search</label><input id="f-q" placeholder="Name, store, email, rep, phone…" oninput="renderList()"/></div>
-        <div class="fg"><label>Sort</label><select id="f-sort" onchange="renderList()">
-          <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
-          <option value="name">Name A→Z</option><option value="rep">Rep A→Z</option>
-        </select></div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px">
-        <div class="fg"><label>Sales Rep</label><select id="f-rep" onchange="renderList()"><option value="">All reps</option></select></div>
-        <div class="fg"><label>Status</label><select id="f-status" onchange="renderList()">
-          <option value="">All</option><option value="active">Active</option><option value="won">Won</option><option value="lost">Lost</option>
-        </select></div>
-        <div class="fg"><label>Route</label><select id="f-route" onchange="renderList()">
-          <option value="">All routes</option><option value="sales">Sales Rep</option><option value="leasing">Leasing</option>
-        </select></div>
-        <div class="fg"><label>Program</label><select id="f-src" onchange="renderList()">
-          <option value="">All</option><option value="Java Select">Java Select</option><option value="Sledd">Sledd</option>
-          <option value="CoreMark">CoreMark</option><option value="Farner-Bocken">Farner-Bocken</option>
-        </select></div>
-        <div class="fg"><label>Warehouse</label><select id="f-wh" onchange="renderList()"><option value="">All</option></select></div>
-      </div>
-      <div id="f-sum" style="font-size:11px;color:#9ca3af;margin-top:.45rem;padding-top:.4rem;border-top:1px solid #f3f4f6"></div>
+    <div class="layout">
+      <div class="sidebar" id="sidebar"><div class="empty" style="min-height:100px"><div>⏳</div><div>Loading…</div></div></div>
+      <div class="main" id="main-panel"><div class="empty"><div style="font-size:32px">👈</div><div style="font-weight:600">Select a lead to view details</div></div></div>
     </div>
   </div>
-  <div class="layout">
-    <div class="sidebar" id="sidebar"><div class="empty" style="min-height:100px"><div>⏳</div><div>Loading…</div></div></div>
-    <div class="main" id="main-panel"><div class="empty"><div style="font-size:32px">👈</div><div style="font-weight:600">Select a lead to view details</div></div></div>
-  </div>
-</div>
 </div>
 
 <!-- LOCK PAGE -->
 <div id="pg-lock" class="page">
-  <div class="lock-wrap"><div class="lock-card">
-    <div style="font-size:17px;font-weight:700;margin-bottom:.25rem;color:#111827">⚙ Settings</div>
-    <div style="font-size:13px;color:#6b7280;margin-bottom:1rem">Enter admin password to continue</div>
-    <input class="finp" type="password" id="lock-pw" placeholder="Password" style="text-align:center;margin-bottom:.6rem" onkeydown="if(event.key==='Enter')unlock()"/>
-    <button class="btn b-navy" style="width:100%;margin-bottom:.4rem" onclick="unlock()">Unlock →</button>
-    <div id="lock-err" style="font-size:12px;color:#dc2626;display:none;margin-top:.3rem">Incorrect password</div>
-    <button class="btn" style="width:100%;margin-top:.4rem" onclick="showPage('main')">← Back</button>
-  </div></div>
+  <div class="lock-wrap">
+    <div class="lock-card">
+      <div style="font-size:17px;font-weight:700;margin-bottom:.25rem;color:#111827">⚙ Settings</div>
+      <div style="font-size:13px;color:#6b7280;margin-bottom:1rem">Enter admin password to continue</div>
+      <input class="finp" type="password" id="lock-pw" placeholder="Password" style="text-align:center;margin-bottom:.6rem" onkeydown="if(event.key==='Enter')unlock()"/>
+      <button class="btn b-navy" style="width:100%;margin-bottom:.4rem" onclick="unlock()">Unlock →</button>
+      <div id="lock-err" style="font-size:12px;color:#dc2626;display:none;margin-top:.3rem">Incorrect password</div>
+      <button class="btn" style="width:100%;margin-top:.4rem" onclick="showPage('main')">← Back</button>
+    </div>
+  </div>
 </div>
 
 <!-- SETTINGS PAGE -->
@@ -298,7 +327,7 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
   <div style="max-width:800px;margin:0 auto;padding:1.3rem">
     <div style="background:#0f2347;border-radius:9px;padding:1.5rem;margin-bottom:1rem;color:#fff;text-align:center">
       <h1 style="font-size:21px;margin-bottom:.2rem">Ronnoco Distributor Deal Portal</h1>
-      <p style="font-size:12px;opacity:.6">Java Select · Sledd · CoreMark · Farner-Bocken · v3.3</p>
+      <p style="font-size:12px;opacity:.6">Java Select &amp; Sledd Programs · v3.0</p>
     </div>
     <div style="background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.2rem;margin-bottom:.8rem">
       <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.5rem">Quick Start</h3>
@@ -308,17 +337,13 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
         <li>Click any lead in the sidebar to open it</li>
         <li>Use <strong>Move to step</strong> to advance a lead through the pipeline</li>
         <li>Click <strong>Assign Rep</strong> to assign a rep and auto-draft a notification email</li>
-        <li><strong>CSV Import</strong> automatically skips leads already in the system — re-uploading is safe</li>
         <li><strong>Settings</strong> password: <code style="background:#f3f4f6;padding:1px 5px;border-radius:3px">pipeline2024</code></li>
       </ul>
     </div>
-    <div style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:9px;padding:1.2rem;margin-bottom:.8rem">
-      <h3 style="font-size:15px;font-weight:700;color:#065f46;margin-bottom:.4rem">🛡 Duplicate Protection</h3>
-      <p style="font-size:13px;color:#374151">CSV Import checks by <strong>name + email</strong> before inserting. Leads already in the system are automatically skipped — even if you upload the same file again. Leads with an assigned rep or pipeline progress are <strong>never overwritten</strong>.</p>
-    </div>
     <div style="background:#fff;border:1px solid #e5e7eb;border-radius:9px;padding:1.2rem;margin-bottom:.8rem">
-      <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.5rem">Pipeline (15 Steps — All Leads)</h3>
-      <p style="font-size:13px;color:#374151">New Lead → Assign Rep → Customer Contacted → Customer Won → Deal Sheet Submitted → Credit App Sent → Credit Approved → Paperwork Sent → Docs Signed → Deal Funded → Customer Set Up → Equipment Ordered → Install Scheduled → Dist Notified / Product Ordered → Install Complete</p>
+      <h3 style="font-size:15px;font-weight:700;color:#0f2347;margin-bottom:.5rem">Pipeline Routes</h3>
+      <p style="font-size:13px;color:#374151;margin-bottom:.5rem"><strong>Sales Rep (13 steps):</strong> New Lead → Assign Rep → Lead Received → Customer Contacted → Customer Won → Deal Sheet → Waiting Finance → Deal Funded → Customer Setup → Equip Ordered → Dist Notified → Install Scheduled → Complete</p>
+      <p style="font-size:13px;color:#374151"><strong>Leasing/Finance (8 steps):</strong> New Lead → Assign Rep → Credit App Sent → Credit Received → Approved → Paperwork Sent → Paperwork Signed → Deal Funded</p>
     </div>
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:1.2rem">
       <h3 style="font-size:15px;font-weight:700;color:#1e40af;margin-bottom:.4rem">Smarter Equipment Finance</h3>
@@ -340,7 +365,8 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
     <label class="flbl">Rep email address</label>
     <input class="finp" id="ra-remail" type="email" placeholder="rep@example.com"/>
     <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:.55rem .8rem;margin:.6rem 0;font-size:12px;color:#92400e">✉ Email will be copied to clipboard — paste and send from your email client.</div>
-    <label class="flbl">Subject</label><input class="finp" id="ra-subj"/>
+    <label class="flbl">Subject</label>
+    <input class="finp" id="ra-subj"/>
     <label class="flbl">Body</label>
     <textarea class="finp" id="ra-body" rows="18" style="font-family:monospace;font-size:12px"></textarea>
     <div class="mfoot">
@@ -406,10 +432,7 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
     <label class="flbl">Distributor rep name</label><input class="finp" id="nl-drep"/>
     <label class="flbl">Warehouse</label><input class="finp" id="nl-wh"/>
     <label class="flbl">Distributor Program</label>
-    <select class="finp" id="nl-src">
-      <option value="Java Select">Java Select</option><option value="Sledd">Sledd</option>
-      <option value="CoreMark">CoreMark</option><option value="Farner-Bocken">Farner-Bocken</option>
-    </select>
+    <select class="finp" id="nl-src"><option value="Java Select">Java Select</option><option value="Sledd">Sledd</option></select>
     <label class="flbl">Which program</label>
     <select class="finp" id="nl-prog">
       <option>Small Coffee - Accounts under $500/Sales/Month</option>
@@ -432,13 +455,9 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 <div class="overlay" id="csv-modal">
   <div class="modal">
     <div class="mhdr"><div class="mtitle">Import CSV</div><button class="mclose" onclick="close_modal('csv-modal')">✕</button></div>
-    <div style="font-size:12px;color:#6b7280;margin-bottom:.5rem">Export from Jotform Tables → ··· → Export as CSV, then import here.</div>
-    <div style="font-size:12px;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:6px;padding:.4rem .7rem;margin-bottom:.6rem;color:#065f46">🛡 Duplicate leads are automatically skipped. Re-uploading is safe — leads with assigned reps or pipeline progress will never be overwritten.</div>
+    <div style="font-size:12px;color:#6b7280;margin-bottom:.7rem">Export from Jotform Tables → ··· → Export as CSV, then import here.</div>
     <label class="flbl">Program</label>
-    <select class="finp" id="csv-src" style="margin-bottom:.6rem">
-      <option value="Java Select">Java Select</option><option value="Sledd">Sledd</option>
-      <option value="CoreMark">CoreMark</option><option value="Farner-Bocken">Farner-Bocken</option>
-    </select>
+    <select class="finp" id="csv-src" style="margin-bottom:.6rem"><option value="Java Select">Java Select</option><option value="Sledd">Sledd</option></select>
     <input type="file" accept=".csv" id="csv-file" onchange="previewCSV(this)" style="font-size:13px;width:100%"/>
     <div id="csv-prev" style="font-size:13px;margin-top:.6rem;display:none;padding:.5rem;background:#f9fafb;border-radius:6px"></div>
     <div class="mfoot">
@@ -462,7 +481,7 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
   </div>
 </div>
 
-<!-- Edit -->
+<!-- Edit (from report) -->
 <div class="overlay" id="edit-modal">
   <div class="modal" style="max-width:580px">
     <div class="mhdr"><div class="mtitle" id="edit-title">Edit Lead</div><button class="mclose" onclick="close_modal('edit-modal')">✕</button></div>
@@ -478,672 +497,664 @@ textarea.finp{resize:vertical;min-height:90px;line-height:1.5}
 // ─── CONSTANTS ─────────────────────────────────────────────────
 const SB_URL = 'https://opnpyunbccifkdnbljsz.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
-const JOTFORM_IDS = {'Java Select':'260045399064863','Sledd':'260696473895880','CoreMark':'','Farner-Bocken':''};
+const JOTFORM_IDS = { 'Java Select': '260045399064863', 'Sledd': '260696473895880' };
 const DEF_PW = 'pipeline2024';
-const LEASING_INTERESTS = ['Leasing Equipment','Financing Equipment','Loaned Equipment Program','Loaned Equipment Request','Loaned Request'];
 
-// Single unified pipeline — all leads follow the same route.
-const ALL_STEPS = [
-  {id:'new_lead',          label:'New Lead',              icon:'🆕'},
-  {id:'assign_rep',        label:'Assign Rep',            icon:'👤'},
-  {id:'customer_contacted',label:'Customer Contacted',    icon:'📞', subj:'Following Up on Your Interest',   body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nThank you for your interest in the Ronnoco program! I wanted to follow up and answer any questions you may have.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'customer_won',      label:'Customer Won',          icon:'🏆', subj:'Welcome to Ronnoco!',             body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe're excited to welcome you to the Ronnoco program!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'deal_sheet',        label:'Deal Sheet Submitted',  icon:'📋', subj:'Deal Sheet Submitted',            body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour deal sheet has been submitted for processing.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'credit_app_sent',   label:'Credit App Sent',       icon:'📤', subj:'Credit Application — Action Required', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nPlease complete your credit application at the link below:\nhttps://signnow.com/s/YKsq02bU\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'credit_approved',   label:'Credit Approved',       icon:'✅', subj:'Credit Approved!',              body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nGreat news — your credit application has been approved!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'paperwork_sent',    label:'Paperwork Sent',        icon:'🖊️', subj:'Lease Documents Ready for Signature', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour lease documents have been sent for your signature. Please review and sign at your earliest convenience.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'paperwork_signed',  label:'Docs Signed',           icon:'✍️', subj:'Documents Received — Thank You', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nWe have received your signed documents and are processing funding.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'deal_funded_s',     label:'Deal Funded',           icon:'💰', subj:'Deal Funded!',                  body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nGreat news — your deal has been funded!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'customer_setup',    label:'Customer Set Up',       icon:'⚙️', subj:'Account Setup in Progress',     body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour account is being set up in our system.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'equip_ordered',     label:'Equipment Ordered',     icon:'🛒', subj:'Equipment Ordered',             body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment has been ordered and will ship soon.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'install_scheduled', label:'Install Scheduled',     icon:'📅', subj:'Installation Scheduled',        body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment installation has been scheduled. We will be in touch with the details.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'dist_notified',     label:'Dist Notified / Product Ordered', icon:'📦', subj:'Distributor Notified — Product Ordered', body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour distributor has been notified and your product has been ordered.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
-  {id:'complete_s',        label:'Install Complete',      icon:'🏁', subj:'Installation Complete!',        body:l=>`Dear ${l.customer_full_name||l.dba_name},\n\nYour installation is complete — welcome to the Ronnoco family!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}`},
+const COMMON = [
+  { id: 'new_lead',   label: 'New Lead',    icon: '🆕' },
+  { id: 'assign_rep', label: 'Assign Rep',  icon: '👤' },
 ];
-// Aliases keep existing leads on old step IDs working without data migration
-const STEP_ALIASES = {
-  deal_funded_l:    'deal_funded_s',
-  waiting_finance:  'credit_app_sent',
-  credit_received:  'credit_approved',
-  lead_received:    'customer_contacted',
-  complete_s:       'complete_s',
-};
-function getSteps(){return ALL_STEPS;}
-function getStep(id){return ALL_STEPS.find(s=>s.id===(STEP_ALIASES[id]||id));}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+const SALES_STEPS = [
+  { id: 'lead_received',    label: 'Lead Received',   icon: '📥', subj: "You've Been Assigned a New Lead", body: l => emailBody_leadReceived(l) },
+  { id: 'customer_contacted', label: 'Contacted',    icon: '📞', subj: 'Following Up on Your Interest', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nThank you for your interest in the Java Select program!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'customer_won',    label: 'Customer Won',     icon: '🏆', subj: 'Welcome to Java Select!', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nWe're excited to welcome you to the Java Select Program!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'deal_sheet',     label: 'Deal Sheet',        icon: '📋', subj: 'Deal Sheet Submitted', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour deal sheet has been submitted for processing.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'waiting_finance', label: 'Waiting Finance',  icon: '⏳', subj: 'Under Finance Review', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour deal is currently under finance review.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'deal_funded_s',  label: 'Deal Funded',       icon: '💰', subj: 'Deal Funded!', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nGreat news — your deal has been funded!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'customer_setup', label: 'Customer Setup',    icon: '⚙️', subj: 'Account Setup in Progress', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour account is being set up.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'equip_ordered',  label: 'Equip Ordered',     icon: '🛒', subj: 'Equipment Ordered', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment has been ordered and will ship soon.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'dist_notified',  label: 'Dist Notified',     icon: '📡', subj: 'Distributor Notified', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour distributor has been notified and will be in touch.\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'install_scheduled', label: 'Install Sched.', icon: '📅', subj: 'Installation Scheduled', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour equipment installation has been scheduled!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+  { id: 'complete_s',     label: 'Complete',          icon: '🏁', subj: 'Setup Complete!', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nSetup is complete — welcome to the Java Select family!\n\nBest regards,\n${l.assigned_sales_rep||'Ronnoco Team'}` },
+];
+const LEASE_STEPS = [
+  { id: 'credit_app_sent',   label: 'Credit App Sent', icon: '📤', subj: 'Credit Application Link', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nPlease complete your credit application:\nhttps://signnow.com/s/YKsq02bU\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}` },
+  { id: 'credit_received',   label: 'Credit Received', icon: '📩', subj: 'Application Received', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nWe received your credit application and it is under review.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}` },
+  { id: 'credit_approved',   label: 'Approved',        icon: '✅', subj: 'Credit Approved!', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour credit application has been approved!\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}` },
+  { id: 'paperwork_sent',    label: 'Paperwork Sent',  icon: '📋', subj: 'Lease Documents Ready', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour lease documents have been sent for signature.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}` },
+  { id: 'paperwork_signed',  label: 'Docs Signed',     icon: '✍️', subj: 'Documents Received', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nWe received your signed documents and are processing funding.\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}` },
+  { id: 'deal_funded_l',     label: 'Deal Funded',     icon: '💰', subj: 'Lease Funded!', body: l => `Dear ${l.customer_full_name||l.dba_name},\n\nYour lease is fully funded — you're all set!\n\nBest regards,\n${l.assigned_sales_rep||'Leasing Team'}` },
+];
 
-function emailBody_leadReceived(l){
-return `Dear ${l.assigned_sales_rep||'[Rep Name]'},
+const ALL_STEPS = [...COMMON, ...SALES_STEPS, ...LEASE_STEPS];
+
+function getSteps(route) { return route === 'leasing' ? [...COMMON, ...LEASE_STEPS] : [...COMMON, ...SALES_STEPS]; }
+function getStep(id) { return ALL_STEPS.find(s => s.id === id); }
+
+function emailBody_leadReceived(l) {
+  return `Dear ${l.assigned_sales_rep||'[Rep Name]'},
 
 You have been assigned a new lead. Please review the details below and make contact as soon as possible.
 
 ━━━ CUSTOMER INFORMATION ━━━
-
-Name: ${l.customer_full_name||'—'}
-DBA / Store: ${l.dba_name||'—'}
-Legal Name: ${l.legal_business_name||'—'}
-Email: ${l.contact_email||'—'}
-Phone: ${l.phone||l.contact_number||'—'}
-Address: ${l.store_address||'—'}
-Locations: ${l.num_locations||'—'}
-Cust Dist #: ${l.customer_distributor_number||'—'}
+Name:           ${l.customer_full_name||'—'}
+DBA / Store:    ${l.dba_name||'—'}
+Legal Name:     ${l.legal_business_name||'—'}
+Email:          ${l.contact_email||'—'}
+Phone:          ${l.phone||l.contact_number||'—'}
+Address:        ${l.store_address||'—'}
+Locations:      ${l.num_locations||'—'}
+Cust Dist #:    ${l.customer_distributor_number||'—'}
 
 ━━━ PROGRAM INFORMATION ━━━
-
-Dist Program: ${l.program_source||'Java Select'}
-Program: ${l.which_program||'—'}
-Interest: ${l.customer_interest||'—'}
-Route: ${l.route==='leasing'?'Leasing/Finance':'Sales Rep'}
+Dist Program:   ${l.program_source||'Java Select'}
+Program:        ${l.which_program||'—'}
+Interest:       ${l.customer_interest||'—'}
+Route:          ${l.route==='leasing'?'Leasing/Finance':'Sales Rep'}
 
 ━━━ DISTRIBUTOR INFORMATION ━━━
-
-Dist Rep: ${l.distributor_sales_rep||'—'}
-Rep Email: ${l.distributor_rep_email||'—'}
-Distributor: ${l.distributor||'—'}
-Warehouse: ${l.distributor_warehouse||'—'}
-Tradeshow: ${l.tradeshow_lead||'—'}
+Dist Rep:       ${l.distributor_sales_rep||'—'}
+Rep Email:      ${l.distributor_rep_email||'—'}
+Distributor:    ${l.distributor||'—'}
+Warehouse:      ${l.distributor_warehouse||'—'}
+Tradeshow:      ${l.tradeshow_lead||'—'}
 
 ━━━ NOTES ━━━
-
 ${l.beverage_needs||l.notes||'None'}
-
 ${l.route==='leasing'?'\n━━━ ACTION REQUIRED ━━━\nSend the customer this credit application IMMEDIATELY:\nhttps://signnow.com/s/YKsq02bU\n':''}
-
 Ronnoco Beverage Solutions`;
 }
 
 // ─── STATE ────────────────────────────────────────────────────
-let sb=null;
-let leads=[],salesReps=[],actCache={};
-let selId=null,role='admin',showLost=false;
-let activeMetric='';
-let csvRows=[];
-let pendingNote=null,lostLeadId=null,repAssignId=null,emailLeadId=null,emailIsAdv=false,editLeadId=null;
+let sb = null;
+let leads = [], salesReps = [], actCache = {};
+let selId = null, role = 'admin', showLost = false;
+let activeMetric = '';
+let csvRows = [];
+// Pending action state
+let pendingNote = null;   // {leadId, fromStep, toStep, doEmail, emailSubj, emailBody}
+let lostLeadId = null;
+let repAssignId = null;
+let emailLeadId = null, emailIsAdv = false;
+let editLeadId = null;
 
 // ─── UTILS ────────────────────────────────────────────────────
-const fmtD=ts=>ts?new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
-const fmtT=ts=>ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
-const pct=l=>{const s=getSteps();const id=STEP_ALIASES[l.current_step]||l.current_step;const i=s.findIndex(x=>x.id===id);return i<0?0:Math.round((i+1)/s.length*100);};
-const ge=id=>document.getElementById(id);
-const open_modal=id=>ge(id).classList.add('open');
-const close_modal=id=>ge(id).classList.remove('open');
-function showPage(n){['main','lock','settings','help'].forEach(p=>{const e=ge('pg-'+p);if(e)e.classList.remove('on');});const t=ge('pg-'+n);if(t)t.classList.add('on');window.scrollTo(0,0);}
-function goSettings(){if(sessionStorage.getItem('unlocked')==='1'){showPage('settings');refreshSettings();}else{showPage('lock');setTimeout(()=>ge('lock-pw')?.focus(),80);}}
-function goHelp(){showPage('help');}
-function unlock(){const pw=ge('lock-pw').value;const stored=localStorage.getItem('adm_pw')||DEF_PW;if(pw===stored){sessionStorage.setItem('unlocked','1');ge('lock-pw').value='';ge('lock-err').style.display='none';showPage('settings');refreshSettings();}else{ge('lock-err').style.display='block';}}
-function setRole(r,btn){role=r;document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderList();if(selId)renderMain(selId);}
-function toggleLost(){showLost=!showLost;ge('show-lost-btn').textContent=showLost?'Hide lost':'Show lost';renderList();}
-function notice(msg,type,elId){const el=ge(elId||'notice');if(!el)return;el.className='notice n-'+(type||'info');el.textContent=msg;el.style.display='block';setTimeout(()=>{el.style.display='none';},5000);}
-function toggleFP(){const b=ge('fp-body'),btn=ge('fp-tog'),show=b.style.display==='none';b.style.display=show?'':'none';btn.textContent=show?'Hide':'Show';localStorage.setItem('fp-h',show?'0':'1');}
-function clearFilters(){['f-q'].forEach(id=>{const e=ge(id);if(e)e.value=''});['f-sort','f-status','f-route','f-src','f-rep','f-wh'].forEach(id=>{const e=ge(id);if(e)e.selectedIndex=0});activeMetric='';document.querySelectorAll('.mcard').forEach(e=>e.classList.remove('active'));renderList();}
-function metricFilter(t){activeMetric=activeMetric===t?'':t;document.querySelectorAll('.mcard').forEach(e=>e.classList.remove('active'));if(activeMetric){const map={all:'mc0',unassigned:'mc1',assigned:'mc2',won:'mc3',lost:'mc4'};const e=ge(map[t]);if(e)e.classList.add('active');}renderList();}
+const fmtD = ts => ts ? new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+const fmtT = ts => ts ? new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+const pct = l => { const s = getSteps(l.route); const i = s.findIndex(x => x.id === l.current_step); return i < 0 ? 0 : Math.round((i+1)/s.length*100); };
+const ge = id => document.getElementById(id);
+const open_modal = id => ge(id).classList.add('open');
+const close_modal = id => ge(id).classList.remove('open');
+function showPage(n) { ['main','lock','settings','help'].forEach(p => { const e = ge('pg-'+p); if(e) e.classList.remove('on'); }); const t = ge('pg-'+n); if(t) t.classList.add('on'); window.scrollTo(0,0); }
+function goSettings() { if(sessionStorage.getItem('unlocked')==='1') { showPage('settings'); refreshSettings(); } else { showPage('lock'); setTimeout(()=>ge('lock-pw')?.focus(),80); } }
+function goHelp() { showPage('help'); }
+function unlock() { const pw = ge('lock-pw').value; const stored = localStorage.getItem('adm_pw')||DEF_PW; if(pw===stored){sessionStorage.setItem('unlocked','1');ge('lock-pw').value='';ge('lock-err').style.display='none';showPage('settings');refreshSettings();}else{ge('lock-err').style.display='block';} }
+function setRole(r, btn) { role=r; document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); renderList(); if(selId)renderMain(selId); }
+function toggleLost() { showLost=!showLost; ge('show-lost-btn').textContent=showLost?'Hide lost':'Show lost'; renderList(); }
+function notice(msg, type, elId) { const el = ge(elId||'notice'); if(!el)return; el.className='notice n-'+(type||'info'); el.textContent=msg; el.style.display='block'; setTimeout(()=>{el.style.display='none';},5000); }
+function toggleFP() { const b=ge('fp-body'), btn=ge('fp-tog'), show=b.style.display==='none'; b.style.display=show?'':'none'; btn.textContent=show?'Hide':'Show'; localStorage.setItem('fp-h',show?'0':'1'); }
+function clearFilters() { ['f-q'].forEach(id=>{const e=ge(id);if(e)e.value=''}); ['f-sort','f-status','f-route','f-src','f-rep','f-wh'].forEach(id=>{const e=ge(id);if(e)e.selectedIndex=0}); activeMetric=''; document.querySelectorAll('.mcard').forEach(e=>e.classList.remove('active')); renderList(); }
+function metricFilter(t) { activeMetric=activeMetric===t?'':t; document.querySelectorAll('.mcard').forEach(e=>e.classList.remove('active')); if(activeMetric){const map={all:'mc0',unassigned:'mc1',assigned:'mc2',won:'mc3',lost:'mc4'};const e=ge(map[t]);if(e)e.classList.add('active');} renderList(); }
 
 // ─── INIT ─────────────────────────────────────────────────────
-async function init(){
-let t=0;
-while(typeof supabase==='undefined'&&t<30){await new Promise(r=>setTimeout(r,200));t++;}
-if(typeof supabase==='undefined'){ge('conn-dot').textContent='✗ failed';ge('conn-dot').className='badge bg-red';return;}
-sb=supabase.createClient(SB_URL,SB_KEY);
-try{
-  await loadLeads();await loadReps();
-  sb.channel('portal').on('postgres_changes',{event:'*',schema:'public',table:'leads'},()=>loadLeads())
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},async p=>{
-      const lid=p.new.lead_id;const{data}=await sb.from('activity_log').select('*').eq('lead_id',lid).order('created_at',{ascending:false}).limit(30);if(data)actCache[lid]=data;if(selId===lid)renderMain(lid);
-    }).subscribe();
-  ge('conn-dot').textContent='● connected';ge('conn-dot').className='badge bg-green';
-  if(localStorage.getItem('jf_key'))ge('sync-btn').style.display='inline-block';
-  const wu=ge('wh-url');if(wu)wu.textContent=window.location.origin+'/.netlify/functions/webhook';
-  if(localStorage.getItem('fp-h')==='1'){const b=ge('fp-body');if(b)b.style.display='none';const t2=ge('fp-tog');if(t2)t2.textContent='Show';}
-}catch(e){ge('conn-dot').textContent='✗ error';ge('conn-dot').className='badge bg-red';console.error(e);}
+async function init() {
+  let t=0;
+  while(typeof supabase==='undefined' && t<30) { await new Promise(r=>setTimeout(r,200)); t++; }
+  if(typeof supabase==='undefined') { ge('conn-dot').textContent='✗ failed'; ge('conn-dot').className='badge bg-red'; return; }
+  sb = supabase.createClient(SB_URL, SB_KEY);
+  try {
+    await loadLeads();
+    await loadReps();
+    // Realtime
+    sb.channel('portal').on('postgres_changes',{event:'*',schema:'public',table:'leads'},()=>loadLeads())
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},async p=>{
+        const lid=p.new.lead_id; const {data}=await sb.from('activity_log').select('*').eq('lead_id',lid).order('created_at',{ascending:false}).limit(30); if(data)actCache[lid]=data; if(selId===lid)renderMain(lid);
+      }).subscribe();
+    ge('conn-dot').textContent='● connected'; ge('conn-dot').className='badge bg-green';
+    if(localStorage.getItem('jf_key')) ge('sync-btn').style.display='inline-block';
+    const wu=ge('wh-url'); if(wu) wu.textContent=window.location.origin+'/.netlify/functions/webhook';
+    if(localStorage.getItem('fp-h')==='1'){const b=ge('fp-body');if(b)b.style.display='none';const t=ge('fp-tog');if(t)t.textContent='Show';}
+  } catch(e) { ge('conn-dot').textContent='✗ error'; ge('conn-dot').className='badge bg-red'; console.error(e); }
 }
 
-async function loadLeads(){
-const{data,error}=await sb.from('leads').select('*').order('created_at',{ascending:false});
-if(error){notice('Error loading leads: '+error.message,'err');return;}
-leads=data||[];updateMetrics();populateFilterSelects();renderList();
-if(selId&&leads.find(l=>l.id===selId))renderMain(selId);
+async function loadLeads() {
+  const {data,error} = await sb.from('leads').select('*').order('created_at',{ascending:false});
+  if(error){notice('Error loading leads: '+error.message,'err');return;}
+  leads = data||[];
+  updateMetrics(); populateFilterSelects(); renderList();
+  if(selId && leads.find(l=>l.id===selId)) renderMain(selId);
 }
-async function loadAct(id){const{data}=await sb.from('activity_log').select('*').eq('lead_id',id).order('created_at',{ascending:false}).limit(30);actCache[id]=data||[];}
-async function loadReps(){
-const{data}=await sb.from('sales_reps').select('*').eq('active',true).order('name');
-salesReps=data||[];
-const sel=ge('ra-rep');
-if(sel)sel.innerHTML='<option value="">— Choose a rep —</option>'+salesReps.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');
+
+async function loadAct(id) {
+  const {data} = await sb.from('activity_log').select('*').eq('lead_id',id).order('created_at',{ascending:false}).limit(30);
+  actCache[id] = data||[];
+}
+
+async function loadReps() {
+  const {data} = await sb.from('sales_reps').select('*').eq('active',true).order('name');
+  salesReps = data||[];
+  const sel=ge('ra-rep');
+  if(sel) sel.innerHTML='<option value="">— Choose a rep —</option>'+salesReps.map(r=>`<option value="${r.name}">${r.name}</option>`).join('');
 }
 
 // ─── METRICS ──────────────────────────────────────────────────
-function updateMetrics(){
-ge('mv0').textContent=leads.length;
-ge('mv1').textContent=leads.filter(l=>!l.assigned_sales_rep||!l.assigned_sales_rep.trim()).length;
-ge('mv2').textContent=leads.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim()).length;
-ge('mv3').textContent=leads.filter(l=>l.status==='won').length;
-ge('mv4').textContent=leads.filter(l=>l.status==='lost').length;
+function updateMetrics() {
+  ge('mv0').textContent = leads.length;
+  ge('mv1').textContent = leads.filter(l=>!l.assigned_sales_rep||!l.assigned_sales_rep.trim()).length;
+  ge('mv2').textContent = leads.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim()).length;
+  ge('mv3').textContent = leads.filter(l=>l.status==='won').length;
+  ge('mv4').textContent = leads.filter(l=>l.status==='lost').length;
 }
 
 // ─── FILTER SELECTS ───────────────────────────────────────────
-function populateFilterSelects(){
-const reps=[...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
-const whs=[...new Set(leads.map(l=>l.distributor_warehouse).filter(Boolean))].sort();
-['f-rep','rr-rep'].forEach(id=>{const s=ge(id);if(!s)return;const v=s.value;s.innerHTML='<option value="">All reps</option>'+reps.map(r=>`<option value="${esc(r)}" ${r===v?'selected':''}>${esc(r)}</option>`).join('');});
-const fw=ge('f-wh');if(fw){const v=fw.value;fw.innerHTML='<option value="">All</option>'+whs.map(w=>`<option value="${esc(w)}" ${w===v?'selected':''}>${esc(w)}</option>`).join('');}
+function populateFilterSelects() {
+  const reps=[...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
+  const whs=[...new Set(leads.map(l=>l.distributor_warehouse).filter(Boolean))].sort();
+  ['f-rep','rr-rep'].forEach(id=>{const s=ge(id);if(!s)return;const v=s.value;s.innerHTML='<option value="">All reps</option>'+reps.map(r=>`<option value="${r}" ${r===v?'selected':''}>${r}</option>`).join('');});
+  const fw=ge('f-wh');if(fw){const v=fw.value;fw.innerHTML='<option value="">All</option>'+whs.map(w=>`<option value="${w}" ${w===v?'selected':''}>${w}</option>`).join('');}
 }
 
-// ─── STEP BADGE ───────────────────────────────────────────────
-function stepBadge(l){
-if(l.status==='lost')return'<span class="badge bg-red">Lost</span>';
-if(l.status==='won')return'<span class="badge bg-green">Won</span>';
-const sid=STEP_ALIASES[l.current_step]||l.current_step;const s=getStep(sid);
-return`<span class="badge bg-navy" style="font-size:10px">${s?esc(s.icon+' '+s.label):'—'}</span>`;
-}
-
-function srcColor(src){
-const map={'Sledd':{bg:'#d1fae5',txt:'#065f46'},'CoreMark':{bg:'#ede9fe',txt:'#6d28d9'},'Farner-Bocken':{bg:'#fef3c7',txt:'#92400e'}};
-return map[src]||{bg:'#dbeafe',txt:'#1e40af'};
+// ─── STATUS BADGE ─────────────────────────────────────────────
+function stepBadge(l) {
+  if(l.status==='lost') return '<span class="badge bg-red">Lost</span>';
+  if(l.status==='won') return '<span class="badge bg-green">Won</span>';
+  const s = getStep(l.current_step);
+  const cls = l.route==='leasing'?'bg-purple':'bg-navy';
+  return `<span class="badge ${cls}" style="font-size:10px">${s?s.icon+' '+s.label:'—'}</span>`;
 }
 
 // ─── RENDER LIST ──────────────────────────────────────────────
-function renderList(){
-const q=(ge('f-q')?.value||'').toLowerCase().trim();
-const sort=ge('f-sort')?.value||'newest';
-const fRep=ge('f-rep')?.value||'';
-const fStatus=ge('f-status')?.value||'';
-const fRoute=ge('f-route')?.value||'';
-const fSrc=ge('f-src')?.value||'';
-const fWh=ge('f-wh')?.value||'';
-let list=[...leads];
-if(activeMetric==='unassigned')list=list.filter(l=>!l.assigned_sales_rep||!l.assigned_sales_rep.trim());
-else if(activeMetric==='assigned')list=list.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim());
-else if(activeMetric==='won')list=list.filter(l=>l.status==='won');
-else if(activeMetric==='lost')list=list.filter(l=>l.status==='lost');
-if(!showLost&&activeMetric!=='lost'&&!fStatus)list=list.filter(l=>l.status!=='lost');
-if(fStatus)list=list.filter(l=>l.status===fStatus);
-if(fSrc)list=list.filter(l=>(l.program_source||'Java Select')===fSrc);
-if(fRoute)list=list.filter(l=>l.route===fRoute);
-if(fRep)list=list.filter(l=>l.assigned_sales_rep===fRep);
-if(fWh)list=list.filter(l=>l.distributor_warehouse===fWh);
-if(q)list=list.filter(l=>[l.customer_full_name,l.dba_name,l.contact_email,l.phone,l.assigned_sales_rep,l.distributor_sales_rep,l.distributor_warehouse,l.distributor].some(v=>(v||'').toLowerCase().includes(q)));
-if(role==='dist_rep')list=list.filter(l=>l.current_step==='new_lead');
-list.sort((a,b)=>{
-  if(sort==='oldest')return new Date(a.created_at)-new Date(b.created_at);
-  if(sort==='name')return(a.customer_full_name||'').localeCompare(b.customer_full_name||'');
-  if(sort==='rep')return(a.assigned_sales_rep||'').localeCompare(b.assigned_sales_rep||'');
-  return new Date(b.created_at)-new Date(a.created_at);
-});
-const fs=ge('f-sum');if(fs)fs.textContent=`Showing ${list.length} of ${leads.length} leads`;
-const sb2=ge('sidebar');
-if(!list.length){sb2.innerHTML='<div style="font-size:13px;color:#9ca3af;padding:.7rem;text-align:center">No leads match these filters.</div>';return;}
-sb2.innerHTML=list.map(l=>{
-  const sc=srcColor(l.program_source||'Java Select');
-  const repColor=l.assigned_sales_rep?'#1e40af':'#dc2626';
-  return`<div class="lcard${selId===l.id?' sel':''}${l.status==='lost'?' c-lost':''}" onclick="selectLead('${l.id}')">
-<div class="lc-name">${esc(l.customer_full_name||l.dba_name||'Unknown')}</div>
-<div class="lc-sub">${l.dba_name&&l.dba_name!==l.customer_full_name?esc(l.dba_name)+' · ':''}<span style="color:${repColor}">${esc(l.assigned_sales_rep||'⚠ Needs rep')}</span></div>
-<div class="lc-foot">
-${stepBadge(l)}
-<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;background:${sc.bg};color:${sc.txt}">${esc(l.program_source||'Java Select')}</span>
-<span style="font-size:11px;color:#9ca3af">${fmtD(l.created_at)}</span>
-</div>
-<div class="pbar"><div class="pfill pf-s" style="width:${pct(l)}%"></div></div>
-</div>`;
-}).join('');
+function renderList() {
+  const q=(ge('f-q')?.value||'').toLowerCase().trim();
+  const sort=ge('f-sort')?.value||'newest';
+  const fRep=ge('f-rep')?.value||'';
+  const fStatus=ge('f-status')?.value||'';
+  const fRoute=ge('f-route')?.value||'';
+  const fSrc=ge('f-src')?.value||'';
+  const fWh=ge('f-wh')?.value||'';
+
+  let list=[...leads];
+
+  // Metric filter
+  if(activeMetric==='unassigned') list=list.filter(l=>!l.assigned_sales_rep||!l.assigned_sales_rep.trim());
+  else if(activeMetric==='assigned') list=list.filter(l=>l.assigned_sales_rep&&l.assigned_sales_rep.trim());
+  else if(activeMetric==='won') list=list.filter(l=>l.status==='won');
+  else if(activeMetric==='lost') list=list.filter(l=>l.status==='lost');
+
+  // Show/hide lost
+  if(!showLost && activeMetric!=='lost' && !fStatus) list=list.filter(l=>l.status!=='lost');
+  if(fStatus) list=list.filter(l=>l.status===fStatus);
+  if(fSrc) list=list.filter(l=>(l.program_source||'Java Select')===fSrc);
+  if(fRoute) list=list.filter(l=>l.route===fRoute);
+  if(fRep) list=list.filter(l=>l.assigned_sales_rep===fRep);
+  if(fWh) list=list.filter(l=>l.distributor_warehouse===fWh);
+  if(q) list=list.filter(l=>[l.customer_full_name,l.dba_name,l.contact_email,l.phone,l.assigned_sales_rep,l.distributor_sales_rep,l.distributor_warehouse,l.distributor].some(v=>(v||'').toLowerCase().includes(q)));
+  if(role==='dist_rep') list=list.filter(l=>l.current_step==='new_lead');
+
+  list.sort((a,b)=>{
+    if(sort==='oldest') return new Date(a.created_at)-new Date(b.created_at);
+    if(sort==='name') return (a.customer_full_name||'').localeCompare(b.customer_full_name||'');
+    if(sort==='rep') return (a.assigned_sales_rep||'').localeCompare(b.assigned_sales_rep||'');
+    return new Date(b.created_at)-new Date(a.created_at);
+  });
+
+  const fs=ge('f-sum');if(fs)fs.textContent=`Showing ${list.length} of ${leads.length} leads`;
+
+  const sb2=ge('sidebar');
+  if(!list.length){sb2.innerHTML='<div style="font-size:13px;color:#9ca3af;padding:.7rem;text-align:center">No leads match these filters.</div>';return;}
+
+  sb2.innerHTML=list.map(l=>{
+    const src=l.program_source||'Java Select';
+    const srcColor=src==='Sledd'?{bg:'#d1fae5',txt:'#065f46'}:{bg:'#dbeafe',txt:'#1e40af'};
+    const repColor=l.assigned_sales_rep?'#1e40af':'#dc2626';
+    return `<div class="lcard${selId===l.id?' sel':''}${l.status==='lost'?' c-lost':''}" onclick="selectLead('${l.id}')">
+      <div class="lc-name">${l.customer_full_name||l.dba_name||'Unknown'}</div>
+      <div class="lc-sub">${l.dba_name&&l.dba_name!==l.customer_full_name?l.dba_name+' · ':''}<span style="color:${repColor}">${l.assigned_sales_rep||'⚠ Needs rep'}</span></div>
+      <div class="lc-foot">
+        ${stepBadge(l)}
+        <span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:999px;background:${srcColor.bg};color:${srcColor.txt}">${src}</span>
+        <span style="font-size:11px;color:#9ca3af" title="${fmtT(l.created_at)}">${fmtD(l.created_at)}</span>
+      </div>
+      <div class="pbar"><div class="pfill ${l.route==='leasing'?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
+    </div>`;
+  }).join('');
 }
 
 // ─── SELECT + RENDER MAIN ────────────────────────────────────
-async function selectLead(id){selId=id;renderList();if(!actCache[id])await loadAct(id);renderMain(id);}
+async function selectLead(id) { selId=id; renderList(); if(!actCache[id]) await loadAct(id); renderMain(id); }
 
-function renderMain(id){
-const l=leads.find(x=>x.id===id);if(!l)return;
-const steps=getSteps();
-const curId=STEP_ALIASES[l.current_step]||l.current_step;
-const idx=steps.findIndex(s=>s.id===curId);
-const safeIdx=idx>=0?idx:0;
-const cur=steps[safeIdx];const next=steps[safeIdx+1];
-const isLost=l.status==='lost',isWon=l.status==='won';
-const canAct=role==='admin'||role==='director'||(role==='ronnoco_rep'&&l.assigned_sales_rep);
-const logs=actCache[id]||[];
-const pipeHtml=steps.map((s,i)=>{
-  const done=i<safeIdx,isCur=i===safeIdx;
-  let dc=isLost?'lost-dot':done?'done-s':isCur?'cur-s':'';
-  return`<div class="pstep"><div class="pdot ${dc}">${s.icon}</div><div class="pname ${done||isCur?'active':''}">${esc(s.label)}</div></div>`;
-}).join('');
+function renderMain(id) {
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  const steps=getSteps(l.route);
+  const idx=steps.findIndex(s=>s.id===l.current_step);
+  const cur=steps[idx>=0?idx:0];
+  const next=steps[idx+1];
+  const isLost=l.status==='lost', isWon=l.status==='won';
+  const canAct=role==='admin'||role==='director'||(role==='ronnoco_rep'&&l.assigned_sales_rep);
+  const isLeasing=l.route==='leasing';
+  const logs=actCache[id]||[];
 
-const rows=[];const add=(k,v)=>{if(v&&String(v).trim())rows.push([k,v]);};
-add('Program',l.program_source);add('Customer',l.customer_full_name);add('DBA/Store',l.dba_name);
-add('Legal Name',l.legal_business_name);add('Email',l.contact_email);add('Phone',l.phone||l.contact_number);
-add('Address',l.store_address);add('Locations',l.num_locations);add('Cust Dist #',l.customer_distributor_number);
-add('Dist Rep',l.distributor_sales_rep);add('Rep Email',l.distributor_rep_email);
-add('Distributor',l.distributor);add('Warehouse',l.distributor_warehouse);
-add('Tradeshow',l.tradeshow_lead);add('Which Program',l.which_program);
-add('Interest',l.customer_interest);add('Beverage Needs',l.beverage_needs);add('Sales Rep',l.assigned_sales_rep);
-if(isLost)add('Lost Reason',l.lost_reason);
+  // Pipeline dots
+  const pipeHtml=steps.map((s,i)=>{
+    const done=i<idx, isCur=i===idx;
+    let dc=isLost?'lost-dot':done?(isLeasing?'done-l':'done-s'):isCur?(isLeasing?'cur-l':'cur-s'):'';
+    let nc=(done||isCur)?'active':'';
+    return `<div class="pstep"><div class="pdot ${dc}">${s.icon}</div><div class="pname ${nc}">${s.label}</div></div>`;
+  }).join('');
 
-let advHtml='';
-if(canAct&&!isLost&&!isWon&&next){
-  if(next.id==='assign_rep')advHtml=`<button class="btn b-green btn-sm" onclick="openAssignRep('${id}')">Advance → 👤 Assign Rep</button>`;
-  else advHtml=`<button class="btn b-green btn-sm" onclick="startEmailAdv('${id}')">Advance → ${next.icon} ${esc(next.label)}</button>`;
-}
+  // Data rows
+  const rows=[];const add=(k,v)=>{if(v&&String(v).trim())rows.push([k,v]);};
+  add('Program',l.program_source); add('Customer',l.customer_full_name); add('DBA/Store',l.dba_name);
+  add('Legal Name',l.legal_business_name); add('Email',l.contact_email); add('Phone',l.phone||l.contact_number);
+  add('Address',l.store_address); add('Locations',l.num_locations); add('Cust Dist #',l.customer_distributor_number);
+  add('Dist Rep',l.distributor_sales_rep); add('Rep Email',l.distributor_rep_email);
+  add('Distributor',l.distributor); add('Warehouse',l.distributor_warehouse);
+  add('Tradeshow',l.tradeshow_lead); add('Which Program',l.which_program);
+  add('Interest',l.customer_interest); add('Beverage Needs',l.beverage_needs); add('Sales Rep',l.assigned_sales_rep); add('Date Received',fmtT(l.created_at));
+  if(isLost) add('Lost Reason',l.lost_reason);
 
-const logHtml=logs.length?logs.map(lo=>`<div class="log-row"><span class="log-time">${fmtT(lo.created_at)}</span><div>[${esc(lo.actor_role||'admin')}] ${esc(lo.action||'')}${lo.note?`<div class="log-note">${esc(lo.note)}</div>`:''}</div></div>`).join(''):'<div style="font-size:12px;color:#9ca3af">No activity yet.</div>';
+  // Advance button
+  let advHtml='';
+  if(canAct && !isLost && !isWon && next) {
+    if(next.id==='assign_rep') advHtml=`<button class="btn b-green btn-sm" onclick="openAssignRep('${id}')">Advance → 👤 Assign Rep</button>`;
+    else advHtml=`<button class="btn b-green btn-sm" onclick="startEmailAdv('${id}')">Advance → ${next.icon} ${next.label}</button>`;
+  }
 
-ge('main-panel').innerHTML=`
-<div class="main-hdr">
-  <div>
-    <div class="main-name">${esc(l.customer_full_name||l.dba_name||'Unnamed Lead')}</div>
-    <div class="main-meta">${l.dba_name&&l.dba_name!==l.customer_full_name?'<strong>'+esc(l.dba_name)+'</strong> · ':''}${[l.contact_email,l.phone||l.contact_number].filter(Boolean).map(esc).join(' · ')}${l.store_address?'<br>'+esc(l.store_address):''}${l.which_program?'<br><span style="color:#7c3aed;font-weight:500">'+esc(l.which_program)+'</span>':''}</div>
-  </div>
-  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-    ${stepBadge(l)} <span style="font-size:12px;color:#9ca3af">${pct(l)}%</span>
-    ${role==='admin'||role==='director'?`<button class="btn b-red btn-sm" onclick="deleteLead('${id}')">Delete</button>`:''}
-  </div>
-</div>
-<div class="pbar" style="height:5px;margin-bottom:.85rem"><div class="pfill pf-s" style="width:${pct(l)}%"></div></div>
-<div class="pipeline">${pipeHtml}</div>
-<div class="jbox">
-  <div class="jbox-title">📍 Move to step</div>
-  <div class="jrow">
-    <select class="jsel" id="jump-${id}">${steps.map(s=>`<option value="${s.id}" ${s.id===curId?'selected':''}>${s.icon} ${esc(s.label)}</option>`).join('')}</select>
-    <button class="btn b-blue btn-sm" onclick="jumpStep('${id}')">Move →</button>
-  </div>
-  ${isLost?`<div class="lost-box"><strong>Lost reason:</strong> ${esc(l.lost_reason||'—')}</div>`:''}
-  ${!isLost&&!isWon?`<div class="abtns">
-    ${cur&&cur.body&&l.contact_email?`<button class="btn b-blue btn-sm" onclick="openEmail('${id}',false)">✉ Draft email</button>`:''}
-    ${l.current_step==='new_lead'?`<button class="btn b-green btn-sm" onclick="openAssignRep('${id}')">Advance → 👤 Assign Rep</button>`:advHtml}
-    ${canAct?`<button class="btn b-red btn-sm" onclick="markLost('${id}')">✗ Mark lost</button>`:''}
-  </div>`:''}
-  ${isWon?'<div style="font-size:14px;font-weight:700;color:#065f46;margin-top:.5rem">🏆 Won!</div>':''}
-</div>
-<div class="sec">
-  <div class="sec-title">✏️ Editable Fields</div>
-  <div class="egrid">
-    <div class="ef"><label>Customer name</label><input class="einp" id="ef-name" value="${esc(l.customer_full_name||'')}"/></div>
-    <div class="ef"><label>DBA / Store</label><input class="einp" id="ef-dba" value="${esc(l.dba_name||'')}"/></div>
-    <div class="ef"><label>Email</label><input class="einp" id="ef-email" value="${esc(l.contact_email||'')}"/></div>
-    <div class="ef"><label>Phone</label><input class="einp" id="ef-phone" value="${esc(l.phone||'')}"/></div>
-    <div class="ef"><label>Legal name</label><input class="einp" id="ef-legal" value="${esc(l.legal_business_name||'')}"/></div>
-    <div class="ef"><label>Address</label><input class="einp" id="ef-addr" value="${esc(l.store_address||'')}"/></div>
-    <div class="ef"><label>Warehouse</label><input class="einp" id="ef-wh" value="${esc(l.distributor_warehouse||'')}"/></div>
-    <div class="ef"><label>Cust Dist #</label><input class="einp" id="ef-dn" value="${esc(l.customer_distributor_number||'')}"/></div>
-    <div class="ef" style="grid-column:1/-1"><label>Notes</label><textarea class="einp" id="ef-notes" rows="3">${esc(l.notes||'')}</textarea></div>
-  </div>
-  <button class="btn b-green btn-sm" onclick="saveEdits('${id}')">💾 Save changes</button>
-</div>
-<div class="sec">
-  <div class="sec-title">📋 Submission Data</div>
-  <table class="dtbl">${rows.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(String(v))}</td></tr>`).join('')||'<tr><td colspan="2" style="color:#9ca3af">No data available.</td></tr>'}</table>
-</div>
-<div class="sec">
-  <div class="sec-title">🕐 Activity Log</div>
-  <div class="log-box">${logHtml}</div>
-</div>`;
+  // Log
+  const logHtml=logs.length?logs.map(lo=>`<div class="log-row"><span class="log-time">${fmtT(lo.created_at)}</span><div>[${lo.actor_role||'admin'}] ${lo.action||''}${lo.note?`<div class="log-note">${lo.note}</div>`:''}</div></div>`).join(''):'<div style="font-size:12px;color:#9ca3af">No activity yet.</div>';
+
+  ge('main-panel').innerHTML=`
+    <div class="main-hdr">
+      <div>
+        <div class="main-name">${l.customer_full_name||l.dba_name||'Unnamed Lead'}</div>
+        <div class="main-meta">${l.dba_name&&l.dba_name!==l.customer_full_name?'<strong>'+l.dba_name+'</strong> · ':''
+          }${[l.contact_email,l.phone||l.contact_number].filter(Boolean).join(' · ')
+          }${l.store_address?'<br>'+l.store_address:''
+          }${l.which_program?'<br><span style="color:#7c3aed;font-weight:500">'+l.which_program+'</span>':''}<br><span style="color:#9ca3af;font-size:11px">📅 Lead received: ${fmtT(l.created_at)}</span></div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        ${stepBadge(l)} <span style="font-size:12px;color:#9ca3af">${pct(l)}%</span>
+        ${role==='admin'||role==='director'?`<button class="btn b-red btn-sm" onclick="deleteLead('${id}')">Delete</button>`:''}
+      </div>
+    </div>
+    <div class="pbar" style="height:5px;margin-bottom:.85rem"><div class="pfill ${isLeasing?'pf-l':'pf-s'}" style="width:${pct(l)}%"></div></div>
+    <div class="route-bar">
+      <span style="font-size:12px;font-weight:600;color:#374151;margin-right:4px">Route:</span>
+      <button class="ropt ${!isLeasing?'on-s':''}" onclick="changeRoute('${id}','sales')">📈 Sales Rep</button>
+      <button class="ropt ${isLeasing?'on-l':''}" onclick="changeRoute('${id}','leasing')">💳 Leasing/Finance</button>
+    </div>
+    <div class="pipeline">${pipeHtml}</div>
+    <div class="jbox">
+      <div class="jbox-title">📍 Move to step</div>
+      <div class="jrow">
+        <select class="jsel" id="jump-${id}">${steps.map(s=>`<option value="${s.id}" ${s.id===l.current_step?'selected':''}>${s.icon} ${s.label}</option>`).join('')}</select>
+        <button class="btn b-blue btn-sm" onclick="jumpStep('${id}')">Move →</button>
+      </div>
+      ${isLost?`<div class="lost-box"><strong>Lost reason:</strong> ${l.lost_reason||'—'}</div>`:''}
+      ${!isLost&&!isWon?`<div class="abtns">
+        ${cur&&cur.body&&l.contact_email?`<button class="btn b-blue btn-sm" onclick="openEmail('${id}',false)">✉ Draft email</button>`:''}
+        ${l.current_step==='new_lead'?`<button class="btn b-green btn-sm" onclick="openAssignRep('${id}')">Advance → 👤 Assign Rep</button>`:advHtml}
+        ${canAct?`<button class="btn b-red btn-sm" onclick="markLost('${id}')">✗ Mark lost</button>`:''}
+      </div>`:''}
+      ${isWon?'<div style="font-size:14px;font-weight:700;color:#065f46;margin-top:.5rem">🏆 Won!</div>':''}
+    </div>
+    <div class="sec">
+      <div class="sec-title">✏️ Editable Fields</div>
+      <div class="egrid">
+        <div class="ef"><label>Customer name</label><input class="einp" id="ef-name" value="${l.customer_full_name||''}"/></div>
+        <div class="ef"><label>DBA / Store</label><input class="einp" id="ef-dba" value="${l.dba_name||''}"/></div>
+        <div class="ef"><label>Email</label><input class="einp" id="ef-email" value="${l.contact_email||''}"/></div>
+        <div class="ef"><label>Phone</label><input class="einp" id="ef-phone" value="${l.phone||''}"/></div>
+        <div class="ef"><label>Legal name</label><input class="einp" id="ef-legal" value="${l.legal_business_name||''}"/></div>
+        <div class="ef"><label>Address</label><input class="einp" id="ef-addr" value="${l.store_address||''}"/></div>
+        <div class="ef"><label>Warehouse</label><input class="einp" id="ef-wh" value="${l.distributor_warehouse||''}"/></div>
+        <div class="ef"><label>Cust Dist #</label><input class="einp" id="ef-dn" value="${l.customer_distributor_number||''}"/></div>
+        <div class="ef" style="grid-column:1/-1"><label>Notes</label><textarea class="einp" id="ef-notes" rows="3">${l.notes||''}</textarea></div>
+      </div>
+      <button class="btn b-green btn-sm" onclick="saveEdits('${id}')">💾 Save changes</button>
+    </div>
+    <div class="sec">
+      <div class="sec-title">📋 Submission Data</div>
+      <table class="dtbl">${rows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')||'<tr><td colspan="2" style="color:#9ca3af">No data available.</td></tr>'}</table>
+    </div>
+    <div class="sec">
+      <div class="sec-title">🕐 Activity Log</div>
+      <div class="log-box">${logHtml}</div>
+    </div>`;
 }
 
 // ─── ACTIONS ─────────────────────────────────────────────────
-async function changeRoute(id,route){
-// Route toggle kept for data purposes but pipeline is now unified
-await sb.from('leads').update({route}).eq('id',id);
-await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Route noted: '+(route==='leasing'?'Leasing/Finance':'Sales Rep')});
-notice('Route updated.','ok');
+async function changeRoute(id, route) {
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  await sb.from('leads').update({route,current_step:'new_lead'}).eq('id',id);
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Route changed to '+(route==='leasing'?'Leasing/Finance':'Sales Rep')});
+  notice('Route updated!','ok');
 }
 
-async function saveEdits(id){
-const g=f=>ge('ef-'+f)?.value?.trim()||'';
-const{error}=await sb.from('leads').update({customer_full_name:g('name'),dba_name:g('dba'),contact_email:g('email'),phone:g('phone'),legal_business_name:g('legal'),store_address:g('addr'),distributor_warehouse:g('wh'),customer_distributor_number:g('dn'),notes:g('notes')}).eq('id',id);
-if(error){notice('Save error: '+error.message,'err');return;}
-await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Lead details updated'});
-notice('Saved!','ok');
+async function saveEdits(id) {
+  const g=f=>ge('ef-'+f)?.value?.trim()||'';
+  const {error}=await sb.from('leads').update({customer_full_name:g('name'),dba_name:g('dba'),contact_email:g('email'),phone:g('phone'),legal_business_name:g('legal'),store_address:g('addr'),distributor_warehouse:g('wh'),customer_distributor_number:g('dn'),notes:g('notes')}).eq('id',id);
+  if(error){notice('Save error: '+error.message,'err');return;}
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Lead details updated'});
+  notice('Saved!','ok');
 }
 
-async function deleteLead(id){
-if(!confirm('Delete this lead? This cannot be undone.'))return;
-await sb.from('activity_log').delete().eq('lead_id',id);
-await sb.from('leads').delete().eq('id',id);
-selId=null;ge('main-panel').innerHTML='<div class="empty"><div>Lead deleted.</div></div>';
-notice('Lead deleted.','warn');
+async function deleteLead(id) {
+  if(!confirm('Delete this lead? This cannot be undone.')) return;
+  await sb.from('activity_log').delete().eq('lead_id',id);
+  await sb.from('leads').delete().eq('id',id);
+  selId=null; ge('main-panel').innerHTML='<div class="empty"><div>Lead deleted.</div></div>';
+  notice('Lead deleted.','warn');
 }
 
 // ─── ASSIGN REP ───────────────────────────────────────────────
-function openAssignRep(id){
-const l=leads.find(x=>x.id===id);if(!l)return;
-repAssignId=id;
-const sub=ge('ra-sub');if(sub)sub.textContent=l.customer_full_name||l.dba_name||'Lead';
-const rsel=ge('ra-rep');
-if(rsel){rsel.innerHTML='<option value="">— Choose a rep —</option>'+salesReps.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');if(l.assigned_sales_rep)rsel.value=l.assigned_sales_rep;}
-ge('ra-remail').value='';
-ge('ra-subj').value="You've Been Assigned a New Lead — Ronnoco";
-buildAssignEmail();open_modal('rep-modal');
+function openAssignRep(id) {
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  repAssignId=id;
+  const sub=ge('ra-sub'); if(sub) sub.textContent=l.customer_full_name||l.dba_name||'Lead';
+  const rsel=ge('ra-rep');
+  if(rsel){rsel.innerHTML='<option value="">— Choose a rep —</option>'+salesReps.map(r=>`<option value="${r.name}">${r.name}</option>`).join('');if(l.assigned_sales_rep)rsel.value=l.assigned_sales_rep;}
+  ge('ra-remail').value='';
+  ge('ra-subj').value="You've Been Assigned a New Lead — Ronnoco Java Select Program";
+  buildAssignEmail();
+  open_modal('rep-modal');
 }
 
-function buildAssignEmail(){
-const id=repAssignId;if(!id)return;
-const l=leads.find(x=>x.id===id);if(!l)return;
-const repName=ge('ra-rep')?.value||'[Rep Name]';
-ge('ra-body').value=emailBody_leadReceived({...l,assigned_sales_rep:repName});
+function buildAssignEmail() {
+  const id=repAssignId; if(!id) return;
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  const repName=ge('ra-rep')?.value||'[Rep Name]';
+  ge('ra-body').value=emailBody_leadReceived({...l, assigned_sales_rep:repName});
 }
 
-async function confirmAssign(){
-const id=repAssignId;if(!id)return;
-const repName=ge('ra-rep')?.value||'';const repEmail=ge('ra-remail')?.value||'';
-const subj=ge('ra-subj')?.value||'';const body=ge('ra-body')?.value||'';
-if(!repName){notice('Please select a rep.','warn');return;}
-const l=leads.find(x=>x.id===id);if(!l)return;
-await sb.from('leads').update({assigned_sales_rep:repName,current_step:'assign_rep'}).eq('id',id);
-await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Rep assigned: '+repName,from_step:l.current_step,to_step:'assign_rep',note:'Email sent to '+(repEmail||'rep')});
-try{await sb.from('email_log').insert({lead_id:id,step:'assign_rep',subject:subj,body,sent_by_role:role});}catch(e){}
-try{await navigator.clipboard.writeText('To: '+repEmail+'\nSubject: '+subj+'\n\n'+body);}catch(e){}
-close_modal('rep-modal');repAssignId=null;
-notice(repName+' assigned! Email copied to clipboard.','ok');
+async function confirmAssign() {
+  const id=repAssignId; if(!id) return;
+  const repName=ge('ra-rep')?.value||'';
+  const repEmail=ge('ra-remail')?.value||'';
+  const subj=ge('ra-subj')?.value||'';
+  const body=ge('ra-body')?.value||'';
+  if(!repName){notice('Please select a rep.','warn');return;}
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  await sb.from('leads').update({assigned_sales_rep:repName,current_step:'assign_rep'}).eq('id',id);
+  await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Rep assigned: '+repName,from_step:l.current_step,to_step:'assign_rep',note:'Email sent to '+(repEmail||'rep')});
+  try{await sb.from('email_log').insert({lead_id:id,step:'assign_rep',subject:subj,body,sent_by_role:role});}catch(e){}
+  try{await navigator.clipboard.writeText('To: '+repEmail+'\nSubject: '+subj+'\n\n'+body);}catch(e){}
+  close_modal('rep-modal');repAssignId=null;
+  notice(repName+' assigned! Email copied to clipboard.','ok');
 }
 
 // ─── NOTE MODAL ───────────────────────────────────────────────
-function openNoteModal(leadId,fromStep,toStep,doEmail,emailSubj,emailBody){
-pendingNote={leadId,fromStep,toStep,doEmail,emailSubj:emailSubj||'',emailBody:emailBody||''};
-ge('note-title').textContent='Moving to: '+(getStep(toStep)?.icon||'')+' '+(getStep(toStep)?.label||toStep);
-ge('note-sub').textContent='From: '+(getStep(fromStep)?.label||fromStep);
-ge('note-text').value='';open_modal('note-modal');setTimeout(()=>ge('note-text')?.focus(),80);
+function openNoteModal(leadId,fromStep,toStep,doEmail,emailSubj,emailBody) {
+  pendingNote={leadId,fromStep,toStep,doEmail,emailSubj:emailSubj||'',emailBody:emailBody||''};
+  ge('note-title').textContent='Moving to: '+(getStep(toStep)?.icon||'')+' '+(getStep(toStep)?.label||toStep);
+  ge('note-sub').textContent='From: '+(getStep(fromStep)?.label||fromStep);
+  ge('note-text').value='';
+  open_modal('note-modal');
+  setTimeout(()=>ge('note-text')?.focus(),80);
 }
 function cancelNote(){close_modal('note-modal');pendingNote=null;}
 async function confirmNote(){
-if(!pendingNote)return;
-const{leadId,fromStep,toStep,doEmail,emailSubj,emailBody}=pendingNote;
-const note=ge('note-text').value.trim();
-close_modal('note-modal');pendingNote=null;
-const l=leads.find(x=>x.id===leadId);if(!l)return;
-const wonSteps=['customer_won','complete_s','deal_funded_s','deal_funded_l'];
-const status=wonSteps.includes(toStep)?'won':l.status;
-await sb.from('leads').update({current_step:toStep,status}).eq('id',leadId);
-await sb.from('activity_log').insert({lead_id:leadId,actor_role:role,action:'Advanced: '+(getStep(fromStep)?.label||fromStep)+' → '+(getStep(toStep)?.label||toStep),from_step:fromStep,to_step:toStep,note:note||''});
-if(doEmail&&emailSubj){
-  try{await navigator.clipboard.writeText('Subject: '+emailSubj+'\n\n'+emailBody);}catch(e){}
-  try{await sb.from('email_log').insert({lead_id:leadId,step:fromStep,subject:emailSubj,body:emailBody,sent_by_role:role});}catch(e){}
-  notice('Advanced to '+(getStep(toStep)?.label||toStep)+'! Email copied.','ok');
-}else{notice('Moved to '+(getStep(toStep)?.label||toStep)+'!','ok');}
+  if(!pendingNote)return;
+  const{leadId,fromStep,toStep,doEmail,emailSubj,emailBody}=pendingNote;
+  const note=ge('note-text').value.trim();
+  close_modal('note-modal');pendingNote=null;
+  const l=leads.find(x=>x.id===leadId); if(!l) return;
+  const wonSteps=['customer_won','complete_s','deal_funded_l','deal_funded_s'];
+  const status=wonSteps.includes(toStep)?'won':l.status;
+  await sb.from('leads').update({current_step:toStep,status}).eq('id',leadId);
+  await sb.from('activity_log').insert({lead_id:leadId,actor_role:role,action:'Advanced: '+(getStep(fromStep)?.label||fromStep)+' → '+(getStep(toStep)?.label||toStep),from_step:fromStep,to_step:toStep,note:note||''});
+  if(doEmail&&emailSubj){
+    try{await navigator.clipboard.writeText('Subject: '+emailSubj+'\n\n'+emailBody);}catch(e){}
+    try{await sb.from('email_log').insert({lead_id:leadId,step:fromStep,subject:emailSubj,body:emailBody,sent_by_role:role});}catch(e){}
+    notice('Advanced to '+(getStep(toStep)?.label||toStep)+'! Email copied.','ok');
+  }else{notice('Moved to '+(getStep(toStep)?.label||toStep)+'!','ok');}
 }
 
 async function jumpStep(id){
-const sel=ge('jump-'+id);if(!sel)return;
-const toStep=sel.value;const l=leads.find(x=>x.id===id);if(!l||toStep===l.current_step)return;
-if(toStep==='assign_rep'){openAssignRep(id);return;}
-openNoteModal(id,l.current_step,toStep,false);
+  const sel=ge('jump-'+id); if(!sel)return;
+  const toStep=sel.value; const l=leads.find(x=>x.id===id); if(!l||toStep===l.current_step)return;
+  if(toStep==='assign_rep'){openAssignRep(id);return;}
+  openNoteModal(id,l.current_step,toStep,false);
 }
 
 // ─── EMAIL MODAL ─────────────────────────────────────────────
 function openEmail(id,isAdv){
-const l=leads.find(x=>x.id===id);if(!l)return;
-const steps=getSteps();const curId2=STEP_ALIASES[l.current_step]||l.current_step;const idx=steps.findIndex(s=>s.id===curId2);
-const safeIdx2=idx>=0?idx:0;const step=steps[safeIdx2];if(!step||!step.body)return;
-emailLeadId=id;emailIsAdv=isAdv;
-ge('em-title').textContent=isAdv?'Compose & advance':'Draft email';
-ge('em-to').value=l.contact_email||'';ge('em-subj').value=step.subj||'';ge('em-body').value=step.body(l);
-const next2=steps[safeIdx2+1];const adv=ge('em-adv');
-if(adv){adv.style.display=isAdv&&next2?'inline-block':'none';adv.textContent=next2?'Copy & advance → '+next2.label:'Copy';}
-open_modal('email-modal');
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  const steps=getSteps(l.route); const idx=steps.findIndex(s=>s.id===l.current_step);
+  const step=steps[idx]; if(!step||!step.body) return;
+  emailLeadId=id; emailIsAdv=isAdv;
+  ge('em-title').textContent=isAdv?'Compose & advance':'Draft email';
+  ge('em-to').value=l.contact_email||'';
+  ge('em-subj').value=step.subj||'';
+  ge('em-body').value=step.body(l);
+  const next=steps[idx+1];
+  const adv=ge('em-adv');
+  if(adv){adv.style.display=isAdv&&next?'inline-block':'none';adv.textContent=next?'Copy & advance → '+next.label:'Copy';}
+  open_modal('email-modal');
 }
+
 function startEmailAdv(id){openEmail(id,true);}
+
 async function copyEmailOnly(){
-const subj=ge('em-subj').value,body=ge('em-body').value;
-try{await navigator.clipboard.writeText('Subject: '+subj+'\n\n'+body);}catch(e){}
-if(emailLeadId){const l=leads.find(x=>x.id===emailLeadId);try{await sb.from('email_log').insert({lead_id:emailLeadId,step:l.current_step,subject:subj,body,sent_by_role:role});}catch(e){}try{await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:role,action:'Email drafted: "'+subj+'"'});}catch(e){}}
-notice('Email copied!','ok');close_modal('email-modal');
+  const subj=ge('em-subj').value, body=ge('em-body').value;
+  try{await navigator.clipboard.writeText('Subject: '+subj+'\n\n'+body);}catch(e){}
+  if(emailLeadId){const l=leads.find(x=>x.id===emailLeadId);try{await sb.from('email_log').insert({lead_id:emailLeadId,step:l.current_step,subject:subj,body,sent_by_role:role});}catch(e){}try{await sb.from('activity_log').insert({lead_id:emailLeadId,actor_role:role,action:'Email drafted: "'+subj+'"'});}catch(e){}}
+  notice('Email copied!','ok');close_modal('email-modal');
 }
+
 async function copyEmailAndAdv(){
-const subj=ge('em-subj').value,body=ge('em-body').value;
-if(emailLeadId){const l=leads.find(x=>x.id===emailLeadId);const steps=getSteps();const curId3=STEP_ALIASES[l.current_step]||l.current_step;const idx=steps.findIndex(s=>s.id===curId3);const si=idx>=0?idx:0;if(si<steps.length-1){close_modal('email-modal');openNoteModal(emailLeadId,l.current_step,steps[si+1].id,true,subj,body);return;}}
-close_modal('email-modal');
+  const subj=ge('em-subj').value, body=ge('em-body').value;
+  if(emailLeadId){const l=leads.find(x=>x.id===emailLeadId);const steps=getSteps(l.route);const idx=steps.findIndex(s=>s.id===l.current_step);if(idx<steps.length-1){close_modal('email-modal');openNoteModal(emailLeadId,l.current_step,steps[idx+1].id,true,subj,body);return;}}
+  close_modal('email-modal');
 }
 
 // ─── LOST ─────────────────────────────────────────────────────
 function markLost(id){lostLeadId=id;ge('lost-reason').value='';open_modal('lost-modal');}
 async function confirmLost(){
-const reason=ge('lost-reason').value.trim();if(!reason){alert('Please enter a reason.');return;}
-const l=leads.find(x=>x.id===lostLeadId);
-await sb.from('leads').update({status:'lost',lost_reason:reason}).eq('id',lostLeadId);
-await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:role,action:'Marked as lost',from_step:l?.current_step,note:reason});
-close_modal('lost-modal');notice('Lead marked as lost.','warn');
+  const reason=ge('lost-reason').value.trim();
+  if(!reason){alert('Please enter a reason.');return;}
+  const l=leads.find(x=>x.id===lostLeadId);
+  await sb.from('leads').update({status:'lost',lost_reason:reason}).eq('id',lostLeadId);
+  await sb.from('activity_log').insert({lead_id:lostLeadId,actor_role:role,action:'Marked as lost',from_step:l?.current_step,note:reason});
+  close_modal('lost-modal');notice('Lead marked as lost.','warn');
 }
 
 // ─── NEW LEAD ─────────────────────────────────────────────────
 function openNewLead(){open_modal('new-modal');}
 async function saveNewLead(){
-const name=ge('nl-name').value.trim();if(!name){notice('Name required.','warn');return;}
-const interest=ge('nl-int').value;
-const route=LEASING_INTERESTS.includes(interest)?'leasing':'sales';
-const np=name.split(' ');
-const{error}=await sb.from('leads').insert({
-  customer_full_name:name,customer_first_name:np[0]||'',customer_last_name:np.slice(1).join(' ')||'',
-  dba_name:ge('nl-dba').value.trim(),contact_email:ge('nl-email').value.trim(),phone:ge('nl-phone').value.trim(),
-  distributor_sales_rep:ge('nl-drep').value.trim(),distributor_warehouse:ge('nl-wh').value.trim(),
-  which_program:ge('nl-prog').value,customer_interest:interest,route,current_step:'new_lead',status:'active',
-  program_source:ge('nl-src').value,
-});
-if(error){notice('Error: '+error.message,'err');return;}
-close_modal('new-modal');notice('Lead created!','ok');
-['nl-name','nl-dba','nl-email','nl-phone','nl-drep','nl-wh'].forEach(id=>{const e=ge(id);if(e)e.value='';});
-}
-
-// ─── CSV IMPORT (v3.3 — name+email duplicate detection) ──────
-function parseCSV(text){const rows=[];for(const line of text.split(/\r?\n/)){if(!line.trim())continue;const cols=[];let cur='',inQ=false;for(const ch of line){if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=ch;}cols.push(cur.trim());rows.push(cols);}return rows;}
-
-function previewCSV(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{csvRows=parseCSV(e.target.result);const p=ge('csv-prev');const b=ge('csv-btn');if(csvRows.length>1){p.style.display='block';p.innerHTML=`<strong>${csvRows.length-1} rows</strong> found — ready to import.`;b.disabled=false;}else{p.style.display='block';p.textContent='Could not read file.';b.disabled=true;}};r.readAsText(f);}
-
-async function importCSV(){
-if(!csvRows.length||!sb)return;
-const hdrs=csvRows[0].map(h=>h.toLowerCase().trim());
-const rows=csvRows.slice(1).filter(r=>r.some(c=>c));
-const btn=ge('csv-btn');btn.disabled=true;btn.textContent='Importing…';
-const col=(row,...kws)=>{for(const kw of kws){const i=hdrs.findIndex(h=>h.includes(kw));if(i>=0&&row[i]&&row[i].trim())return row[i].trim();}return '';};
-const src=ge('csv-src')?.value||'Java Select';
-let added=0,skipped=0,protectedCount=0;
-
-// Load all existing leads once — check name+email to catch re-uploads with new IDs
-const{data:existingLeads}=await sb.from('leads').select('id,customer_full_name,dba_name,contact_email,assigned_sales_rep,current_step,jotform_submission_id');
-const existing=existingLeads||[];
-
-function findDup(name,dba,email){
-  const ne=(email||'').toLowerCase().trim();
-  const nn=(name||dba||'').toLowerCase().trim();
-  if(!ne&&!nn)return null;
-  return existing.find(l=>{
-    const le=(l.contact_email||'').toLowerCase().trim();
-    const ln=(l.customer_full_name||l.dba_name||'').toLowerCase().trim();
-    const ld=(l.dba_name||'').toLowerCase().trim();
-    return ne&&le&&ne===le&&nn&&(nn===ln||nn===ld);
-  })||null;
-}
-
-for(let i=0;i<rows.length;i++){
-  const row=rows[i];
-  const name=col(row,'customers full','customer full','full name','store name','business name')||col(row,'doing business','dba');
-  const dba=col(row,'doing business','dba','store name');
-  const email=col(row,'contact email','email');
-  const phone=col(row,'phone');
-  if(!name&&!dba&&!email&&!phone){skipped++;continue;}
-
-  // Dedup: name+email match beats submission ID (catches re-uploads)
-  const dup=findDup(name,dba,email);
-  if(dup){
-    const hasRep=dup.assigned_sales_rep&&dup.assigned_sales_rep.trim();
-    const hasPipeline=dup.current_step&&dup.current_step!=='new_lead';
-    if(hasRep||hasPipeline){protectedCount++;continue;}
-    skipped++;continue;
-  }
-
-  const subId=col(row,'submission id','submissionid')||('csv-'+Date.now()+'-'+i);
-  const interest=col(row,'interest','customer interest','which program');
-  const route=LEASING_INTERESTS.some(li=>interest.toLowerCase().includes(li.toLowerCase()))?'leasing':'sales';
-
-  const{error}=await sb.from('leads').insert({
-    jotform_submission_id:subId,
-    distributor_sales_rep:col(row,'distributor sales','dist rep','sales rep name','rep name'),
-    distributor_rep_email:col(row,'rep email','dist rep email'),
-    distributor:col(row,'distributor name','distributor'),
-    distributor_warehouse:col(row,'warehouse','dist warehouse'),
-    tradeshow_lead:col(row,'tradeshow','trade show'),
-    customer_full_name:name,
-    customer_first_name:col(row,'first name'),
-    customer_last_name:col(row,'last name'),
-    contact_email:email,contact_number:phone,phone:phone,
-    legal_business_name:col(row,'legal business','legal name'),
-    dba_name:dba||name,
-    store_address:col(row,'address','store address','location'),
-    num_locations:col(row,'locations','num location','number of location'),
-    customer_distributor_number:col(row,'distributor number','dist number','customer dist'),
-    which_program:col(row,'which program','program','coffee program'),
-    customer_interest:interest,
-    beverage_needs:col(row,'beverage','needs','beverage needs'),
-    notes:col(row,'notes','comments','additional'),
-    route,current_step:'new_lead',status:'active',program_source:src,
-    raw_csv:Object.fromEntries(hdrs.map((h,i2)=>[h,row[i2]||''])),
+  const name=ge('nl-name').value.trim();
+  if(!name){notice('Name required.','warn');return;}
+  const interest=ge('nl-int').value;
+  const route=['Leasing Equipment','Financing Equipment'].includes(interest)?'leasing':'sales';
+  const np=name.split(' ');
+  const {error}=await sb.from('leads').insert({
+    customer_full_name:name,customer_first_name:np[0]||'',customer_last_name:np.slice(1).join(' ')||'',
+    dba_name:ge('nl-dba').value.trim(),contact_email:ge('nl-email').value.trim(),phone:ge('nl-phone').value.trim(),
+    distributor_sales_rep:ge('nl-drep').value.trim(),distributor_warehouse:ge('nl-wh').value.trim(),
+    which_program:ge('nl-prog').value,customer_interest:interest,route,current_step:'new_lead',status:'active',
+    program_source:ge('nl-src').value,
   });
-  if(!error){
-    added++;
-    existing.push({id:'tmp-'+i,customer_full_name:name,dba_name:dba||name,contact_email:email,assigned_sales_rep:'',current_step:'new_lead',jotform_submission_id:subId});
-  }else{skipped++;}
+  if(error){notice('Error: '+error.message,'err');return;}
+  close_modal('new-modal');notice('Lead created!','ok');
+  ['nl-name','nl-dba','nl-email','nl-phone','nl-drep','nl-wh'].forEach(id=>{const e=ge(id);if(e)e.value='';});
 }
 
-btn.disabled=false;btn.textContent='Import';
-csvRows=[];if(ge('csv-file'))ge('csv-file').value='';
-
-let msg=`Imported ${added} new lead${added!==1?'s':''}.`;
-if(protectedCount>0)msg+=` ${protectedCount} skipped — already in pipeline with rep or progress.`;
-if(skipped>0)msg+=` ${skipped} skipped (duplicates or blank rows).`;
-
-const p=ge('csv-prev');if(p){p.style.display='block';p.innerHTML=`<span style="color:#065f46;font-weight:600">✓ Done.</span> ${msg}`;}
-notice(msg,'ok');
-if(added>0){await loadLeads();setTimeout(()=>close_modal('csv-modal'),2500);}
-}
-
-// ─── JOTFORM SYNC ─────────────────────────────────────────────
-async function doSync(){
-const key=localStorage.getItem('jf_key');if(!key){notice('Set API key in Settings first.','warn');return;}
-const btn=ge('sync-btn');btn.textContent='Syncing…';btn.disabled=true;
-let added=0,skipped=0;
-for(const[prog,fid] of Object.entries(JOTFORM_IDS)){
-  if(!fid)continue;
-  try{
-    const res=await fetch(`https://api.jotform.com/form/${fid}/submissions?apiKey=${key}&limit=1000&orderby=created_at,desc`);
-    const json=await res.json();
-    if(json.responseCode!==200){notice('Jotform error: '+json.message,'err');continue;}
-    for(const sub of (json.content||[])){
-      const sid=String(sub.id);
-      const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',sid).maybeSingle();
-      if(ex){skipped++;continue;}
-      const a=sub.answers||{};
-      const gv=(...ks)=>{for(const k of ks){for(const v of Object.values(a)){if(ks.some(kk=>(v.name||'').toLowerCase().includes(kk.toLowerCase()))&&v.answer){if(typeof v.answer==='object'){if(v.answer.first||v.answer.last)return((v.answer.first||'')+' '+(v.answer.last||'')).trim();return Object.values(v.answer).filter(Boolean).join(', ');}return String(v.answer).trim();}}}return '';};
-      const name=(gv('customer full','customer name','full name')||gv('store name','business name','dba')).trim();
-      const interest=gv('interest','customer interest');
-      const route=LEASING_INTERESTS.some(li=>interest.toLowerCase().includes(li.toLowerCase()))?'leasing':'sales';
-      const{error}=await sb.from('leads').insert({jotform_submission_id:sid,customer_full_name:name,customer_first_name:gv('first name'),customer_last_name:gv('last name'),contact_email:gv('email'),phone:gv('phone'),contact_number:gv('phone','contact'),legal_business_name:gv('legal'),dba_name:gv('dba','store name','doing business')||name,store_address:gv('address'),num_locations:gv('location','how many'),customer_distributor_number:gv('distributor number','dist number'),distributor_sales_rep:gv('dist rep','distributor sales rep','rep name'),distributor_rep_email:gv('rep email'),distributor:gv('distributor name','which distributor'),distributor_warehouse:gv('warehouse'),tradeshow_lead:gv('tradeshow'),which_program:gv('which program','program'),customer_interest:interest,beverage_needs:gv('beverage'),notes:gv('notes','comments'),route,current_step:'new_lead',status:'active',program_source:prog,submission_date:sub.created_at?new Date(parseInt(sub.created_at)*1000).toISOString():null,jotform_answers:a});
-      if(!error)added++;else skipped++;
-    }
-  }catch(err){notice('Sync error: '+err.message,'err');}
-}
-btn.textContent='↻ Jotform Sync';btn.disabled=false;
-notice(`Sync complete: ${added} added, ${skipped} skipped.`,added>0?'ok':'info');
-if(added>0)await loadLeads();
-}
-
-async function settingsSync(prog){
-const key=localStorage.getItem('jf_key');if(!key){notice('Set API key first.','warn','s-notice');return;}
-const toSync=prog?[[prog,JOTFORM_IDS[prog]]]:Object.entries(JOTFORM_IDS);
-let added=0,skipped=0;
-for(const[p,fid] of toSync){
-  if(!fid){notice('No Form ID for '+p+'. Enter it in Settings.','warn','s-notice');continue;}
-  try{
-    const res=await fetch(`https://api.jotform.com/form/${fid}/submissions?apiKey=${key}&limit=1000&orderby=created_at,desc`);
-    const json=await res.json();
-    if(json.responseCode!==200){notice('Error for '+p+': '+json.message,'err','s-notice');continue;}
-    for(const sub of (json.content||[])){
-      const sid=String(sub.id);
-      const{data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',sid).maybeSingle();
-      if(ex){skipped++;continue;}
-      const a=sub.answers||{};
-      const gv=(...ks)=>{for(const k of ks){for(const v of Object.values(a)){if(ks.some(kk=>(v.name||'').toLowerCase().includes(kk.toLowerCase()))&&v.answer){if(typeof v.answer==='object'){if(v.answer.first||v.answer.last)return((v.answer.first||'')+' '+(v.answer.last||'')).trim();return Object.values(v.answer).filter(Boolean).join(', ');}return String(v.answer).trim();}}}return '';};
-      const name=(gv('customer full','customer name','full name')||gv('store name','business name','dba')).trim();
-      const interest=gv('interest','customer interest');
-      const route=LEASING_INTERESTS.some(li=>interest.toLowerCase().includes(li.toLowerCase()))?'leasing':'sales';
-      await sb.from('leads').insert({jotform_submission_id:sid,customer_full_name:name,customer_first_name:gv('first name'),customer_last_name:gv('last name'),contact_email:gv('email'),phone:gv('phone'),contact_number:gv('phone','contact'),legal_business_name:gv('legal'),dba_name:gv('dba','store name','doing business')||name,store_address:gv('address'),num_locations:gv('location','how many'),customer_distributor_number:gv('distributor number','dist number'),distributor_sales_rep:gv('dist rep','distributor sales rep','rep name'),distributor_rep_email:gv('rep email'),distributor:gv('distributor name','which distributor'),distributor_warehouse:gv('warehouse'),tradeshow_lead:gv('tradeshow'),which_program:gv('which program','program'),customer_interest:interest,beverage_needs:gv('beverage'),notes:gv('notes','comments'),route,current_step:'new_lead',status:'active',program_source:p,submission_date:sub.created_at?new Date(parseInt(sub.created_at)*1000).toISOString():null,jotform_answers:a});
-      added++;
-    }
-  }catch(e){notice('Error: '+e.message,'err','s-notice');}
-}
-notice(`Sync done: ${added} new, ${skipped} already in system.`,added>0?'ok':'info','s-notice');
-if(added>0)await loadLeads();
-}
-
-// ─── SETTINGS ─────────────────────────────────────────────────
-async function testApiKey(){
-const key=ge('s-apikey').value.trim();if(!key){ge('key-msg').textContent='Enter a key first.';return;}
-ge('key-msg').textContent='Testing…';
-try{
-  const res=await fetch(`https://api.jotform.com/user?apiKey=${key}`);
-  const json=await res.json();
-  if(json.responseCode===200){localStorage.setItem('jf_key',key);ge('key-msg').textContent='✓ Connected as '+json.content.username;ge('sync-btn').style.display='inline-block';['sync-js','sync-sl','sync-all'].forEach(id=>{const e=ge(id);if(e)e.disabled=false;});}
-  else{ge('key-msg').textContent='✗ Invalid key: '+json.message;}
-}catch(e){ge('key-msg').textContent='✗ Error: '+e.message;}
-}
-
-function refreshSettings(){
-const key=localStorage.getItem('jf_key')||'';
-const apiEl=ge('s-apikey');if(apiEl)apiEl.value=key?'••••••••••••••••':'';
-if(key)['sync-js','sync-sl','sync-all'].forEach(id=>{const e=ge(id);if(e)e.disabled=false;});
-const wu=ge('wh-url');if(wu)wu.textContent=window.location.origin+'/.netlify/functions/webhook';
-const ss=ge('s-status');if(ss)ss.innerHTML=`Supabase: <strong>${SB_URL.split('//')[1]?.split('.')[0]||'connected'}</strong><br>Jotform: <strong>${key?'API key saved':'Not configured'}</strong><br>Realtime: <strong>Active</strong>`;
-refreshRepList();
-}
-
-async function refreshRepList(){
-const list=ge('rep-list');if(!list)return;
-const{data}=await sb.from('sales_reps').select('*').order('name');
-list.innerHTML=(data||[]).map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px"><span style="font-size:13px;font-weight:500">${esc(r.name)}</span><button class="btn b-red btn-sm" onclick="removeRep('${r.id}','${esc(r.name)}')">Remove</button></div>`).join('')||'<div style="font-size:13px;color:#9ca3af">No reps added yet.</div>';
-}
-
-async function addRep(){
-const inp=ge('new-rep');const name=inp?.value?.trim();if(!name)return;
-const{error}=await sb.from('sales_reps').insert({name,active:true});
-if(error){notice('Error: '+error.message,'err','s-notice');return;}
-inp.value='';await loadReps();refreshRepList();notice('Rep added!','ok','s-notice');
-}
-
-async function removeRep(id,name){
-if(!confirm('Remove '+name+'?'))return;
-await sb.from('sales_reps').delete().eq('id',id);
-await loadReps();refreshRepList();notice('Rep removed.','warn','s-notice');
-}
-
-function changePw(){
-const cur=ge('pw-cur')?.value||'';const nw=ge('pw-new')?.value||'';const cf=ge('pw-conf')?.value||'';
-const stored=localStorage.getItem('adm_pw')||DEF_PW;const msg=ge('pw-msg');
-if(cur!==stored){msg.textContent='✗ Current password incorrect.';msg.style.color='#dc2626';return;}
-if(!nw||nw.length<4){msg.textContent='✗ New password too short.';msg.style.color='#dc2626';return;}
-if(nw!==cf){msg.textContent='✗ Passwords do not match.';msg.style.color='#dc2626';return;}
-localStorage.setItem('adm_pw',nw);
-['pw-cur','pw-new','pw-conf'].forEach(id=>{const e=ge(id);if(e)e.value='';});
-msg.textContent='✓ Password updated!';msg.style.color='#059669';
+// ─── CSV IMPORT ───────────────────────────────────────────────
+function parseCSV(text){const rows=[];for(const line of text.split(/\r?\n/)){if(!line.trim())continue;const cols=[];let cur='',inQ=false;for(const ch of line){if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=ch;}cols.push(cur.trim());rows.push(cols);}return rows;}
+function previewCSV(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{csvRows=parseCSV(e.target.result);const p=ge('csv-prev');const b=ge('csv-btn');if(csvRows.length>1){p.style.display='block';p.innerHTML=`<strong>${csvRows.length-1} rows</strong> found — ready to import.`;b.disabled=false;}else{p.style.display='block';p.textContent='Could not read file.';b.disabled=true;}};r.readAsText(f);}
+async function importCSV(){
+  if(!csvRows.length||!sb)return;
+  const hdrs=csvRows[0].map(h=>h.toLowerCase().trim());
+  const rows=csvRows.slice(1).filter(r=>r.some(c=>c));
+  const btn=ge('csv-btn');btn.disabled=true;btn.textContent='Importing…';
+  const col=(row,...kws)=>{for(const kw of kws){const i=hdrs.findIndex(h=>h.includes(kw));if(i>=0&&row[i]&&row[i].trim())return row[i].trim();}return '';};
+  const src=ge('csv-src')?.value||'Java Select';
+  let added=0,skipped=0;
+  for(let i=0;i<rows.length;i++){
+    const row=rows[i];
+    const name=col(row,"customers full","customer full","full name","store name","business name","dba") || col(row,"doing business","dba");const dba=col(row,"doing business","dba","store name");
+    const email=col(row,"contact email","email");const phone=col(row,"phone");
+    if(!name&&!dba&&!email&&!phone){skipped++;continue;}
+    const subId=col(row,'submission id','submissionid')||('csv-'+Date.now()+'-'+i);
+    const {data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',subId).maybeSingle();
+    if(ex){skipped++;continue;}
+    const interest=col(row,"customer interested","is customer","interest");
+    const route=['leasing equipment','financing equipment'].some(s=>interest.toLowerCase().includes(s))?'leasing':'sales';
+    const np=(name||'').split(' ');
+    await sb.from('leads').insert({
+      jotform_submission_id:subId,customer_full_name:name,customer_first_name:np[0]||'',customer_last_name:np.slice(1).join(' ')||'',
+      dba_name:dba,contact_email:email,phone,legal_business_name:col(row,'legal name','llc'),store_address:col(row,'store location','address'),
+      distributor_sales_rep:col(row,'distributor sales rep','dist rep'),distributor_rep_email:col(row,'distributor rep email'),
+      distributor:col(row,'distributor'),distributor_warehouse:col(row,'distributor warehouse','warehouse'),
+      tradeshow_lead:col(row,'tradeshow'),num_locations:col(row,'number of locations'),
+      customer_distributor_number:col(row,"customer's distributor","distributor number"),
+      which_program:col(row,'which program','program'),customer_interest:interest,
+      beverage_needs:col(row,'beverage needs','additional information'),notes:col(row,'additional notes','notes'),
+      program_source:src,route,current_step:'new_lead',status:'active',jotform_answers:{},raw_csv:{},
+    });added++;
+  }
+  btn.disabled=false;btn.textContent='Import';close_modal('csv-modal');
+  notice('Import complete — '+added+' added, '+skipped+' skipped.','ok');
 }
 
 // ─── REP REPORT ───────────────────────────────────────────────
-function showRepReport(){
-const sel=ge('rr-rep');
-if(sel){const reps=[...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();sel.innerHTML='<option value="">All reps</option>'+reps.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');}
-renderReport();open_modal('report-modal');
-}
-
+function showRepReport(){populateFilterSelects();open_modal('report-modal');renderReport();}
 function renderReport(){
-const filterRep=ge('rr-rep')?.value||'';
-const body=ge('report-body');if(!body)return;
-const reps=filterRep?[filterRep]:[...new Set(leads.filter(l=>l.assigned_sales_rep).map(l=>l.assigned_sales_rep))].sort();
-if(!reps.length){body.innerHTML='<div style="padding:1rem;color:#9ca3af">No assigned leads yet.</div>';return;}
-body.innerHTML=reps.map(rep=>{
-  const rl=leads.filter(l=>l.assigned_sales_rep===rep);
-  const won=rl.filter(l=>l.status==='won').length,lost=rl.filter(l=>l.status==='lost').length,active=rl.filter(l=>l.status==='active').length;
-  return`<div style="margin-bottom:1.2rem"><div class="rep-hdr"><span style="font-size:13px;font-weight:700;color:#fff">${esc(rep)}</span><div style="display:flex;gap:6px"><span class="badge bg-gray">${rl.length} total</span><span class="badge bg-green">${won} won</span><span class="badge bg-red">${lost} lost</span><span class="badge bg-blue">${active} active</span></div></div>
-<table class="rtbl" style="border-radius:0 0 7px 7px;overflow:hidden"><thead><tr><th>Customer</th><th>Program</th><th>Step</th><th>Route</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rl.map(l=>{const sc=srcColor(l.program_source||'Java Select');return`<tr><td><strong>${esc(l.customer_full_name||l.dba_name||'--')}</strong><br><span style="color:#9ca3af;font-size:11px">${esc(l.contact_email||'')}</span></td><td><span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;background:${sc.bg};color:${sc.txt}">${esc(l.program_source||'--')}</span></td><td>${stepBadge(l)}</td><td><span style="font-size:11px">${l.route==='leasing'?'&#128179; Leasing':'&#128200; Sales'}</span></td><td><span class="badge ${l.status==='won'?'bg-green':l.status==='lost'?'bg-red':'bg-blue'}">${esc(l.status)}</span></td><td><button class="btn btn-sm" style="font-size:11px" onclick="close_modal('report-modal');selectLead('${l.id}')">View &#8594;</button></td></tr>`;}).join('')}</tbody></table></div>`;
-}).join('');
+  const filterRep=ge('rr-rep')?.value||'';
+  let list=filterRep?leads.filter(l=>l.assigned_sales_rep===filterRep):leads;
+  const byRep={};list.forEach(l=>{const r=l.assigned_sales_rep||'— Unassigned —';if(!byRep[r])byRep[r]=[];byRep[r].push(l);});
+  let html='';
+  Object.keys(byRep).sort().forEach(rep=>{
+    const rl=byRep[rep];const won=rl.filter(l=>l.status==='won').length,lost=rl.filter(l=>l.status==='lost').length,active=rl.filter(l=>l.status==='active').length;
+    html+=`<div style="margin-bottom:1.2rem">
+      <div class="rep-hdr">
+        <div style="font-size:13px;font-weight:700;color:#fff">${rep}</div>
+        <div style="display:flex;gap:10px;font-size:12px;font-weight:600">
+          <span style="color:rgba(255,255,255,.7)">${rl.length} total</span>
+          <span style="color:#6ee7b7">${won} won</span>
+          <span style="color:#fca5a5">${lost} lost</span>
+          <span style="color:#bfdbfe">${active} active</span>
+        </div>
+      </div>
+      <table class="rtbl" style="border:1px solid #e5e7eb;border-top:none"><thead><tr><th>Customer</th><th>Store</th><th>Program</th><th>Step</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>
+      ${rl.map(l=>{const step=getStep(l.current_step);const sb2=l.status==='won'?'<span class="badge bg-green">Won</span>':l.status==='lost'?'<span class="badge bg-red">Lost</span>':'<span class="badge bg-gray">Active</span>';return`<tr><td style="font-weight:500">${l.customer_full_name||'—'}</td><td>${l.dba_name||'—'}</td><td>${(l.which_program||'—').split('-')[0].trim()}</td><td>${step?step.icon+' '+step.label:'—'}</td><td>${sb2}</td><td style="color:#9ca3af">${fmtD(l.created_at)}</td><td><button class="btn btn-sm" onclick="openEdit('${l.id}')">Edit</button></td></tr>`;}).join('')}
+      </tbody></table></div>`;
+  });
+  if(!html)html='<div class="empty" style="min-height:100px">No leads found.</div>';
+  ge('report-body').innerHTML=html;
 }
 
-function saveEdit(){}
+function openEdit(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;editLeadId=id;
+  ge('edit-title').textContent='Edit — '+(l.customer_full_name||l.dba_name||'Lead');
+  const steps=getSteps(l.route);
+  ge('edit-body').innerHTML=`<div class="egrid">
+    <div class="ef"><label>Customer name</label><input class="einp" id="el-name" value="${l.customer_full_name||''}"/></div>
+    <div class="ef"><label>DBA / Store</label><input class="einp" id="el-dba" value="${l.dba_name||''}"/></div>
+    <div class="ef"><label>Email</label><input class="einp" id="el-email" value="${l.contact_email||''}"/></div>
+    <div class="ef"><label>Phone</label><input class="einp" id="el-phone" value="${l.phone||''}"/></div>
+    <div class="ef"><label>Sales Rep</label><input class="einp" id="el-rep" value="${l.assigned_sales_rep||''}"/></div>
+    <div class="ef"><label>Status</label><select class="einp" id="el-status"><option value="active" ${l.status==='active'?'selected':''}>Active</option><option value="won" ${l.status==='won'?'selected':''}>Won</option><option value="lost" ${l.status==='lost'?'selected':''}>Lost</option></select></div>
+    <div class="ef"><label>Route</label><select class="einp" id="el-route" onchange="updEditSteps()"><option value="sales" ${l.route==='sales'?'selected':''}>Sales Rep</option><option value="leasing" ${l.route==='leasing'?'selected':''}>Leasing</option></select></div>
+    <div class="ef"><label>Step</label><select class="einp" id="el-step">${steps.map(s=>`<option value="${s.id}" ${s.id===l.current_step?'selected':''}>${s.icon} ${s.label}</option>`).join('')}</select></div>
+  </div>
+  <div class="ef" style="margin-bottom:.6rem"><label>Lost reason</label><input class="einp" id="el-lost" value="${l.lost_reason||''}"/></div>
+  <div class="ef"><label>Notes</label><textarea class="einp" id="el-notes" rows="3">${l.notes||''}</textarea></div>`;
+  open_modal('edit-modal');
+}
+function updEditSteps(){const r=ge('el-route').value;const s=ge('el-step');if(s)s.innerHTML=getSteps(r).map(x=>`<option value="${x.id}">${x.icon} ${x.label}</option>`).join('');}
+async function saveEdit(){
+  if(!editLeadId)return;const g=id=>{const e=ge(id);return e?e.value.trim():'';};
+  await sb.from('leads').update({customer_full_name:g('el-name'),dba_name:g('el-dba'),contact_email:g('el-email'),phone:g('el-phone'),assigned_sales_rep:g('el-rep'),status:g('el-status'),route:g('el-route'),current_step:g('el-step'),lost_reason:g('el-lost'),notes:g('el-notes')}).eq('id',editLeadId);
+  await sb.from('activity_log').insert({lead_id:editLeadId,actor_role:role,action:'Lead updated via report'});
+  close_modal('edit-modal');notice('Lead updated!','ok');
+  if(ge('report-modal').classList.contains('open'))renderReport();
+}
 
-window.addEventListener('DOMContentLoaded',init);
+// ─── SETTINGS ────────────────────────────────────────────────
+function refreshSettings(){
+  const key=localStorage.getItem('jf_key')||'';
+  if(key)ge('s-apikey').value=key;
+  const hasKey=!!key;
+  ['sync-js','sync-sl','sync-all'].forEach(id=>{const e=ge(id);if(e)e.disabled=!hasKey;});
+  ge('s-status').innerHTML=`<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${hasKey?'#059669':'#dc2626'};margin-right:5px;vertical-align:middle"></span>API Key: <strong>${hasKey?'Saved':'Not set'}</strong><br><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#059669;margin-right:5px;vertical-align:middle"></span>Supabase: <strong>Connected</strong>`;
+  renderRepList();
+}
+
+async function testApiKey(){
+  const key=ge('s-apikey').value.trim();if(!key)return;
+  ge('key-msg').textContent='Testing…';
+  try{
+    const r=await fetch(`/.netlify/functions/jotform?path=user&apiKey=${encodeURIComponent(key)}`);
+    const d=await r.json();
+    localStorage.setItem('jf_key',key);
+    ['sync-js','sync-sl','sync-all'].forEach(id=>{const e=ge(id);if(e)e.disabled=false;});
+    ge('sync-btn').style.display='inline-block';
+    ge('key-msg').innerHTML=d.responseCode===200?`<span style="color:#059669">✓ Connected as ${d.content.username}</span>`:`<span style="color:#d97706">⚠ Saved (could not verify)</span>`;
+    refreshSettings();
+  }catch(e){ge('key-msg').innerHTML=`<span style="color:#dc2626">✗ ${e.message}</span>`;}
+}
+
+async function settingsSync(formName){
+  const key=localStorage.getItem('jf_key');if(!key){notice('Save API key first.','warn','s-notice');return;}
+  notice('Syncing…','info','s-notice');
+  const forms=formName?[[formName,{id:JOTFORM_IDS[formName]}]]:Object.entries(JOTFORM_IDS).map(([k,v])=>[k,{id:v}]);
+  let total=0;
+  for(const[name,cfg] of forms){
+    let offset=0;
+    while(true){
+      const params=new URLSearchParams({path:'user/submissions',apiKey:key,offset,limit:100,filter:JSON.stringify({'formid:eq':cfg.id})});
+      const r=await fetch(`/.netlify/functions/jotform?${params}`);const d=await r.json();
+      if(d.responseCode!==200||!d.content?.length)break;
+      for(const sub of d.content){
+        const {data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',sub.id).maybeSingle();
+        if(ex)continue;
+        const ans=sub.answers||{};
+        const g=qid=>{const a=ans[qid];if(!a||!a.answer)return'';if(typeof a.answer==='string')return a.answer.trim();if(typeof a.answer==='object'){if(a.answer.first)return(a.answer.first+' '+a.answer.last).trim();return Object.values(a.answer).filter(Boolean).join(', ');}return '';};
+        const interest=g('36');const route=['Leasing Equipment','Financing Equipment'].includes(interest)?'leasing':'sales';
+        const fullName=g('19');const np=fullName.split(' ');
+        await sb.from('leads').insert({jotform_submission_id:sub.id,customer_full_name:fullName,customer_first_name:np[0]||'',customer_last_name:np.slice(1).join(' ')||'',contact_email:g('6'),contact_number:g('7'),phone:g('13'),legal_business_name:g('8'),dba_name:g('16'),store_address:[ans['5']?.answer?.addr_line1,ans['5']?.answer?.city,ans['5']?.answer?.state,ans['5']?.answer?.zip].filter(Boolean).join(', '),distributor_sales_rep:g('3'),distributor_rep_email:g('9'),distributor:g('28'),distributor_warehouse:g('37')||g('29'),tradeshow_lead:g('38'),num_locations:g('32'),customer_distributor_number:g('34'),which_program:g('31'),customer_interest:interest,beverage_needs:g('30'),notes:g('25'),route,current_step:'new_lead',status:'active',program_source:name,jotform_answers:ans,raw_csv:{}});
+        total++;
+      }
+      if(d.content.length<100)break;offset+=100;
+    }
+  }
+  notice('Sync done — '+total+' new leads added.','ok','s-notice');
+}
+
+async function doSync(){
+  const key=localStorage.getItem('jf_key');if(!key){notice('Configure API key in Settings first.','warn');return;}
+  notice('Syncing…','info');await settingsSync_quiet();
+}
+async function settingsSync_quiet(){const key=localStorage.getItem('jf_key');if(!key)return;let total=0;const forms=Object.entries(JOTFORM_IDS).map(([k,v])=>[k,{id:v}]);for(const[name,cfg] of forms){let offset=0;while(true){const params=new URLSearchParams({path:'user/submissions',apiKey:key,offset,limit:100,filter:JSON.stringify({'formid:eq':cfg.id})});const r=await fetch(`/.netlify/functions/jotform?${params}`);const d=await r.json();if(d.responseCode!==200||!d.content?.length)break;for(const sub of d.content){const {data:ex}=await sb.from('leads').select('id').eq('jotform_submission_id',sub.id).maybeSingle();if(ex)continue;const ans=sub.answers||{};const g=qid=>{const a=ans[qid];if(!a||!a.answer)return'';if(typeof a.answer==='string')return a.answer.trim();if(typeof a.answer==='object'){if(a.answer.first)return(a.answer.first+' '+a.answer.last).trim();return Object.values(a.answer).filter(Boolean).join(', ');}return '';};const interest=g('36');const route=['Leasing Equipment','Financing Equipment'].includes(interest)?'leasing':'sales';const fullName=g('19');const np=fullName.split(' ');await sb.from('leads').insert({jotform_submission_id:sub.id,customer_full_name:fullName,customer_first_name:np[0]||'',customer_last_name:np.slice(1).join(' ')||'',contact_email:g('6'),phone:g('13'),dba_name:g('16'),distributor_sales_rep:g('3'),distributor_warehouse:g('37')||g('29'),which_program:g('31'),customer_interest:interest,beverage_needs:g('30'),notes:g('25'),route,current_step:'new_lead',status:'active',program_source:name,jotform_answers:ans,raw_csv:{}});total++;}if(d.content.length<100)break;offset+=100;}}notice('Sync done — '+total+' added.','ok');}
+
+function changePw(){
+  const cur=ge('pw-cur').value,nw=ge('pw-new').value,cf=ge('pw-conf').value;
+  const stored=localStorage.getItem('adm_pw')||DEF_PW;const msg=ge('pw-msg');
+  if(cur!==stored){msg.style.color='#dc2626';msg.textContent='Incorrect current password.';return;}
+  if(nw.length<6){msg.style.color='#dc2626';msg.textContent='Min 6 characters.';return;}
+  if(nw!==cf){msg.style.color='#dc2626';msg.textContent='Passwords do not match.';return;}
+  localStorage.setItem('adm_pw',nw);msg.style.color='#059669';msg.textContent='Password updated!';
+  ['pw-cur','pw-new','pw-conf'].forEach(id=>{const e=ge(id);if(e)e.value='';});
+}
+
+async function renderRepList(){
+  const {data}=await sb.from('sales_reps').select('*').order('name');
+  const box=ge('rep-list');if(!box)return;
+  box.innerHTML=(data||[]).map(r=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 9px;border:1px solid #e5e7eb;border-radius:6px;background:#fff">
+    <span style="font-size:13px;color:${r.active?'#111827':'#9ca3af'};${r.active?'':'text-decoration:line-through'}">${r.name}</span>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-sm" onclick="toggleRep('${r.id}',${r.active})">${r.active?'Deactivate':'Activate'}</button>
+      <button class="btn b-red btn-sm" onclick="deleteRep('${r.id}','${(r.name||'').replace(/'/g,"\\'")}')">Del</button>
+    </div>
+  </div>`).join('');
+}
+async function addRep(){const inp=ge('new-rep');if(!inp)return;const name=inp.value.trim();if(!name)return;await sb.from('sales_reps').insert({name,active:true});inp.value='';notice(name+' added!','ok','s-notice');await renderRepList();await loadReps();}
+async function toggleRep(id,active){await sb.from('sales_reps').update({active:!active}).eq('id',id);await renderRepList();await loadReps();}
+async function deleteRep(id,name){if(!confirm('Delete "'+name+'"?'))return;await sb.from('sales_reps').delete().eq('id',id);notice(name+' removed.','warn','s-notice');await renderRepList();await loadReps();}
+
+// ─── START ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => init());
 </script>
 </body>
 </html>
