@@ -563,12 +563,23 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 
     <div class="scard">
       <div style="font-size:15px;font-weight:500;margin-bottom:4px">Sales reps</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Add or manage assignable reps.</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Add or manage assignable reps and assign each to a director.</div>
       <div style="display:flex;gap:7px;margin-bottom:12px">
         <input class="finp" id="new-rep" placeholder="Rep name…" style="flex:1" onkeydown="if(event.key==='Enter')addRep()"/>
         <button class="btn btn-sm btn-primary" onclick="addRep()">Add</button>
       </div>
-      <div id="rep-list" style="display:flex;flex-direction:column;gap:5px;max-height:360px;overflow-y:auto"></div>
+      <div id="rep-list" style="display:flex;flex-direction:column;gap:5px;max-height:420px;overflow-y:auto"></div>
+    </div>
+
+    <div class="scard">
+      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Directors</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Create directors and assign their sales reps. Directors only see leads from their assigned reps (plus unassigned leads).</div>
+      <div style="display:flex;gap:7px;margin-bottom:12px">
+        <input class="finp" id="new-director-name" placeholder="Director name…" style="flex:1.5" onkeydown="if(event.key==='Enter')addDirector()"/>
+        <input class="finp" id="new-director-email" placeholder="Email (optional)" style="flex:1"/>
+        <button class="btn btn-sm btn-primary" onclick="addDirector()">Add</button>
+      </div>
+      <div id="director-list" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
 
     <div class="scard">
@@ -798,7 +809,7 @@ const stepById = id => STEPS.find(s=>s.id===id);
 const stepIdx = id => STEPS.findIndex(s=>s.id===id);
 
 let sb=null;
-let leads=[], salesReps=[], actCache={}, emailCache={};
+let leads=[], salesReps=[], directors=[], actCache={}, emailCache={};
 let role='admin';          // admin | director | distributor | ronnoco_rep
 let scope='';              // the specific person or program selected within a role
 let currentTab='scorecard';
@@ -889,9 +900,17 @@ function saveDirectorTeam(){
 
 function setupScopeSelect(){
   const sel = ge('scope-select');
-  // Hide the standard dropdown for Director — they get a richer picker below the topbar
-  if(role==='admin' || role==='director'){
+  // Director gets a director-select if directors exist in the DB, otherwise the manual team bar
+  if(role==='admin'){
     sel.classList.add('hidden'); sel.innerHTML='';
+  } else if(role==='director'){
+    if(directors.length){
+      sel.classList.remove('hidden');
+      sel.innerHTML = '<option value="">— Choose your director profile —</option>'
+        + directors.map(d=>`<option value="${esc(d.name)}" ${scope===d.name?'selected':''}>${esc(d.name)}</option>`).join('');
+    } else {
+      sel.classList.add('hidden'); sel.innerHTML='';
+    }
   } else {
     sel.classList.remove('hidden');
     let opts='';
@@ -899,13 +918,11 @@ function setupScopeSelect(){
       opts = '<option value="">— Choose a program —</option>'
         + ['Java Select','Sledd','CoreMark'].map(p=>`<option value="${p}">${p}</option>`).join('');
     } else if(role==='ronnoco_rep'){
-      const reps = salesReps.length ? salesReps.map(r=>r.name) : [...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
-      opts = '<option value="">— Choose your name —</option>' + reps.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
+      // Union: roster + reps used in leads (so Will Sims style mismatches can't hide leads)
+      opts = '<option value="">— Choose your name —</option>' + allRepNames().map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
     }
     sel.innerHTML = opts;
   }
-
-  // Render or remove the director team bar
   renderDirectorTeamBar();
 }
 
@@ -916,45 +933,62 @@ function renderDirectorTeamBar(){
     return;
   }
   loadDirectorTeam();
-  const repNames = salesReps.length ? salesReps.map(r=>r.name) : [...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
+
+  // If a director profile is selected, derive the team from the DB
+  let dbTeam = [];
+  let source = 'manual';
+  if(scope){
+    dbTeam = repsForDirector(scope);
+    source = 'db';
+  }
+
+  const teamToShow = source==='db' ? dbTeam : directorTeam;
+  const repNames = allRepNames();
+  const teamSummary = source==='db'
+    ? `${dbTeam.length} rep${dbTeam.length===1?'':'s'} assigned to ${esc(scope)} <span style="color:var(--text-3)">(managed in Settings → Sales reps)</span>`
+    : `<strong>Pick your reps</strong>`;
+
   const html = `
     <div id="director-team-bar" style="background:var(--surface);border-bottom:0.5px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-      <div style="font-size:12px;color:var(--text-2)"><strong>Your team:</strong></div>
+      <div style="font-size:12px;color:var(--text-2)">${teamSummary}</div>
       <div id="dt-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:200px">
-        ${directorTeam.length ? directorTeam.map(r=>`<span class="chip">${esc(r)}<span class="chip-x" data-rep="${esc(r)}">×</span></span>`).join('') : '<span style="font-size:12px;color:var(--text-3)">No reps selected — pick from the dropdown to start</span>'}
+        ${teamToShow.length ? teamToShow.map(r=>`<span class="chip">${esc(r)}${source==='manual'?`<span class="chip-x" data-rep="${esc(r)}">×</span>`:''}</span>`).join('') : '<span style="font-size:12px;color:var(--text-3)">'+(source==='db'?'No reps assigned yet — add them in Settings':'No reps selected — add from dropdown')+'</span>'}
       </div>
+      ${source==='manual' ? `
       <select id="dt-add" class="input" style="min-width:180px">
         <option value="">+ Add rep to your team…</option>
         ${repNames.filter(r=>!directorTeam.includes(r)).map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('')}
-      </select>
+      </select>` : ''}
       <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);cursor:pointer">
         <input type="checkbox" id="dt-unassigned" ${directorIncludeUnassigned?'checked':''} style="width:14px;height:14px"/>
         Show unassigned leads
       </label>
-      <button class="btn btn-sm btn-ghost" onclick="clearDirectorTeam()">Clear</button>
+      ${source==='manual' ? `<button class="btn btn-sm btn-ghost" onclick="clearDirectorTeam()">Clear</button>` : ''}
     </div>`;
-  // Insert just below the tabs nav
   const tabs = ge('tabs');
   tabs.insertAdjacentHTML('afterend', html);
-  // Wire chip removals
-  ge('dt-chips').querySelectorAll('.chip-x').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      const rep = el.getAttribute('data-rep');
-      directorTeam = directorTeam.filter(r=>r!==rep);
-      saveDirectorTeam();
-      renderDirectorTeamBar();
-      renderAll();
+
+  // Wire chip removals (manual mode only)
+  if(source==='manual'){
+    ge('dt-chips').querySelectorAll('.chip-x').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const rep = el.getAttribute('data-rep');
+        directorTeam = directorTeam.filter(r=>r!==rep);
+        saveDirectorTeam();
+        renderDirectorTeamBar();
+        renderAll();
+      });
     });
-  });
-  ge('dt-add').addEventListener('change', e=>{
-    const v = e.target.value;
-    if(v && !directorTeam.includes(v)){
-      directorTeam.push(v);
-      saveDirectorTeam();
-      renderDirectorTeamBar();
-      renderAll();
-    }
-  });
+    ge('dt-add').addEventListener('change', e=>{
+      const v = e.target.value;
+      if(v && !directorTeam.includes(v)){
+        directorTeam.push(v);
+        saveDirectorTeam();
+        renderDirectorTeamBar();
+        renderAll();
+      }
+    });
+  }
   ge('dt-unassigned').addEventListener('change', e=>{
     directorIncludeUnassigned = e.target.checked;
     saveDirectorTeam();
@@ -1002,12 +1036,13 @@ function setRoleUI(){
 function scopedLeads(){
   if(role==='admin') return leads.slice();
   if(role==='director'){
-    // Director sees: leads assigned to any rep on their team, PLUS unassigned leads (if toggle is on).
-    // An empty team + unassigned-toggle-on => show only the unassigned queue (the assignment work).
+    // If a director profile is picked, use their DB-assigned reps.
+    // Otherwise fall back to the manual team picker (localStorage).
+    const team = scope ? repsForDirector(scope) : directorTeam;
     return leads.filter(l => {
       const repAssigned = l.assigned_sales_rep && l.assigned_sales_rep.trim();
       if(!repAssigned) return directorIncludeUnassigned;
-      return directorTeam.includes(l.assigned_sales_rep);
+      return team.includes(l.assigned_sales_rep);
     });
   }
   if(role==='distributor'){
@@ -1023,7 +1058,11 @@ function scopedLeads(){
 
 function needsScope(){
   if(role==='admin') return false;
-  if(role==='director') return directorTeam.length === 0 && !directorIncludeUnassigned;
+  if(role==='director'){
+    // OK if a director profile is picked OR if manual team is set OR include-unassigned is on
+    if(scope) return false;
+    return directorTeam.length===0 && !directorIncludeUnassigned;
+  }
   return !scope;
 }
 
@@ -1108,11 +1147,31 @@ async function loadEmails(id){
 }
 
 async function loadReps(){
-  const {data} = await sb.from('sales_reps').select('*').eq('active',true).order('name');
-  salesReps = data||[];
-  // refill assign-rep dropdown in modal
+  const [r1, r2] = await Promise.all([
+    sb.from('sales_reps').select('*').order('name'),
+    sb.from('directors').select('*').eq('active', true).order('name'),
+  ]);
+  salesReps = r1.data||[];
+  directors = r2.data||[];
+  // refill assign-rep dropdown in modal with the union of active reps + reps used in leads
   const sel = ge('ra-rep');
-  if(sel) sel.innerHTML = '<option value="">— Choose a rep —</option>' + salesReps.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');
+  if(sel) sel.innerHTML = '<option value="">— Choose a rep —</option>' + allRepNames().map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+}
+
+// Union of (active reps in sales_reps roster) and (reps actually used on leads).
+// Prevents Will-Sims-style invisibility: any rep with a lead always appears.
+function allRepNames(){
+  const set = new Set();
+  salesReps.filter(r=>r.active!==false).forEach(r=>set.add(r.name));
+  leads.forEach(l=>{ if(l.assigned_sales_rep && l.assigned_sales_rep.trim()) set.add(l.assigned_sales_rep); });
+  return [...set].sort();
+}
+
+// Reps for a given director name (resolved through sales_reps.director_id)
+function repsForDirector(directorName){
+  const d = directors.find(d=>d.name===directorName);
+  if(!d) return [];
+  return salesReps.filter(r=>r.director_id===d.id && r.active!==false).map(r=>r.name);
 }
 
 function renderAll(){
@@ -1800,7 +1859,7 @@ function openAssignRep(id){
   repAssignId = id;
   ge('ra-sub').textContent = l.dba_name||l.customer_full_name||'Lead';
   const rsel = ge('ra-rep');
-  rsel.innerHTML = '<option value="">— Choose a rep —</option>'+salesReps.map(r=>`<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('');
+  rsel.innerHTML = '<option value="">— Choose a rep —</option>'+allRepNames().map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
   if(l.assigned_sales_rep) rsel.value = l.assigned_sales_rep;
   ge('ra-remail').value = '';
   ge('ra-dremail').value = l.distributor_rep_email||'';
@@ -2008,7 +2067,7 @@ function openEdit(id){
       <div><label class="flbl">Business / DBA</label><input class="finp" id="el-dba" value="${esc(l.dba_name||'')}"/></div>
       <div><label class="flbl">Legal name</label><input class="finp" id="el-legal" value="${esc(l.legal_business_name||'')}"/></div>
       <div><label class="flbl">Contact name</label><input class="finp" id="el-name" value="${esc(l.customer_full_name||'')}"/></div>
-      <div><label class="flbl">Sales rep</label><select class="finp" id="el-rep"><option value="">— None —</option>${salesReps.map(r=>`<option value="${esc(r.name)}" ${r.name===l.assigned_sales_rep?'selected':''}>${esc(r.name)}</option>`).join('')}</select></div>
+      <div><label class="flbl">Sales rep</label><select class="finp" id="el-rep"><option value="">— None —</option>${allRepNames().map(n=>`<option value="${esc(n)}" ${n===l.assigned_sales_rep?'selected':''}>${esc(n)}</option>`).join('')}</select></div>
       <div><label class="flbl">Email</label><input class="finp" id="el-email" type="email" value="${esc(l.contact_email||'')}"/></div>
       <div><label class="flbl">Phone</label><input class="finp" id="el-phone" value="${esc(l.phone||'')}"/></div>
       <div><label class="flbl">Address</label><input class="finp" id="el-addr" value="${esc(l.store_address||'')}"/></div>
@@ -2141,7 +2200,8 @@ function refreshSettings(){
   const hasKey = !!key;
   ['sync-js','sync-sl','sync-all'].forEach(id=>{const e=ge(id);if(e)e.disabled=!hasKey;});
   ge('s-status').innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${hasKey?'#16a34a':'#dc2626'};margin-right:5px;vertical-align:middle"></span>API Key: <strong>${hasKey?'Saved':'Not set'}</strong><br/><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:5px;vertical-align:middle"></span>Supabase: <strong>Connected</strong>`;
-  renderRepList();
+  // Refresh in-memory reps & directors so the UI is current, then render lists
+  loadReps().then(()=>{ renderRepList(); renderDirectorList(); });
 }
 async function testApiKey(){
   const key = ge('s-apikey').value.trim(); if(!key) return;
@@ -2208,20 +2268,116 @@ function changePw(){
 async function renderRepList(){
   const {data} = await sb.from('sales_reps').select('*').order('name');
   const box = ge('rep-list'); if(!box) return;
-  box.innerHTML = (data||[]).map(r=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border:0.5px solid var(--border);border-radius:6px">
-    <span style="font-size:13px;${r.active?'':'color:var(--text-3);text-decoration:line-through'}">${esc(r.name)}</span>
-    <div style="display:flex;gap:4px">
-      <button class="btn btn-sm" data-act="toggle" data-id="${r.id}" data-active="${r.active?1:0}">${r.active?'Deactivate':'Activate'}</button>
-      <button class="btn btn-sm btn-danger" data-act="delete" data-id="${r.id}" data-name="${esc(r.name)}">Delete</button>
-    </div>
+  const activeDirs = directors.filter(d=>d.active!==false);
+  const buildDirOpts = repDirId => {
+    let html = `<option value="" ${!repDirId?'selected':''}>— No director —</option>`;
+    activeDirs.forEach(d=>{
+      html += `<option value="${d.id}" ${repDirId===d.id?'selected':''}>${esc(d.name)}</option>`;
+    });
+    return html;
+  };
+  box.innerHTML = (data||[]).map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:0.5px solid var(--border);border-radius:6px">
+    <span style="font-size:13px;flex:1;${r.active?'':'color:var(--text-3);text-decoration:line-through'}">${esc(r.name)}</span>
+    <select class="input" data-act="set-director" data-id="${r.id}" style="font-size:12px;min-width:160px">${buildDirOpts(r.director_id)}</select>
+    <button class="btn btn-sm" data-act="toggle" data-id="${r.id}" data-active="${r.active?1:0}">${r.active?'Deactivate':'Activate'}</button>
+    <button class="btn btn-sm btn-danger" data-act="delete" data-id="${r.id}" data-name="${esc(r.name)}">Delete</button>
   </div>`).join('');
-  box.querySelectorAll('button[data-act]').forEach(btn=>{
+  box.querySelectorAll('button[data-act],select[data-act]').forEach(el=>{
+    const act = el.getAttribute('data-act'), id=el.getAttribute('data-id');
+    if(act==='set-director'){
+      el.addEventListener('change', ()=>setRepDirector(id, el.value||null));
+    } else {
+      el.addEventListener('click', ()=>{
+        if(act==='toggle') toggleRep(id, el.getAttribute('data-active')==='1');
+        else if(act==='delete') deleteRep(id, el.getAttribute('data-name'));
+      });
+    }
+  });
+}
+
+async function setRepDirector(repId, directorId){
+  const {error} = await sb.from('sales_reps').update({director_id: directorId}).eq('id', repId);
+  if(error){ notice('Could not update: '+error.message, 'err', 's-notice'); return; }
+  await loadReps();
+  renderDirectorList();
+  notice('Director assignment updated.', 'ok', 's-notice');
+}
+
+async function renderDirectorList(){
+  const {data:ds} = await sb.from('directors').select('*').order('name');
+  const box = ge('director-list'); if(!box) return;
+  if(!(ds||[]).length){
+    box.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px">No directors yet — add one above.</div>';
+    return;
+  }
+  // Group active reps by director_id
+  const repsByDir = {};
+  salesReps.filter(r=>r.active!==false).forEach(r=>{
+    if(r.director_id){ (repsByDir[r.director_id]=repsByDir[r.director_id]||[]).push(r.name); }
+  });
+  box.innerHTML = ds.map(d=>{
+    const team = (repsByDir[d.id]||[]).sort();
+    return `<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px 12px;background:${d.active?'var(--surface)':'var(--surface-2)'}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="flex:1;min-width:160px">
+          <div style="font-size:14px;font-weight:500;${d.active?'':'color:var(--text-3)'}">${esc(d.name)}</div>
+          <div style="font-size:11px;color:var(--text-3)">${esc(d.email||'no email on file')}</div>
+        </div>
+        <span class="pill pill-gray">${team.length} rep${team.length===1?'':'s'}</span>
+        <button class="btn btn-sm" data-dir-act="edit-email" data-id="${d.id}" data-name="${esc(d.name)}" data-email="${esc(d.email||'')}">Edit</button>
+        <button class="btn btn-sm" data-dir-act="toggle" data-id="${d.id}" data-active="${d.active?1:0}">${d.active?'Deactivate':'Activate'}</button>
+        <button class="btn btn-sm btn-danger" data-dir-act="delete" data-id="${d.id}" data-name="${esc(d.name)}">Delete</button>
+      </div>
+      ${team.length ? `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">${team.map(n=>`<span class="chip">${esc(n)}</span>`).join('')}</div>` : '<div style="font-size:11px;color:var(--text-3);margin-top:6px">No reps assigned yet. Use the dropdown next to each rep above to assign them.</div>'}
+    </div>`;
+  }).join('');
+  box.querySelectorAll('button[data-dir-act]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const act = btn.getAttribute('data-act'), id=btn.getAttribute('data-id');
-      if(act==='toggle') toggleRep(id, btn.getAttribute('data-active')==='1');
-      else if(act==='delete') deleteRep(id, btn.getAttribute('data-name'));
+      const act=btn.getAttribute('data-dir-act'), id=btn.getAttribute('data-id'), name=btn.getAttribute('data-name');
+      if(act==='delete') deleteDirector(id, name);
+      else if(act==='toggle') toggleDirector(id, btn.getAttribute('data-active')==='1');
+      else if(act==='edit-email') editDirectorEmail(id, name, btn.getAttribute('data-email'));
     });
   });
+}
+
+async function addDirector(){
+  const name = ge('new-director-name').value.trim();
+  const email = ge('new-director-email').value.trim();
+  if(!name){ notice('Name required.', 'warn', 's-notice'); return; }
+  const {error} = await sb.from('directors').insert({name, email: email||null, active:true});
+  if(error){ notice('Could not add: '+error.message, 'err', 's-notice'); return; }
+  ge('new-director-name').value=''; ge('new-director-email').value='';
+  notice(name+' added.', 'ok', 's-notice');
+  await loadReps();
+  renderDirectorList();
+  renderRepList();
+}
+
+async function editDirectorEmail(id, name, currentEmail){
+  const newEmail = prompt(`Email for ${name}:`, currentEmail||'');
+  if(newEmail===null) return;
+  const {error} = await sb.from('directors').update({email: newEmail.trim()||null}).eq('id', id);
+  if(error){ notice('Update failed: '+error.message, 'err', 's-notice'); return; }
+  await loadReps();
+  renderDirectorList();
+  notice('Email updated.', 'ok', 's-notice');
+}
+
+async function toggleDirector(id, active){
+  await sb.from('directors').update({active:!active}).eq('id', id);
+  await loadReps();
+  renderDirectorList();
+  renderRepList();
+}
+
+async function deleteDirector(id, name){
+  if(!confirm('Delete director "'+name+'"? Reps assigned to them will be unassigned.')) return;
+  await sb.from('directors').delete().eq('id', id);  // FK SET NULL handles the unassignment
+  await loadReps();
+  renderDirectorList();
+  renderRepList();
+  notice(name+' removed.', 'warn', 's-notice');
 }
 async function addRep(){
   const inp = ge('new-rep'); const name = inp.value.trim(); if(!name) return;
