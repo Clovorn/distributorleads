@@ -870,26 +870,103 @@ function onScopeChange(){
   renderAll();
 }
 
+// State for director's team (which reps they oversee)
+let directorTeam = [];   // array of rep names
+let directorIncludeUnassigned = true;
+
+function loadDirectorTeam(){
+  try {
+    const saved = localStorage.getItem('director_team');
+    directorTeam = saved ? JSON.parse(saved) : [];
+  } catch(e){ directorTeam = []; }
+  const inc = localStorage.getItem('director_include_unassigned');
+  directorIncludeUnassigned = inc === null ? true : inc === '1';
+}
+function saveDirectorTeam(){
+  localStorage.setItem('director_team', JSON.stringify(directorTeam));
+  localStorage.setItem('director_include_unassigned', directorIncludeUnassigned?'1':'0');
+}
+
 function setupScopeSelect(){
   const sel = ge('scope-select');
-  if(role==='admin'){
-    sel.classList.add('hidden'); sel.innerHTML=''; return;
+  // Hide the standard dropdown for Director — they get a richer picker below the topbar
+  if(role==='admin' || role==='director'){
+    sel.classList.add('hidden'); sel.innerHTML='';
+  } else {
+    sel.classList.remove('hidden');
+    let opts='';
+    if(role==='distributor'){
+      opts = '<option value="">— Choose a program —</option>'
+        + ['Java Select','Sledd','CoreMark'].map(p=>`<option value="${p}">${p}</option>`).join('');
+    } else if(role==='ronnoco_rep'){
+      const reps = salesReps.length ? salesReps.map(r=>r.name) : [...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
+      opts = '<option value="">— Choose your name —</option>' + reps.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
+    }
+    sel.innerHTML = opts;
   }
-  sel.classList.remove('hidden');
-  let opts='';
-  if(role==='director'){
-    // List sales reps — director "is" picking which rep's leads to act as overseeing
-    // (In future: director_id mapping; for now scoped per-rep)
-    const reps = salesReps.length ? salesReps.map(r=>r.name) : [...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
-    opts = '<option value="">— Choose a rep to oversee —</option>' + reps.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
-  } else if(role==='distributor'){
-    opts = '<option value="">— Choose a program —</option>'
-      + ['Java Select','Sledd','CoreMark'].map(p=>`<option value="${p}">${p}</option>`).join('');
-  } else if(role==='ronnoco_rep'){
-    const reps = salesReps.length ? salesReps.map(r=>r.name) : [...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
-    opts = '<option value="">— Choose your name —</option>' + reps.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
+
+  // Render or remove the director team bar
+  renderDirectorTeamBar();
+}
+
+function renderDirectorTeamBar(){
+  const existing = ge('director-team-bar');
+  if(role !== 'director'){
+    if(existing) existing.remove();
+    return;
   }
-  sel.innerHTML = opts;
+  loadDirectorTeam();
+  const repNames = salesReps.length ? salesReps.map(r=>r.name) : [...new Set(leads.map(l=>l.assigned_sales_rep).filter(Boolean))].sort();
+  const html = `
+    <div id="director-team-bar" style="background:var(--surface);border-bottom:0.5px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="font-size:12px;color:var(--text-2)"><strong>Your team:</strong></div>
+      <div id="dt-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:200px">
+        ${directorTeam.length ? directorTeam.map(r=>`<span class="chip">${esc(r)}<span class="chip-x" data-rep="${esc(r)}">×</span></span>`).join('') : '<span style="font-size:12px;color:var(--text-3)">No reps selected — pick from the dropdown to start</span>'}
+      </div>
+      <select id="dt-add" class="input" style="min-width:180px">
+        <option value="">+ Add rep to your team…</option>
+        ${repNames.filter(r=>!directorTeam.includes(r)).map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('')}
+      </select>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);cursor:pointer">
+        <input type="checkbox" id="dt-unassigned" ${directorIncludeUnassigned?'checked':''} style="width:14px;height:14px"/>
+        Show unassigned leads
+      </label>
+      <button class="btn btn-sm btn-ghost" onclick="clearDirectorTeam()">Clear</button>
+    </div>`;
+  // Insert just below the tabs nav
+  const tabs = ge('tabs');
+  tabs.insertAdjacentHTML('afterend', html);
+  // Wire chip removals
+  ge('dt-chips').querySelectorAll('.chip-x').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const rep = el.getAttribute('data-rep');
+      directorTeam = directorTeam.filter(r=>r!==rep);
+      saveDirectorTeam();
+      renderDirectorTeamBar();
+      renderAll();
+    });
+  });
+  ge('dt-add').addEventListener('change', e=>{
+    const v = e.target.value;
+    if(v && !directorTeam.includes(v)){
+      directorTeam.push(v);
+      saveDirectorTeam();
+      renderDirectorTeamBar();
+      renderAll();
+    }
+  });
+  ge('dt-unassigned').addEventListener('change', e=>{
+    directorIncludeUnassigned = e.target.checked;
+    saveDirectorTeam();
+    renderAll();
+  });
+}
+
+function clearDirectorTeam(){
+  directorTeam = [];
+  saveDirectorTeam();
+  renderDirectorTeamBar();
+  renderAll();
 }
 
 function setRoleUI(){
@@ -925,10 +1002,13 @@ function setRoleUI(){
 function scopedLeads(){
   if(role==='admin') return leads.slice();
   if(role==='director'){
-    // Director sees only the leads of the rep they're overseeing.
-    // (Future: a directors table mapping director → reps.)
-    if(!scope) return [];
-    return leads.filter(l => l.assigned_sales_rep === scope);
+    // Director sees: leads assigned to any rep on their team, PLUS unassigned leads (if toggle is on).
+    // An empty team + unassigned-toggle-on => show only the unassigned queue (the assignment work).
+    return leads.filter(l => {
+      const repAssigned = l.assigned_sales_rep && l.assigned_sales_rep.trim();
+      if(!repAssigned) return directorIncludeUnassigned;
+      return directorTeam.includes(l.assigned_sales_rep);
+    });
   }
   if(role==='distributor'){
     if(!scope) return [];
@@ -942,13 +1022,19 @@ function scopedLeads(){
 }
 
 function needsScope(){
-  return role!=='admin' && !scope;
+  if(role==='admin') return false;
+  if(role==='director') return directorTeam.length === 0 && !directorIncludeUnassigned;
+  return !scope;
 }
 
 function scopeNeededHtml(){
-  const what = role==='director' ? 'a sales rep to oversee'
-             : role==='distributor' ? 'your program (Java Select / Sledd / CoreMark)'
-             : 'your name from the list';
+  if(role==='director'){
+    return `<div class="card"><div class="empty">
+      <div class="empty-title">Set up your team</div>
+      <div class="empty-sub">Use the bar above to add the reps you oversee, or check "Show unassigned leads" to see leads needing assignment.</div>
+    </div></div>`;
+  }
+  const what = role==='distributor' ? 'your program (Java Select / Sledd / CoreMark)' : 'your name from the list';
   return `<div class="card"><div class="empty">
     <div class="empty-title">Select ${what}</div>
     <div class="empty-sub">Use the dropdown in the top bar to pick.</div>
@@ -1047,8 +1133,14 @@ function populateFilterSelects(){
 function renderScorecard(){
   // Update header per role
   if(role==='director'){
-    ge('sc-title').textContent = scope ? `${scope} — scorecard` : 'Director scorecard';
-    ge('sc-sub').textContent = scope ? 'Your assigned reps and their lead activity' : 'Select a rep above to view their scorecard';
+    ge('sc-title').textContent = 'Your team';
+    const parts = [];
+    if(directorTeam.length) parts.push(`${directorTeam.length} rep${directorTeam.length===1?'':'s'}`);
+    if(directorIncludeUnassigned){
+      const u = leads.filter(l=>(!l.assigned_sales_rep||!l.assigned_sales_rep.trim()) && l.status==='active').length;
+      parts.push(`${u} unassigned`);
+    }
+    ge('sc-sub').textContent = parts.length ? parts.join(' · ') : 'Add reps using the bar above';
   } else {
     ge('sc-title').textContent = 'Rep scorecard';
     ge('sc-sub').textContent = 'One row per sales rep · click any rep to drill into their leads';
