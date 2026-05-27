@@ -1488,8 +1488,18 @@ async function selectLead(id){
   selId = id;
   if(!actCache[id]) await loadAct(id);
   if(!emailCache[id]) await loadEmails(id);
-  renderList();
-  renderMain(id);
+  if(currentTab === 'leads'){
+    renderList();
+    renderMain(id);
+  } else if(currentTab === 'mywork'){
+    renderMyWork();
+  } else if(currentTab === 'submitted'){
+    renderSubmitted();
+  } else {
+    // Scorecard or Pipeline tab — switch to leads so the detail surface exists
+    switchTab('leads');
+    renderMain(id);
+  }
 }
 function clearLeadSelection(){
   selId = null;
@@ -2243,6 +2253,7 @@ async function saveEdit(){
   if(error){ notice('Save error: '+error.message,'err'); return; }
   await sb.from('activity_log').insert({lead_id:editLeadId, actor_role:role, action: role==='ronnoco_rep' ? 'Rep updated customer info' : 'Lead details edited'});
   close_modal('edit-modal'); notice('Saved.','ok');
+  await loadLeads(); // refreshes in-memory leads + re-renders current view
 }
 
 async function deleteLead(id){
