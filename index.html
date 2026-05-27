@@ -214,8 +214,9 @@ select.input:focus,input.input:focus{border-color:var(--border-strong)}
 .lc-foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 
 /* ─── Kanban ────────────────────────────────────── */
-.kanban{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-@media(max-width:960px){.kanban{grid-template-columns:repeat(2,1fr)}}
+.kanban{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+@media(max-width:1200px){.kanban{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){.kanban{grid-template-columns:repeat(2,1fr)}}
 .kcol{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);overflow:hidden;display:flex;flex-direction:column;min-height:200px}
 .kcol-head{padding:10px 12px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface-2)}
 .kcol-title{font-size:12px;font-weight:500;color:var(--text)}
@@ -383,7 +384,8 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
           <select id="f-step" class="input" onchange="renderList()">
             <option value="">All stages</option>
             <option value="lead_received">Lead Received</option>
-            <option value="assign_rep">Awaiting Assignment</option>
+            <option value="awaiting_director">Awaiting Director</option>
+            <option value="awaiting_rep">Awaiting Rep Assignment</option>
             <option value="rep_assigned">Assigned to Rep</option>
             <option value="customer_contacted">Contacted</option>
             <option value="follow_up">In Follow-up</option>
@@ -470,7 +472,8 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
           <select id="sub-step" class="input" onchange="renderSubmitted()">
             <option value="">All stages</option>
             <option value="lead_received">Lead Received</option>
-            <option value="assign_rep">Awaiting Assignment</option>
+            <option value="awaiting_director">Awaiting Director</option>
+            <option value="awaiting_rep">Awaiting Rep Assignment</option>
             <option value="rep_assigned">Assigned to Rep</option>
             <option value="customer_contacted">Contacted</option>
             <option value="follow_up">In Follow-up</option>
@@ -603,23 +606,24 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
   </div>
   <div class="wrap" style="max-width:760px">
     <div class="scard">
-      <div style="font-size:17px;font-weight:500;margin-bottom:10px">The 5-stage pipeline</div>
+      <div style="font-size:17px;font-weight:500;margin-bottom:10px">The pipeline</div>
       <ol style="font-size:14px;color:var(--text);line-height:1.9;padding-left:18px;margin-top:8px">
-        <li><strong>Lead Received</strong> — Lead came in from a tradeshow, webhook, or CSV.</li>
-        <li><strong>Awaiting Assignment</strong> — Director needs to assign a Sales Rep.</li>
-        <li><strong>Assigned to Rep</strong> — Rep has been assigned but has not yet contacted.</li>
-        <li><strong>Customer Contacted</strong> — Rep made first real contact (call, email, meeting).</li>
+        <li><strong>Lead Received</strong> — Lead came in from a tradeshow, webhook, or CSV import.</li>
+        <li><strong>Awaiting Director</strong> — Admin needs to route the lead to a Director.</li>
+        <li><strong>Awaiting Rep Assignment</strong> — Director needs to assign one of their Sales Reps.</li>
+        <li><strong>Assigned to Rep</strong> — Rep has been assigned but has not yet made first contact.</li>
+        <li><strong>Customer Contacted</strong> — Rep made first real contact (call, email, in-person).</li>
         <li><strong>In Follow-up</strong> — Ongoing back-and-forth until the deal is Won or Lost.</li>
       </ol>
       <p style="font-size:13px;color:var(--text-2);margin-top:12px">Terminal: <strong style="color:var(--success)">Won</strong> or <strong style="color:var(--danger)">Lost</strong>. A Won lead converts to a deal in the Ronnoco Deal Builder.</p>
     </div>
     <div class="scard">
-      <div style="font-size:17px;font-weight:500;margin-bottom:10px">Roles</div>
+      <div style="font-size:17px;font-weight:500;margin-bottom:10px">Roles &amp; what they can do</div>
       <ul style="font-size:14px;line-height:1.9;padding-left:18px">
-        <li><strong>Admin</strong> — Full access, all leads, all settings.</li>
-        <li><strong>Director</strong> — Sees only leads assigned to reps reporting to them.</li>
-        <li><strong>Distributor</strong> — Sees only leads from their program (e.g. Java Select).</li>
-        <li><strong>Ronnoco Rep</strong> — Sees only leads assigned to them.</li>
+        <li><strong>Admin</strong> — Sees all leads. Routes new leads to Directors. Manages reps, directors, sync settings.</li>
+        <li><strong>Director</strong> — Sees leads routed to them by Admin, plus their team's active leads. Assigns Sales Reps from their team.</li>
+        <li><strong>Distributor</strong> — Sees only leads from their program (e.g. Java Select). Submits new leads, tracks status. Cannot see internal rep notes.</li>
+        <li><strong>Ronnoco Rep</strong> — Sees only leads assigned to them. Logs follow-ups, marks won/lost, edits customer contact info.</li>
       </ul>
       <p style="font-size:13px;color:var(--text-2);margin-top:10px">Settings password: <code style="background:var(--surface-2);padding:1px 6px;border-radius:4px">pipeline2024</code></p>
     </div>
@@ -629,6 +633,27 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <!-- ====================================================================
      MODALS
      ==================================================================== -->
+
+<!-- Route to Director modal -->
+<div class="overlay" id="route-modal">
+  <div class="modal">
+    <div class="mhdr">
+      <div><div class="mtitle">Route to Director</div><div id="rd-sub" style="font-size:12px;color:var(--text-2);margin-top:2px"></div></div>
+      <button class="mclose" onclick="close_modal('route-modal')">×</button>
+    </div>
+    <div style="font-size:13px;color:var(--text-2);margin-bottom:10px">
+      Assign this lead to a director. They'll see it in their queue and assign a sales rep from their team.
+    </div>
+    <label class="flbl">Director *</label>
+    <select class="finp" id="rd-director"></select>
+    <label class="flbl">Note for the director (optional)</label>
+    <textarea class="finp" id="rd-note" rows="2" placeholder="Any context the director should know"></textarea>
+    <div class="mfoot">
+      <button class="btn" onclick="close_modal('route-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmRouteToDirector()">Route lead</button>
+    </div>
+  </div>
+</div>
 
 <!-- Assign Rep modal -->
 <div class="overlay" id="rep-modal">
@@ -799,11 +824,12 @@ const DEF_PW = 'pipeline2024';
 const STALL_DAYS = 14;
 
 const STEPS = [
-  { id:'lead_received',      label:'Lead Received',       short:'Received',   glyph:'1' },
-  { id:'assign_rep',         label:'Awaiting Assignment', short:'Awaiting',   glyph:'2' },
-  { id:'rep_assigned',       label:'Assigned to Rep',     short:'Assigned',   glyph:'3' },
-  { id:'customer_contacted', label:'Customer Contacted',  short:'Contacted',  glyph:'4' },
-  { id:'follow_up',          label:'In Follow-up',        short:'Follow-up',  glyph:'5' },
+  { id:'lead_received',      label:'Lead Received',         short:'Received',   glyph:'1' },
+  { id:'awaiting_director',  label:'Awaiting Director',     short:'To Director',glyph:'2' },
+  { id:'awaiting_rep',       label:'Awaiting Rep Assignment',short:'To Rep',    glyph:'3' },
+  { id:'rep_assigned',       label:'Assigned to Rep',       short:'Assigned',   glyph:'4' },
+  { id:'customer_contacted', label:'Customer Contacted',    short:'Contacted',  glyph:'5' },
+  { id:'follow_up',          label:'In Follow-up',          short:'Follow-up',  glyph:'6' },
 ];
 const stepById = id => STEPS.find(s=>s.id===id);
 const stepIdx = id => STEPS.findIndex(s=>s.id===id);
@@ -815,7 +841,7 @@ let scope='';              // the specific person or program selected within a r
 let currentTab='scorecard';
 let selId=null;
 let activeMetric='';
-let repAssignId=null, lostLeadId=null, wonLeadId=null;
+let repAssignId=null, lostLeadId=null, wonLeadId=null, routeDirId=null;
 let followupLeadId=null, followupMethod='call';
 let editLeadId=null;
 let csvRows=[];
@@ -1036,13 +1062,19 @@ function setRoleUI(){
 function scopedLeads(){
   if(role==='admin') return leads.slice();
   if(role==='director'){
-    // If a director profile is picked, use their DB-assigned reps.
-    // Otherwise fall back to the manual team picker (localStorage).
+    // A Director sees a lead if ANY of:
+    //   (a) Admin routed it to them: assigned_director_id === their director.id
+    //   (b) A rep on their team has been assigned the lead
+    //   (c) Manual mode: rep on their localStorage team
+    // The "include unassigned" toggle adds leads that have no director_id yet (legacy fallback).
+    const dirObj = scope ? directors.find(d=>d.name===scope) : null;
+    const dirId = dirObj ? dirObj.id : null;
     const team = scope ? repsForDirector(scope) : directorTeam;
     return leads.filter(l => {
-      const repAssigned = l.assigned_sales_rep && l.assigned_sales_rep.trim();
-      if(!repAssigned) return directorIncludeUnassigned;
-      return team.includes(l.assigned_sales_rep);
+      if(dirId && l.assigned_director_id === dirId) return true;     // routed to me
+      if(l.assigned_sales_rep && team.includes(l.assigned_sales_rep)) return true; // my rep has it
+      if(!l.assigned_director_id && !l.assigned_sales_rep && directorIncludeUnassigned) return true; // legacy unassigned
+      return false;
     });
   }
   if(role==='distributor'){
@@ -1205,16 +1237,27 @@ function renderScorecard(){
     ge('sc-sub').textContent = 'One row per sales rep · click any rep to drill into their leads';
   }
 
-  // Metric strip (counts across whatever scope this user can see)
+  // Metric strip (role-aware — Admin sees Awaiting Director, Director sees Awaiting Rep)
   const scoped = scopedLeads();
   const act = scoped.filter(l=>l.status==='active');
-  const m = [
-    {id:'lead_received',  lbl:'Lead Received',       n:act.filter(l=>l.current_step==='lead_received').length,       sub:'Awaiting Director'},
-    {id:'assign_rep',     lbl:'Awaiting Assignment', n:act.filter(l=>l.current_step==='assign_rep').length,          sub:'Needs rep assigned'},
-    {id:'rep_assigned',   lbl:'Assigned to Rep',     n:act.filter(l=>l.current_step==='rep_assigned').length,        sub:'Rep must contact'},
-    {id:'customer_contacted', lbl:'Contacted',       n:act.filter(l=>l.current_step==='customer_contacted').length,  sub:'First touch done'},
-    {id:'follow_up',      lbl:'In Follow-up',        n:act.filter(l=>l.current_step==='follow_up').length,           sub:'Ongoing contact'},
-  ];
+  const baseMetrics = {
+    lead_received:      {lbl:'Lead Received',           sub:'Just arrived', n:act.filter(l=>l.current_step==='lead_received').length},
+    awaiting_director:  {lbl:'Awaiting Director',       sub:'Admin must route',   n:act.filter(l=>l.current_step==='awaiting_director').length},
+    awaiting_rep:       {lbl:'Awaiting Rep',            sub:'Director must assign',n:act.filter(l=>l.current_step==='awaiting_rep').length},
+    rep_assigned:       {lbl:'Assigned to Rep',         sub:'Rep must contact',   n:act.filter(l=>l.current_step==='rep_assigned').length},
+    customer_contacted: {lbl:'Contacted',               sub:'First touch done',   n:act.filter(l=>l.current_step==='customer_contacted').length},
+    follow_up:          {lbl:'In Follow-up',            sub:'Ongoing contact',    n:act.filter(l=>l.current_step==='follow_up').length},
+  };
+  // Admin sees the routing inbox (Awaiting Director) prominently; Director sees their own inbox (Awaiting Rep).
+  // To keep the metric strip at 5 cards (it's already a tight grid), we hide the one that's not relevant to this role.
+  let metricOrder;
+  if(role==='director'){
+    metricOrder = ['awaiting_rep','rep_assigned','customer_contacted','follow_up','lead_received'];
+  } else {
+    // admin (and the legacy non-scoped fallback)
+    metricOrder = ['awaiting_director','awaiting_rep','rep_assigned','customer_contacted','follow_up'];
+  }
+  const m = metricOrder.map(id=>({id, ...baseMetrics[id]}));
   ge('sc-metrics').innerHTML = m.map(x=>`
     <div class="mcard ${activeMetric===x.id?'active':''}" onclick="metricFilter('${x.id}')">
       <div class="m-lbl">${x.lbl}</div>
@@ -1249,7 +1292,7 @@ function renderScorecard(){
   const byRep = {};
   pool.forEach(l=>{
     const rep = l.assigned_sales_rep && l.assigned_sales_rep.trim() ? l.assigned_sales_rep : '(Unassigned)';
-    if(!byRep[rep]) byRep[rep] = {rep,received:0,awaiting:0,assigned:0,contacted:0,followup:0,won:0,lost:0,total:0,lastAct:null,cohorts:new Set()};
+    if(!byRep[rep]) byRep[rep] = {rep,received:0,awaitingDir:0,awaitingRep:0,assigned:0,contacted:0,followup:0,won:0,lost:0,total:0,lastAct:null,cohorts:new Set()};
     const b = byRep[rep];
     b.total++;
     if(l.tradeshow_lead) b.cohorts.add(l.tradeshow_lead);
@@ -1257,7 +1300,8 @@ function renderScorecard(){
     else if(l.status==='lost') b.lost++;
     else {
       if(l.current_step==='lead_received') b.received++;
-      else if(l.current_step==='assign_rep') b.awaiting++;
+      else if(l.current_step==='awaiting_director') b.awaitingDir++;
+      else if(l.current_step==='awaiting_rep') b.awaitingRep++;
       else if(l.current_step==='rep_assigned') b.assigned++;
       else if(l.current_step==='customer_contacted') b.contacted++;
       else if(l.current_step==='follow_up') b.followup++;
@@ -1270,8 +1314,8 @@ function renderScorecard(){
     if(sort==='name') return a.rep.localeCompare(b.rep);
     if(sort==='contacted') return b.contacted-a.contacted;
     if(sort==='stalled') return daysSince(b.lastAct)-daysSince(a.lastAct);
-    const aA = a.received+a.awaiting+a.assigned+a.contacted+a.followup;
-    const bA = b.received+b.awaiting+b.assigned+b.contacted+b.followup;
+    const aA = a.received+a.awaitingDir+a.awaitingRep+a.assigned+a.contacted+a.followup;
+    const bA = b.received+b.awaitingDir+b.awaitingRep+b.assigned+b.contacted+b.followup;
     return bA-aA;
   });
 
@@ -1295,12 +1339,13 @@ function renderScorecard(){
           <th>Last activity</th>
         </tr></thead>
         <tbody>${rows.map(r=>{
+          const awaiting = r.awaitingDir + r.awaitingRep;
           const cohorts = [...r.cohorts].map(c=>c.replace('Yes - ','')).slice(0,2).join(', ') || (r.total?'Non-tradeshow':'—');
-          const stalled = r.lastAct && daysSince(r.lastAct)>STALL_DAYS && (r.received+r.awaiting+r.assigned+r.contacted+r.followup)>0;
+          const stalled = r.lastAct && daysSince(r.lastAct)>STALL_DAYS && (r.received+awaiting+r.assigned+r.contacted+r.followup)>0;
           const lastTxt = stalled ? `<span class="pill-stall">⚠ ${daysSince(r.lastAct)}d idle</span>` : (r.lastAct?fmtRel(r.lastAct):'—');
           return `<tr data-rep="${esc(r.rep)}">
             <td><div class="col-name">${esc(r.rep)}</div><div class="col-sub">${esc(cohorts)}</div></td>
-            ${numCell(r.received)}${numCell(r.awaiting)}${numCell(r.assigned)}${numCell(r.contacted)}${numCell(r.followup)}
+            ${numCell(r.received)}${numCell(awaiting)}${numCell(r.assigned)}${numCell(r.contacted)}${numCell(r.followup)}
             ${numCell(r.won,'0')}${numCell(r.lost,'0')}
             <td>${lastTxt}</td>
           </tr>`;
@@ -1338,7 +1383,7 @@ function drillToRep(repName){
     const f = ge('f-rep');
     if(f){
       f.value = repName==='(Unassigned)' ? '' : repName;
-      if(repName==='(Unassigned)') ge('f-step').value='assign_rep';
+      if(repName==='(Unassigned)') ge('f-step').value='awaiting_director';
       renderList();
     }
   }
@@ -1418,7 +1463,8 @@ function leadCard(l){
   if(l.status==='won'){ pillCls='pill-green'; pillTxt='Won'; }
   else if(l.status==='lost'){ pillCls='pill-red'; pillTxt='Lost'; }
   else if(l.current_step==='lead_received') pillCls='pill-blue';
-  else if(l.current_step==='assign_rep') pillCls='pill-amber';
+  else if(l.current_step==='awaiting_director') pillCls='pill-amber';
+  else if(l.current_step==='awaiting_rep') pillCls='pill-amber';
   else if(l.current_step==='rep_assigned') pillCls='pill-blue';
   else if(l.current_step==='customer_contacted') pillCls='pill-green';
   else if(l.current_step==='follow_up') pillCls='pill-blue';
@@ -1467,12 +1513,13 @@ function renderMain(id){
 
   // Role-based "can take this action" gates
   const isAdmin = role==='admin', isDirector = role==='director', isDist = role==='distributor', isRep = role==='ronnoco_rep';
-  const canAssign = (isAdmin || isDirector) && !isLost && !isWon;
+  const canRouteToDirector = isAdmin && !isLost && !isWon && ['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step);
+  const canAssignRep = (isAdmin || isDirector) && !isLost && !isWon && ['awaiting_rep','rep_assigned'].includes(l.current_step);
   const canLogFollowup = (isAdmin || isDirector || isRep) && !isLost && !isWon && ['rep_assigned','customer_contacted','follow_up'].includes(l.current_step);
-  const canMarkWonLost = (isAdmin || isDirector || isRep) && !isLost && !isWon && l.current_step!=='lead_received' && l.current_step!=='assign_rep';
-  const canEdit = isAdmin || isDirector;
+  const canMarkWonLost = (isAdmin || isDirector || isRep) && !isLost && !isWon && !['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step);
+  const canEdit = isAdmin || isDirector || isRep;  // reps get a constrained edit form
   const canDelete = isAdmin;
-  const showInternalNotes = !isDist;  // distributors don't see internal activity log
+  const showInternalNotes = !isDist;
   const showEmailLog = !isDist;
 
   // Pipeline strip
@@ -1485,6 +1532,10 @@ function renderMain(id){
     const advLog = logs.find(lo=>lo.to_step===s.id);
     if(advLog) meta = fmtRel(advLog.created_at);
     else if(s.id==='lead_received' && l.created_at) meta = fmtRel(l.created_at);
+    if(s.id==='awaiting_rep' && l.assigned_director_id){
+      const d = directors.find(d=>d.id===l.assigned_director_id);
+      if(d) meta = esc(d.name.split(' ')[0]);
+    }
     if(s.id==='rep_assigned' && l.assigned_sales_rep) meta = esc(l.assigned_sales_rep.split(' ')[0]);
     return `<div class="pipe-cell ${cls}"><div class="pipe-glyph">${s.glyph}</div><div class="pipe-label">${s.short}</div><div class="pipe-meta" title="${esc(meta)}">${esc(meta)}</div></div>`;
   });
@@ -1493,15 +1544,24 @@ function renderMain(id){
   else if(isLost){ termCls='lost'; termG='✗'; termL='Lost'; termM=esc(l.lost_reason||'—'); }
   cells.push(`<div class="pipe-cell ${termCls}"><div class="pipe-glyph">${termG}</div><div class="pipe-label">${termL}</div><div class="pipe-meta" title="${termM}">${termM}</div></div>`);
 
-  // Action buttons
+  // Action buttons — reflect the three-step routing chain
   const actBtns = [];
   if(!isLost && !isWon){
-    if(l.current_step==='lead_received' && (isAdmin || isDirector)){
-      actBtns.push(`<button class="btn btn-primary btn-sm" onclick="advanceStep('${id}','assign_rep')">Move to awaiting assignment</button>`);
+    // Step 1: Admin moves Lead Received → Awaiting Director (one-click advance)
+    if(l.current_step==='lead_received' && isAdmin){
+      actBtns.push(`<button class="btn btn-primary btn-sm" onclick="advanceStep('${id}','awaiting_director')">Move to Awaiting Director</button>`);
     }
-    if(l.current_step==='assign_rep' && canAssign){
-      actBtns.push(`<button class="btn btn-primary btn-sm" onclick="openAssignRep('${id}')">Assign sales rep</button>`);
+    // Step 2: Admin routes Awaiting Director → Awaiting Rep (picks a director)
+    if(canRouteToDirector && (l.current_step==='awaiting_director' || (l.current_step==='lead_received' && isAdmin))){
+      const lbl = l.assigned_director_id ? 'Change director' : 'Route to Director';
+      actBtns.push(`<button class="btn btn-primary btn-sm" onclick="openRouteToDirector('${id}')">${lbl}</button>`);
     }
+    // Step 3: Director (or Admin) assigns Sales Rep
+    if(canAssignRep){
+      const lbl = l.assigned_sales_rep ? 'Reassign Sales Rep' : 'Assign Sales Rep';
+      actBtns.push(`<button class="btn btn-primary btn-sm" onclick="openAssignRep('${id}')">${lbl}</button>`);
+    }
+    // Step 4: Rep logs follow-ups
     if(canLogFollowup){
       const lbl = l.current_step==='rep_assigned' ? 'Log first contact' : 'Log follow-up';
       actBtns.push(`<button class="btn btn-primary btn-sm" onclick="openFollowup('${id}','${l.current_step==='rep_assigned'?'1':'0'}')">${lbl}</button>`);
@@ -1595,7 +1655,8 @@ function renderMain(id){
   // Edit / reassign / delete header buttons
   const hdrBtns = [];
   if(canEdit) hdrBtns.push(`<button class="btn btn-sm" onclick="openEdit('${id}')">Edit</button>`);
-  if(canAssign) hdrBtns.push(`<button class="btn btn-sm" onclick="openAssignRep('${id}')">Reassign</button>`);
+  if(canAssignRep && l.assigned_sales_rep) hdrBtns.push(`<button class="btn btn-sm" onclick="openAssignRep('${id}')">Reassign Rep</button>`);
+  if(canRouteToDirector && l.assigned_director_id) hdrBtns.push(`<button class="btn btn-sm" onclick="openRouteToDirector('${id}')">Reroute Director</button>`);
   if(canDelete) hdrBtns.push(`<button class="btn btn-sm btn-danger" onclick="deleteLead('${id}')">Delete</button>`);
 
   ge('main-panel').innerHTML = `
@@ -1693,7 +1754,7 @@ function renderSubmitted(){
   const act = scoped.filter(l=>l.status==='active');
   ge('sub-metrics').innerHTML = `
     <div class="mcard"><div class="m-lbl">Total submitted</div><div class="m-val">${scoped.length}</div><div class="m-sub">All time</div></div>
-    <div class="mcard"><div class="m-lbl">Awaiting Ronnoco</div><div class="m-val">${act.filter(l=>['lead_received','assign_rep'].includes(l.current_step)).length}</div><div class="m-sub">Not yet assigned</div></div>
+    <div class="mcard"><div class="m-lbl">Awaiting Ronnoco</div><div class="m-val">${act.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length}</div><div class="m-sub">Not yet assigned</div></div>
     <div class="mcard"><div class="m-lbl">Being worked</div><div class="m-val">${act.filter(l=>['rep_assigned','customer_contacted','follow_up'].includes(l.current_step)).length}</div><div class="m-sub">Rep has it</div></div>
     <div class="mcard"><div class="m-lbl">Won</div><div class="m-val">${scoped.filter(l=>l.status==='won').length}</div><div class="m-sub">Converted</div></div>
     <div class="mcard"><div class="m-lbl">Lost</div><div class="m-val">${scoped.filter(l=>l.status==='lost').length}</div><div class="m-sub">Closed</div></div>
@@ -1728,7 +1789,8 @@ function renderSubmitted(){
     if(l.status==='won'){ pillCls='pill-green'; pillTxt='Won'; }
     else if(l.status==='lost'){ pillCls='pill-red'; pillTxt='Lost'; }
     else if(l.current_step==='lead_received'){ pillCls='pill-blue'; }
-    else if(l.current_step==='assign_rep'){ pillCls='pill-amber'; }
+    else if(l.current_step==='awaiting_director'){ pillCls='pill-amber'; }
+    else if(l.current_step==='awaiting_rep'){ pillCls='pill-amber'; }
     else if(l.current_step==='rep_assigned'){ pillCls='pill-blue'; }
     else if(l.current_step==='customer_contacted'){ pillCls='pill-green'; }
     else if(l.current_step==='follow_up'){ pillCls='pill-blue'; }
@@ -1852,6 +1914,48 @@ async function advanceStep(id, toStep){
   await sb.from('leads').update({current_step:toStep, updated_at:new Date().toISOString()}).eq('id',id);
   await sb.from('activity_log').insert({lead_id:id, actor_role:role, action:'Advanced: '+(stepById(fromStep)?.label||fromStep)+' → '+(stepById(toStep)?.label||toStep), from_step:fromStep, to_step:toStep});
   notice('Moved to '+(stepById(toStep)?.label||toStep),'ok');
+}
+
+function openRouteToDirector(id){
+  const l = leads.find(x=>x.id===id); if(!l) return;
+  routeDirId = id;
+  ge('rd-sub').textContent = l.dba_name||l.customer_full_name||'Lead';
+  ge('rd-note').value = '';
+  const sel = ge('rd-director');
+  const activeDirs = directors.filter(d=>d.active!==false);
+  if(!activeDirs.length){
+    sel.innerHTML = '<option value="">— No directors set up yet —</option>';
+    notice('Add a director in Settings before routing leads.', 'warn');
+  } else {
+    sel.innerHTML = '<option value="">— Choose a director —</option>'
+      + activeDirs.map(d=>`<option value="${d.id}" ${l.assigned_director_id===d.id?'selected':''}>${esc(d.name)}</option>`).join('');
+  }
+  open_modal('route-modal');
+}
+
+async function confirmRouteToDirector(){
+  const id = routeDirId; if(!id) return;
+  const dirId = ge('rd-director').value;
+  if(!dirId){ notice('Pick a director.', 'warn'); return; }
+  const note = ge('rd-note').value.trim();
+  const l = leads.find(x=>x.id===id); if(!l) return;
+  const dir = directors.find(d=>d.id===dirId);
+  const dirName = dir ? dir.name : 'Director';
+  // Move to awaiting_rep (the director's inbox)
+  await sb.from('leads').update({
+    assigned_director_id: dirId,
+    current_step: 'awaiting_rep',
+    updated_at: new Date().toISOString(),
+  }).eq('id', id);
+  await sb.from('activity_log').insert({
+    lead_id: id, actor_role: role,
+    action: 'Routed to '+dirName,
+    from_step: l.current_step, to_step: 'awaiting_rep',
+    note: note || ''
+  });
+  close_modal('route-modal');
+  routeDirId = null;
+  notice('Routed to '+dirName, 'ok');
 }
 
 function openAssignRep(id){
@@ -1989,7 +2093,24 @@ async function confirmAssign(){
   const distEmail=ge('ra-dremail').value, dsubj=ge('ra-dsubj').value, dbody=ge('ra-dbody').value;
   if(!repName){ notice('Please select a rep.','warn'); return; }
   const l = leads.find(x=>x.id===id); if(!l) return;
-  await sb.from('leads').update({assigned_sales_rep:repName, current_step:'rep_assigned', updated_at:new Date().toISOString()}).eq('id',id);
+  // If the actor is a Director, also stamp the lead's director_id (in case Admin skipped the routing step)
+  // and infer from the rep's assigned director if no scope is selected.
+  const updates = {
+    assigned_sales_rep: repName,
+    current_step: 'rep_assigned',
+    updated_at: new Date().toISOString(),
+  };
+  if(!l.assigned_director_id){
+    // Try to derive: 1) current Director's scope, 2) the rep's own director_id
+    if(role==='director' && scope){
+      const d = directors.find(d=>d.name===scope);
+      if(d) updates.assigned_director_id = d.id;
+    } else {
+      const rep = salesReps.find(r=>r.name===repName);
+      if(rep && rep.director_id) updates.assigned_director_id = rep.director_id;
+    }
+  }
+  await sb.from('leads').update(updates).eq('id',id);
   await sb.from('activity_log').insert({lead_id:id,actor_role:role,action:'Rep assigned: '+repName,from_step:l.current_step,to_step:'rep_assigned',note:'Rep: '+repName+(repEmail?' <'+repEmail+'>':'')+'. Dist rep: '+(l.distributor_sales_rep||'—')});
   close_modal('rep-modal');
   const _id=id; repAssignId=null;
@@ -2027,7 +2148,7 @@ async function confirmFollowup(){
   const methodLbl = {call:'Call',email:'Email',text:'Text',visit:'In-person'}[followupMethod]||followupMethod;
   let toStep = l.current_step;
   if(reached){
-    if(['rep_assigned','lead_received','assign_rep'].includes(l.current_step)) toStep='customer_contacted';
+    if(['rep_assigned','lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)) toStep='customer_contacted';
     else if(l.current_step==='customer_contacted') toStep='follow_up';
   }
   if(toStep !== l.current_step){
@@ -2062,11 +2183,26 @@ async function confirmWon(){
 function openEdit(id){
   const l = leads.find(x=>x.id===id); if(!l) return; editLeadId=id;
   ge('edit-title').textContent = 'Edit — '+(l.dba_name||l.customer_full_name||'Lead');
-  ge('edit-body').innerHTML = `
+  const isRepEditing = role === 'ronnoco_rep';
+  ge('edit-body').innerHTML = isRepEditing ? `
+    <div style="font-size:12px;color:var(--text-2);margin-bottom:10px;padding:8px 12px;background:var(--info-bg);border-radius:6px">
+      Fix customer info or add notes here. To advance the pipeline use <strong>Log follow-up</strong> / <strong>Mark won</strong> / <strong>Mark lost</strong> on the lead page.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div><label class="flbl">Contact name</label><input class="finp" id="el-name" value="${esc(l.customer_full_name||'')}"/></div>
+      <div><label class="flbl">Business / DBA</label><input class="finp" id="el-dba" value="${esc(l.dba_name||'')}"/></div>
+      <div><label class="flbl">Email</label><input class="finp" id="el-email" type="email" value="${esc(l.contact_email||'')}"/></div>
+      <div><label class="flbl">Phone</label><input class="finp" id="el-phone" value="${esc(l.phone||'')}"/></div>
+      <div style="grid-column:1/-1"><label class="flbl">Address</label><input class="finp" id="el-addr" value="${esc(l.store_address||'')}"/></div>
+    </div>
+    <label class="flbl">Notes</label>
+    <textarea class="finp" id="el-notes" rows="4" placeholder="Anything worth knowing about this customer">${esc(l.notes||'')}</textarea>
+  ` : `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div><label class="flbl">Business / DBA</label><input class="finp" id="el-dba" value="${esc(l.dba_name||'')}"/></div>
       <div><label class="flbl">Legal name</label><input class="finp" id="el-legal" value="${esc(l.legal_business_name||'')}"/></div>
       <div><label class="flbl">Contact name</label><input class="finp" id="el-name" value="${esc(l.customer_full_name||'')}"/></div>
+      <div><label class="flbl">Director</label><select class="finp" id="el-dir"><option value="">— None —</option>${directors.filter(d=>d.active!==false).map(d=>`<option value="${d.id}" ${d.id===l.assigned_director_id?'selected':''}>${esc(d.name)}</option>`).join('')}</select></div>
       <div><label class="flbl">Sales rep</label><select class="finp" id="el-rep"><option value="">— None —</option>${allRepNames().map(n=>`<option value="${esc(n)}" ${n===l.assigned_sales_rep?'selected':''}>${esc(n)}</option>`).join('')}</select></div>
       <div><label class="flbl">Email</label><input class="finp" id="el-email" type="email" value="${esc(l.contact_email||'')}"/></div>
       <div><label class="flbl">Phone</label><input class="finp" id="el-phone" value="${esc(l.phone||'')}"/></div>
@@ -2078,22 +2214,34 @@ function openEdit(id){
     <label class="flbl">Lost reason</label>
     <input class="finp" id="el-lost" value="${esc(l.lost_reason||'')}"/>
     <label class="flbl">Notes</label>
-    <textarea class="finp" id="el-notes" rows="3">${esc(l.notes||'')}</textarea>`;
+    <textarea class="finp" id="el-notes" rows="3">${esc(l.notes||'')}</textarea>
+  `;
   open_modal('edit-modal');
 }
 async function saveEdit(){
   if(!editLeadId) return;
-  const g = id => ge(id)?.value.trim()||'';
-  const updates = {
-    dba_name:g('el-dba'), legal_business_name:g('el-legal'), customer_full_name:g('el-name'),
-    assigned_sales_rep:g('el-rep'), contact_email:g('el-email'), phone:g('el-phone'),
-    store_address:g('el-addr'), distributor_warehouse:g('el-wh'),
-    current_step:g('el-step'), status:g('el-status'), lost_reason:g('el-lost'), notes:g('el-notes'),
-    updated_at:new Date().toISOString(),
+  // Only collect fields whose inputs actually exist in the rendered modal.
+  // This is what lets the rep view safely write a subset without clobbering others.
+  const g = id => { const e=ge(id); return e ? e.value.trim() : null; };
+  const possible = {
+    dba_name:'el-dba', legal_business_name:'el-legal', customer_full_name:'el-name',
+    assigned_director_id:'el-dir', assigned_sales_rep:'el-rep',
+    contact_email:'el-email', phone:'el-phone', store_address:'el-addr',
+    distributor_warehouse:'el-wh', current_step:'el-step', status:'el-status',
+    lost_reason:'el-lost', notes:'el-notes',
   };
-  const {error} = await sb.from('leads').update(updates).eq('id',editLeadId);
+  const updates = { updated_at: new Date().toISOString() };
+  for(const [field, inputId] of Object.entries(possible)){
+    const v = g(inputId);
+    if(v !== null){
+      // assigned_director_id is a uuid — empty string means "None" → null
+      if(field === 'assigned_director_id' && v === '') updates[field] = null;
+      else updates[field] = v;
+    }
+  }
+  const {error} = await sb.from('leads').update(updates).eq('id', editLeadId);
   if(error){ notice('Save error: '+error.message,'err'); return; }
-  await sb.from('activity_log').insert({lead_id:editLeadId, actor_role:role, action:'Lead details edited'});
+  await sb.from('activity_log').insert({lead_id:editLeadId, actor_role:role, action: role==='ronnoco_rep' ? 'Rep updated customer info' : 'Lead details edited'});
   close_modal('edit-modal'); notice('Saved.','ok');
 }
 
@@ -2170,19 +2318,20 @@ function exportScorecard(){
   const byRep = {};
   pool.forEach(l=>{
     const rep = l.assigned_sales_rep && l.assigned_sales_rep.trim() ? l.assigned_sales_rep : '(Unassigned)';
-    if(!byRep[rep]) byRep[rep] = {rep,received:0,awaiting:0,assigned:0,contacted:0,followup:0,won:0,lost:0,lastAct:null};
+    if(!byRep[rep]) byRep[rep] = {rep,received:0,awaitingDir:0,awaitingRep:0,assigned:0,contacted:0,followup:0,won:0,lost:0,lastAct:null};
     const b = byRep[rep];
     if(l.status==='won') b.won++;
     else if(l.status==='lost') b.lost++;
     else if(l.current_step==='lead_received') b.received++;
-    else if(l.current_step==='assign_rep') b.awaiting++;
+    else if(l.current_step==='awaiting_director') b.awaitingDir++;
+    else if(l.current_step==='awaiting_rep') b.awaitingRep++;
     else if(l.current_step==='rep_assigned') b.assigned++;
     else if(l.current_step==='customer_contacted') b.contacted++;
     else if(l.current_step==='follow_up') b.followup++;
     if(l.last_activity_at && (!b.lastAct || l.last_activity_at>b.lastAct)) b.lastAct = l.last_activity_at;
   });
-  const headers = ['Rep','Received','Awaiting','Assigned','Contacted','Follow-up','Won','Lost','Days idle'];
-  const rows = Object.values(byRep).map(r=>[r.rep,r.received,r.awaiting,r.assigned,r.contacted,r.followup,r.won,r.lost,r.lastAct?daysSince(r.lastAct):'']);
+  const headers = ['Rep','Received','Awaiting Director','Awaiting Rep','Assigned','Contacted','Follow-up','Won','Lost','Days idle'];
+  const rows = Object.values(byRep).map(r=>[r.rep,r.received,r.awaitingDir,r.awaitingRep,r.assigned,r.contacted,r.followup,r.won,r.lost,r.lastAct?daysSince(r.lastAct):'']);
   const csv = [headers,...rows].map(r=>r.map(c=>{const s=String(c==null?'':c);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}).join(',')).join('\n');
   const blob = new Blob([csv],{type:'text/csv'});
   const url = URL.createObjectURL(blob);
