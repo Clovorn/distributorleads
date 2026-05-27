@@ -1145,6 +1145,18 @@ async function init(){
     await loadReps();
     setupScopeSelect();
     setRoleUI();
+    // Deep-link handler: ?lead=<uuid> opens that specific lead on load
+    const _dlParams = new URLSearchParams(window.location.search);
+    const _dlLeadId = _dlParams.get('lead');
+    if (_dlLeadId) {
+      const targetLead = leads.find(l => l.id === _dlLeadId);
+      if (targetLead) {
+        if (currentTab !== 'leads' && currentTab !== 'mywork' && currentTab !== 'submitted') {
+          switchTab('leads');
+        }
+        await selectLead(_dlLeadId);
+      }
+    }
     // Realtime
     sb.channel('portal').on('postgres_changes',{event:'*',schema:'public',table:'leads'},()=>loadLeads())
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},async p=>{
