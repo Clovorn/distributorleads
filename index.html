@@ -92,6 +92,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","SF Pro Text",sans-
 .m-val{font-size:22px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.1}
 .m-sub{font-size:11px;color:var(--text-3);margin-top:3px}
 
+/* ─── Needs-your-attention panel (Director) ─────────────── */
+.attn-card{margin-bottom:20px;padding:16px 18px;border:0.5px solid var(--border-strong);box-shadow:inset 4px 0 0 var(--accent)}
+.attn-card.attn-clear{box-shadow:inset 4px 0 0 #16a34a}
+.attn-head{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--text)}
+.attn-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:0 0 auto}
+.attn-dot.ok{background:#16a34a}
+.attn-count{margin-left:6px;font-size:12px;font-weight:600;color:#fff;background:var(--accent);border-radius:999px;padding:1px 9px}
+.attn-sub{font-size:12px;color:var(--text-2);margin-top:4px}
+.attn-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.attn-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-2);border-radius:var(--rad);padding:9px 12px}
+.attn-row:hover{background:var(--surface-3)}
+.attn-row-main{flex:1;min-width:0;cursor:pointer}
+.attn-row-name{font-size:13px;color:var(--text);font-weight:500;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.attn-row-meta{font-size:11px;color:var(--text-3);margin-top:2px}
+.attn-tag{font-size:10px;font-weight:600;padding:1px 7px;border-radius:999px;white-space:nowrap}
+.attn-tag.t-assign{background:#fef3c7;color:#92400e}
+.attn-tag.t-new{background:#dbeafe;color:#1e3a8a}
+
+/* ─── Drill-down breadcrumb (Director/Admin) ────────────── */
+.drill-crumb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;margin-bottom:12px;padding:8px 12px;background:var(--surface-2);border-radius:var(--rad)}
+.crumb-link{color:var(--accent);cursor:pointer;font-weight:500}
+.crumb-link:hover{text-decoration:underline}
+.crumb-sep{color:var(--text-3)}
+.crumb-cur{color:var(--text);font-weight:500}
+
 /* ─── Cards / tables ────────────────────────────────────── */
 .card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);overflow:hidden}
 .card-pad{padding:16px}
@@ -359,6 +384,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
       </div>
 
       <div id="sc-metrics" class="metrics"></div>
+      <div id="sc-attention"></div>
       <div id="sc-stalled-banner"></div>
       <div id="scorecard-body"></div>
     </div>
@@ -375,6 +401,8 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
           <button class="btn btn-sm" onclick="exportCurrent()" id="export-btn">Export</button>
         </div>
       </div>
+
+      <div id="drill-crumb"></div>
 
       <div class="filterbar">
         <div class="filterbar-row">
@@ -841,6 +869,7 @@ let scope='';              // the specific person or program selected within a r
 let currentTab='scorecard';
 let selId=null;
 let activeMetric='';
+let drillRep='';           // which rep the Director/Admin has drilled into (breadcrumb)
 let repAssignId=null, lostLeadId=null, wonLeadId=null, routeDirId=null;
 let followupLeadId=null, followupMethod='call';
 let editLeadId=null;
@@ -897,6 +926,7 @@ function onRoleChange(){
   role = ge('role-select').value;
   scope = '';
   selId = null;
+  drillRep = '';
   setupScopeSelect();
   setRoleUI();
   renderAll();
@@ -904,6 +934,7 @@ function onRoleChange(){
 function onScopeChange(){
   scope = ge('scope-select').value;
   selId = null;
+  drillRep = '';
   renderAll();
 }
 
@@ -1123,6 +1154,7 @@ function switchTab(name){
     if(view) view.classList.toggle('hidden', n!==name);
   });
   renderCurrentTab();
+  renderDrillCrumb();
 }
 function renderCurrentTab(){
   if(currentTab==='scorecard') renderScorecard();
@@ -1243,7 +1275,7 @@ function renderScorecard(){
       const u = leads.filter(l=>(!l.assigned_sales_rep||!l.assigned_sales_rep.trim()) && l.status==='active').length;
       parts.push(`${u} unassigned`);
     }
-    ge('sc-sub').textContent = parts.length ? parts.join(' · ') : 'Add reps using the bar above';
+    ge('sc-sub').textContent = (parts.length ? parts.join(' · ')+' · ' : '') + 'click any rep to drill into their leads';
   } else {
     ge('sc-title').textContent = 'Rep scorecard';
     ge('sc-sub').textContent = 'One row per sales rep · click any rep to drill into their leads';
@@ -1276,6 +1308,8 @@ function renderScorecard(){
       <div class="m-val">${x.n}</div>
       <div class="m-sub">${x.sub}</div>
     </div>`).join('');
+
+  renderAttentionPanel(scoped);
 
   if(needsScope()){
     ge('scorecard-body').innerHTML = scopeNeededHtml();
@@ -1369,6 +1403,75 @@ function renderScorecard(){
   });
 }
 
+// ============================================================
+// NEEDS YOUR ATTENTION PANEL (Director only)
+// Additive surface: highlights leads the director must act on and
+// lets them open the existing assign-rep dialog in one click.
+// Reuses scopedLeads()/openAssignRep() — no pipeline logic changed.
+// ============================================================
+function attentionLeads(scoped){
+  // A lead needs the director's attention if it's active AND either
+  //  (a) it's explicitly awaiting rep assignment, or
+  //  (b) it has arrived but no sales rep is assigned yet.
+  return scoped.filter(l =>
+    l.status==='active' &&
+    (l.current_step==='awaiting_rep' ||
+     !(l.assigned_sales_rep && l.assigned_sales_rep.trim()))
+  );
+}
+function renderAttentionPanel(scoped){
+  const host = ge('sc-attention');
+  if(!host) return;
+  // Only directors get this panel; clear it for every other role so behavior is unchanged.
+  if(role!=='director' || needsScope()){ host.innerHTML=''; return; }
+
+  const items = attentionLeads(scoped);
+  if(!items.length){
+    host.innerHTML = `<div class="card attn-card attn-clear">
+      <div class="attn-head"><span class="attn-dot ok"></span><strong>You're all caught up</strong></div>
+      <div class="attn-sub">No leads are waiting on a rep assignment right now.</div>
+    </div>`;
+    return;
+  }
+  // Newest first so fresh leads surface at the top.
+  items.sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+
+  const rows = items.map(l=>{
+    const name = esc(l.dba_name||l.customer_full_name||l.legal_business_name||'Unnamed lead');
+    const prog = esc(l.program_source||'Java Select');
+    const isAwaiting = l.current_step==='awaiting_rep';
+    const tag = isAwaiting
+      ? `<span class="attn-tag t-assign">Awaiting rep</span>`
+      : `<span class="attn-tag t-new">New / unassigned</span>`;
+    const age = l.created_at ? `${daysSince(l.created_at)}d old` : '';
+    return `<div class="attn-row">
+      <div class="attn-row-main" onclick="attnSelectLead('${l.id}')">
+        <div class="attn-row-name">${name} ${tag}</div>
+        <div class="attn-row-meta">${prog}${age?` · ${age}`:''}</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openAssignRep('${l.id}')">Assign rep</button>
+    </div>`;
+  }).join('');
+
+  host.innerHTML = `<div class="card attn-card">
+    <div class="attn-head">
+      <span class="attn-dot"></span>
+      <strong>Needs your attention</strong>
+      <span class="attn-count">${items.length}</span>
+    </div>
+    <div class="attn-sub">These leads are waiting for you to assign a sales rep.</div>
+    <div class="attn-list">${rows}</div>
+  </div>`;
+}
+function attnSelectLead(id){
+  // Open the lead in the detail panel without changing any pipeline state.
+  // Delegates to selectLead so activity/email caches load (prevents a blank panel).
+  switchTab('leads');
+  const fStep=ge('f-step'); if(fStep) fStep.value='';
+  const fStatus=ge('f-status'); if(fStatus) fStatus.value='active';
+  selectLead(id);
+}
+
 function metricFilter(stepId){
   activeMetric = activeMetric===stepId ? '' : stepId;
   // For Admin/Director, switch to All Leads filtered to this stage
@@ -1390,15 +1493,60 @@ function jumpToStalled(){
   }
 }
 function drillToRep(repName){
-  if(role==='admin'){
+  if(role==='admin' || role==='director'){
+    drillRep = repName;            // remember which rep we drilled into (for the breadcrumb)
     switchTab('leads');
     const f = ge('f-rep');
     if(f){
       f.value = repName==='(Unassigned)' ? '' : repName;
-      if(repName==='(Unassigned)') ge('f-step').value='awaiting_director';
+      if(repName==='(Unassigned)'){
+        // Unassigned bucket: show the leads that still need a rep.
+        const fs=ge('f-step'); if(fs) fs.value = role==='director' ? 'awaiting_rep' : 'awaiting_director';
+      } else {
+        const fs=ge('f-step'); if(fs) fs.value='';
+      }
       renderList();
     }
+    renderDrillCrumb();
   }
+}
+// Drill-down breadcrumb: Team › Rep › (selected lead). Lets the Director
+// move down into a rep and back up to the full team without losing place.
+function backToTeam(){
+  drillRep = '';
+  const f=ge('f-rep'); if(f) f.value='';
+  const fs=ge('f-step'); if(fs) fs.value='';
+  selId = null;
+  switchTab('scorecard');
+}
+function clearDrillToRep(){
+  // Step back up one level: from a specific lead/rep to the full rep list for the team.
+  drillRep = '';
+  const f=ge('f-rep'); if(f) f.value='';
+  const fs=ge('f-step'); if(fs) fs.value='';
+  selId = null;
+  renderList();
+  renderDrillCrumb();
+}
+function renderDrillCrumb(){
+  const host = ge('drill-crumb');
+  if(!host) return;
+  // Only the oversight roles get the drill breadcrumb; everyone else: nothing.
+  if(role!=='director' && role!=='admin'){ host.innerHTML=''; return; }
+  const teamLabel = role==='director' ? (scope?`${esc(scope)}'s team`:'Your team') : 'All reps';
+  const parts = [`<span class="crumb-link" onclick="backToTeam()">${teamLabel}</span>`];
+  if(drillRep){
+    parts.push(`<span class="crumb-sep">›</span>`);
+    parts.push(`<span class="crumb-link" onclick="clearDrillToRep()">${esc(drillRep)}</span>`);
+  }
+  const sel = selId ? leads.find(l=>l.id===selId) : null;
+  if(sel){
+    parts.push(`<span class="crumb-sep">›</span>`);
+    parts.push(`<span class="crumb-cur">${esc(sel.dba_name||sel.customer_full_name||'Lead')}</span>`);
+  }
+  // Hide the crumb entirely until the user has actually drilled in from the scorecard.
+  if(!drillRep && !sel){ host.innerHTML=''; return; }
+  host.innerHTML = `<div class="drill-crumb">${parts.join(' ')}</div>`;
 }
 
 // ============================================================
@@ -1512,6 +1660,7 @@ async function selectLead(id){
     switchTab('leads');
     renderMain(id);
   }
+  renderDrillCrumb();
 }
 function clearLeadSelection(){
   selId = null;
@@ -1521,6 +1670,7 @@ function clearLeadSelection(){
   } else {
     renderCurrentTab();
   }
+  renderDrillCrumb();
 }
 
 // ============================================================
