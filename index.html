@@ -263,6 +263,22 @@ select.input:focus,input.input:focus{border-color:var(--border-strong)}
 .lite-name{font-size:14px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:4px}
 .lite-meta{font-size:12px;color:var(--text-2);line-height:1.5}
 
+/* ─── Distributor warehouse rollup ───────────────────────── */
+.wh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.wh-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:16px;cursor:pointer;transition:background .12s,border-color .12s,box-shadow .12s;display:flex;flex-direction:column;gap:12px}
+.wh-card:hover{background:var(--surface-2);border-color:var(--border-strong);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.wh-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.wh-name{font-size:15px;font-weight:600;color:var(--text);line-height:1.25}
+.wh-count{font-size:24px;font-weight:600;color:var(--text);line-height:1;white-space:nowrap}
+.wh-count span{font-size:11px;font-weight:400;color:var(--text-3);margin-left:4px}
+.wh-bars{display:flex;flex-wrap:wrap;gap:5px;min-height:22px}
+.wh-go{font-size:12px;color:var(--accent);font-weight:500}
+.crumb{font-size:13px;color:var(--text-2);font-weight:400}
+.crumb a{color:var(--accent);text-decoration:none;cursor:pointer}
+.crumb a:hover{text-decoration:underline}
+.crumb .crumb-sep{color:var(--text-3);margin:0 2px}
+.crumb span:last-child:not(.crumb-sep){color:var(--text);font-weight:500}
+
 /* ─── Notice / banner ────────────────────────────────────── */
 .notice{font-size:13px;padding:9px 14px;border-radius:var(--rad);margin-bottom:14px;display:none;border:0.5px solid transparent}
 .notice.show{display:block}
@@ -650,7 +666,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
       <ul style="font-size:14px;line-height:1.9;padding-left:18px">
         <li><strong>Admin</strong> — Sees all leads. Routes new leads to Directors. Manages reps, directors, sync settings.</li>
         <li><strong>Director</strong> — Sees leads routed to them by Admin, plus their team's active leads. Assigns Sales Reps from their team.</li>
-        <li><strong>Distributor</strong> — Sees only leads from their program (e.g. Java Select). Submits new leads, tracks status. Cannot see internal rep notes.</li>
+        <li><strong>Distributor</strong> — Sees only their own company's leads (e.g. HT Hackney), grouped by warehouse. Drills into any warehouse to see each lead's current stage, status, and contact info. Submits new leads and tracks status. Cannot see internal rep notes or emails.</li>
         <li><strong>Ronnoco Rep</strong> — Sees only leads assigned to them. Logs follow-ups, marks won/lost, edits customer contact info.</li>
       </ul>
       <p style="font-size:13px;color:var(--text-2);margin-top:10px">Settings password: <code style="background:var(--surface-2);padding:1px 6px;border-radius:4px">pipeline2024</code></p>
@@ -868,6 +884,22 @@ let role='admin';          // admin | director | distributor | ronnoco_rep
 let scope='';              // the specific person or program selected within a role
 let currentTab='scorecard';
 let selId=null;
+let drillWarehouse='';     // which warehouse a distributor has drilled into (breadcrumb)
+
+// Distributor companies (top level of the distributor view). A "program" (program_source)
+// rolls up to one of these. Java Select + HTH are both HT Hackney.
+const DISTRIBUTOR_COMPANIES = ['HT Hackney','Sledd','CoreMark'];
+const PROGRAM_TO_COMPANY = { 'Java Select':'HT Hackney', 'HTH':'HT Hackney', 'Sledd':'Sledd', 'CoreMark':'CoreMark' };
+// Resolve a lead's distributor company: prefer the stored column, fall back to the
+// program→company map so legacy/unsynced rows still group correctly.
+function companyOf(l){
+  if(l.distributor_company && l.distributor_company.trim()) return l.distributor_company.trim();
+  return PROGRAM_TO_COMPANY[l.program_source] || l.program_source || '—';
+}
+function warehouseOf(l){
+  const w = (l.distributor_warehouse||'').trim();
+  return w || 'Unspecified';
+}
 let activeMetric='';
 let drillRep='';           // which rep the Director/Admin has drilled into (breadcrumb)
 let repAssignId=null, lostLeadId=null, wonLeadId=null, routeDirId=null;
@@ -927,6 +959,7 @@ function onRoleChange(){
   scope = '';
   selId = null;
   drillRep = '';
+  drillWarehouse = '';
   setupScopeSelect();
   setRoleUI();
   renderAll();
@@ -935,6 +968,7 @@ function onScopeChange(){
   scope = ge('scope-select').value;
   selId = null;
   drillRep = '';
+  drillWarehouse = '';
   renderAll();
 }
 
@@ -972,8 +1006,8 @@ function setupScopeSelect(){
     sel.classList.remove('hidden');
     let opts='';
     if(role==='distributor'){
-      opts = '<option value="">— Choose a program —</option>'
-        + ['Java Select','Sledd','CoreMark'].map(p=>`<option value="${p}">${p}</option>`).join('');
+      opts = '<option value="">— Choose your distributor —</option>'
+        + DISTRIBUTOR_COMPANIES.map(p=>`<option value="${p}">${p}</option>`).join('');
     } else if(role==='ronnoco_rep'){
       // Union: roster + reps used in leads (so Will Sims style mismatches can't hide leads)
       opts = '<option value="">— Choose your name —</option>' + allRepNames().map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
@@ -1110,7 +1144,7 @@ function scopedLeads(){
   }
   if(role==='distributor'){
     if(!scope) return [];
-    return leads.filter(l => (l.program_source||'Java Select') === scope);
+    return leads.filter(l => companyOf(l) === scope);
   }
   if(role==='ronnoco_rep'){
     if(!scope) return [];
@@ -1919,11 +1953,11 @@ function renderSubmitted(){
     ge('sub-metrics').innerHTML = '';
     return;
   }
-  ge('sub-title').textContent = `${scope} — submitted leads`;
-  ge('sub-sub').textContent = `Every lead you've submitted, and where Ronnoco is with it`;
 
-  const scoped = scopedLeads();
+  const scoped = scopedLeads();           // all leads for this distributor company
   const act = scoped.filter(l=>l.status==='active');
+
+  // Company-level handling summary — "how Ronnoco is handling our leads"
   ge('sub-metrics').innerHTML = `
     <div class="mcard"><div class="m-lbl">Total submitted</div><div class="m-val">${scoped.length}</div><div class="m-sub">All time</div></div>
     <div class="mcard"><div class="m-lbl">Awaiting Ronnoco</div><div class="m-val">${act.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length}</div><div class="m-sub">Not yet assigned</div></div>
@@ -1932,26 +1966,87 @@ function renderSubmitted(){
     <div class="mcard"><div class="m-lbl">Lost</div><div class="m-val">${scoped.filter(l=>l.status==='lost').length}</div><div class="m-sub">Closed</div></div>
   `;
 
-  // Apply distributor's filters
-  const q=(ge('sub-q')?.value||'').toLowerCase().trim();
-  const fStep=ge('sub-step')?.value||'';
-  const fStatus=ge('sub-status')?.value||'active';
-  let list = scoped;
-  if(fStatus) list = list.filter(l=>l.status===fStatus);
-  if(fStep) list = list.filter(l=>l.current_step===fStep);
-  if(q) list = list.filter(l=>[l.dba_name,l.legal_business_name,l.customer_full_name,l.contact_email,l.phone].some(v=>(v||'').toString().toLowerCase().includes(q)));
-
-  list.sort((a,b)=>new Date(b.last_activity_at||0)-new Date(a.last_activity_at||0));
-
-  if(selId && list.find(l=>l.id===selId)){
-    // show detail card for the selected lead
+  // ── Lead detail (deepest level) ──────────────────────────────
+  if(selId && scoped.find(l=>l.id===selId)){
+    ge('sub-title').innerHTML = subCrumb(true);
+    ge('sub-sub').textContent = '';
     ge('submitted-body').innerHTML = `<div class="card" id="dist-detail-card"></div>`;
     renderMainInto('dist-detail-card', selId);
     return;
   }
 
+  // ── Warehouse list (one warehouse drilled in) ────────────────
+  if(drillWarehouse){
+    ge('sub-title').innerHTML = subCrumb(false);
+    ge('sub-sub').textContent = `Leads from ${drillWarehouse} and how Ronnoco is progressing them`;
+    renderSubmittedLeadList(scoped.filter(l=>warehouseOf(l)===drillWarehouse));
+    return;
+  }
+
+  // ── Warehouse rollup (top level for the company) ─────────────
+  ge('sub-title').textContent = `${scope} — leads by warehouse`;
+  ge('sub-sub').textContent = `How many leads each of your warehouses has sent, and where Ronnoco is with them`;
+
+  // Group the company's leads by warehouse
+  const byWh = {};
+  scoped.forEach(l=>{
+    const w = warehouseOf(l);
+    (byWh[w] = byWh[w] || []).push(l);
+  });
+  const rows = Object.keys(byWh).sort((a,b)=>byWh[b].length-byWh[a].length).map(w=>{
+    const ls = byWh[w];
+    const a = ls.filter(l=>l.status==='active');
+    const awaiting = a.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length;
+    const working  = a.filter(l=>['rep_assigned','customer_contacted','follow_up'].includes(l.current_step)).length;
+    const won = ls.filter(l=>l.status==='won').length;
+    const lost = ls.filter(l=>l.status==='lost').length;
+    return `<div class="wh-card" onclick="drillIntoWarehouse('${esc(w).replace(/'/g,"\\'")}')">
+      <div class="wh-head">
+        <div class="wh-name">${esc(w)}</div>
+        <div class="wh-count">${ls.length}<span>lead${ls.length===1?'':'s'}</span></div>
+      </div>
+      <div class="wh-bars">
+        ${awaiting?`<span class="pill pill-amber">${awaiting} awaiting</span>`:''}
+        ${working?`<span class="pill pill-blue">${working} being worked</span>`:''}
+        ${won?`<span class="pill pill-green">${won} won</span>`:''}
+        ${lost?`<span class="pill pill-red">${lost} lost</span>`:''}
+        ${!ls.length?'<span class="muted">No leads</span>':''}
+      </div>
+      <div class="wh-go">View leads →</div>
+    </div>`;
+  }).join('');
+
+  ge('submitted-body').innerHTML = rows
+    ? `<div class="wh-grid">${rows}</div>`
+    : `<div class="card"><div class="empty"><div class="empty-title">No leads yet</div><div class="empty-sub">Leads your warehouses submit to Ronnoco will appear here.</div></div></div>`;
+}
+
+// Breadcrumb for the distributor drill levels
+function subCrumb(atLead){
+  const parts = [`<a href="#" onclick="distBackToWarehouses(event)">${esc(scope)}</a>`];
+  if(drillWarehouse) parts.push(atLead
+    ? `<a href="#" onclick="distBackToLeads(event)">${esc(drillWarehouse)}</a>`
+    : `<span>${esc(drillWarehouse)}</span>`);
+  if(atLead) parts.push('<span>Lead detail</span>');
+  return `<span class="crumb">${parts.join(' <span class="crumb-sep">/</span> ')}</span>`;
+}
+function drillIntoWarehouse(w){ drillWarehouse=w; selId=null; renderSubmitted(); }
+function distBackToWarehouses(e){ if(e)e.preventDefault(); drillWarehouse=''; selId=null; renderSubmitted(); }
+function distBackToLeads(e){ if(e)e.preventDefault(); selId=null; renderSubmitted(); }
+
+// Render a filtered lead list (used inside a warehouse) honoring the existing filter bar
+function renderSubmittedLeadList(scopedWh){
+  const q=(ge('sub-q')?.value||'').toLowerCase().trim();
+  const fStep=ge('sub-step')?.value||'';
+  const fStatus=ge('sub-status')?.value||'active';
+  let list = scopedWh;
+  if(fStatus) list = list.filter(l=>l.status===fStatus);
+  if(fStep) list = list.filter(l=>l.current_step===fStep);
+  if(q) list = list.filter(l=>[l.dba_name,l.legal_business_name,l.customer_full_name,l.contact_email,l.phone].some(v=>(v||'').toString().toLowerCase().includes(q)));
+  list.sort((a,b)=>new Date(b.last_activity_at||0)-new Date(a.last_activity_at||0));
+
   if(!list.length){
-    ge('submitted-body').innerHTML = `<div class="card"><div class="empty"><div class="empty-title">No leads to show</div></div></div>`;
+    ge('submitted-body').innerHTML = `<div class="card"><div class="empty"><div class="empty-title">No leads match</div><div class="empty-sub">Try clearing the status or stage filter above.</div></div></div>`;
     return;
   }
 
@@ -1975,7 +2070,6 @@ function renderSubmitted(){
       <div class="lite-name">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown')}</div>
       <div class="lite-meta">
         ${l.assigned_sales_rep ? `Ronnoco rep: <strong>${esc(l.assigned_sales_rep)}</strong>` : '<em style="color:var(--warning)">Awaiting rep assignment</em>'}
-        ${l.distributor_warehouse?`<br/>${esc(l.distributor_warehouse)}`:''}
         ${l.customer_interest?`<br/><span class="muted">${esc(l.customer_interest)}</span>`:''}
       </div>
     </div>`;
@@ -1995,7 +2089,10 @@ function renderMainInto(targetId, id){
   tgt.innerHTML = `<div class="card-pad" style="padding:0">${origMain.innerHTML}</div>`;
   // restore selectable back-link to clear into THIS view
   tgt.querySelectorAll('a').forEach(a=>{
-    if(a.textContent.includes('All leads')) a.onclick = () => { selId=null; renderCurrentTab(); };
+    if(a.textContent.includes('All leads')){
+      if(role==='distributor' && drillWarehouse) a.textContent = '← '+drillWarehouse;
+      a.onclick = () => { selId=null; renderCurrentTab(); };
+    }
   });
 }
 
