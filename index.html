@@ -1355,6 +1355,11 @@ async function init(){
     } else {
       setupScopeSelect();
       setRoleUI();
+      // Shareable deep link: distributorleads.netlify.app/#login opens the sign-in screen directly
+      const _h = (window.location.hash||'').toLowerCase();
+      if(_h==='#login' || _h==='#distributor' || _h==='#signin'){
+        goDistLogin();
+      }
     }
     // Deep-link handler: ?lead=<uuid> opens that specific lead on load
     const _dlParams = new URLSearchParams(window.location.search);
