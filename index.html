@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Distributor Leads — Ronnoco</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -2036,8 +2037,8 @@ function renderSubmitted(){
 
   ge('submitted-body').innerHTML = cards
     ? `<div class="wh-reportbar">
-         <button class="btn btn-sm btn-primary" onclick="exportMasterReport()">⤓ Master report (all warehouses)</button>
-         <span class="wh-reportbar-hint">High-level summary, one row per warehouse</span>
+         <button class="btn btn-sm btn-primary" onclick="exportMasterReport()">⤓ Master report (Excel)</button>
+         <span class="wh-reportbar-hint">Executive summary + per-warehouse breakdown + full lead detail with cycle times</span>
        </div>
        <div class="wh-grid">${cards}</div>`
     : `<div class="card"><div class="empty"><div class="empty-title">No leads yet</div><div class="empty-sub">Leads your warehouses submit to Ronnoco will appear here.</div></div></div>`;
@@ -2115,7 +2116,7 @@ function renderSubmittedLeadList(scopedWh){
       </tr></tbody>
     </table>
     <div class="wh-detail-actions">
-      <button class="btn btn-sm btn-primary" onclick="exportWarehouseReport()">⤓ Detailed report — ${esc(drillWarehouse)}</button>
+      <button class="btn btn-sm btn-primary" onclick="exportWarehouseReport()">⤓ Detailed report (Excel) — ${esc(drillWarehouse)}</button>
     </div>`;
 
   // filters
@@ -2161,43 +2162,130 @@ function renderSubmittedLeadList(scopedWh){
   ge('submitted-body').innerHTML = metricsTable + listHtml;
 }
 
-// ── Distributor reports ───────────────────────────────────────
-// Master: high-level, one row per warehouse for the whole company
-function exportMasterReport(){
-  const scoped = scopedLeads();
-  if(!scoped.length){ notice('No leads to export.','warn'); return; }
-  const groups = groupByWarehouse(scoped);
-  const headers = ['Warehouse','Total leads','Awaiting Ronnoco','Being worked','Won','Lost','Stalled ('+STALL_DAYS+'d+)','Win rate %'];
-  const rows = Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length).map(w=>{
-    const s=whStats(groups[w]);
-    return [w,s.total,s.awaiting,s.working,s.won,s.lost,s.stalled,s.closed?Math.round(s.won/s.closed*100):0];
+// ── Distributor reports (formatted .xlsx via ExcelJS, timing from lead_timing RPC) ──
+const RPT_NAVY='FF0F2347', RPT_WHITE='FFFFFFFF', RPT_GREY='FF6B7280';
+
+async function fetchTimingRows(){
+  try{
+    const {data,error} = await sb.rpc('lead_timing',{company_filter:scope});
+    if(error) throw error;
+    return data||[];
+  }catch(e){
+    notice('Could not load timing data ('+(e.message||e)+').','warn');
+    return null;
+  }
+}
+function whBucket(step){
+  if(['lead_received','awaiting_director','awaiting_rep'].includes(step)) return 'A';
+  if(['rep_assigned','customer_contacted','follow_up'].includes(step)) return 'W';
+  return '';
+}
+function avgN(nums){ const v=nums.filter(n=>n!=null && isFinite(n)); return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:null; }
+function summarize(rows){
+  const byWh={};
+  rows.forEach(r=>{ const w=(r.distributor_warehouse||'').trim()||'Unspecified'; (byWh[w]=byWh[w]||[]).push(r); });
+  return Object.keys(byWh).sort((a,b)=>byWh[b].length-byWh[a].length).map(w=>{
+    const ls=byWh[w], ac=ls.filter(l=>l.status==='active');
+    const awaiting=ac.filter(l=>whBucket(l.current_step)==='A').length;
+    const working=ac.filter(l=>whBucket(l.current_step)==='W').length;
+    const won=ls.filter(l=>l.status==='won').length, lost=ls.filter(l=>l.status==='lost').length;
+    const stalled=ac.filter(l=>daysSince(l.last_activity_at)>STALL_DAYS).length;
+    const ttc=avgN(ls.map(l=>l.days_to_contact!=null?+l.days_to_contact:null));
+    const ttcN=ls.filter(l=>l.days_to_contact!=null).length;
+    const ctc=avgN(ls.map(l=>l.days_contact_to_close!=null?+l.days_contact_to_close:null));
+    const ctcN=ls.filter(l=>l.days_contact_to_close!=null).length;
+    return {warehouse:w,total:ls.length,awaiting,working,won,lost,stalled,winRate:(won+lost)?won/(won+lost):0,ttc,ttcN,ctc,ctcN};
   });
-  // company total row
-  const t=whStats(scoped);
-  rows.push(['— ALL WAREHOUSES —',t.total,t.awaiting,t.working,t.won,t.lost,t.stalled,t.closed?Math.round(t.won/t.closed*100):0]);
-  csvDownload(`${scope.replace(/\s+/g,'_')}-master-report-${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+}
+function rptSection(ws,r,text){
+  const c=ws.getCell('A'+r); c.value=text;
+  c.font={bold:true,size:11,color:{argb:RPT_WHITE},name:'Arial'};
+  for(let i=1;i<=10;i++) ws.getCell(r,i).fill={type:'pattern',pattern:'solid',fgColor:{argb:RPT_NAVY}};
+}
+function rptHdr(c){
+  c.font={bold:true,color:{argb:RPT_WHITE},name:'Arial',size:10};
+  c.fill={type:'pattern',pattern:'solid',fgColor:{argb:RPT_NAVY}};
+  c.alignment={horizontal:'left',vertical:'middle'};
+}
+function addSummarySheet(wb,company,rows,whS){
+  const ws=wb.addWorksheet('Executive Summary',{views:[{showGridLines:false}]});
+  ws.columns=[{width:44},{width:14},{width:30},{width:10},{width:8},{width:8},{width:10},{width:11},{width:24},{width:26}];
+  const t=rows.length, ac=rows.filter(l=>l.status==='active');
+  const awaiting=ac.filter(l=>whBucket(l.current_step)==='A').length, working=ac.filter(l=>whBucket(l.current_step)==='W').length;
+  const won=rows.filter(l=>l.status==='won').length, lost=rows.filter(l=>l.status==='lost').length;
+  const stalled=ac.filter(l=>daysSince(l.last_activity_at)>STALL_DAYS).length;
+  const ttc=avgN(rows.map(l=>l.days_to_contact!=null?+l.days_to_contact:null)), ttcN=rows.filter(l=>l.days_to_contact!=null).length;
+  const ctc=avgN(rows.map(l=>l.days_contact_to_close!=null?+l.days_contact_to_close:null)), ctcN=rows.filter(l=>l.days_contact_to_close!=null).length;
+  const winRate=(won+lost)?won/(won+lost):0;
+
+  ws.mergeCells('A1:C1'); ws.getCell('A1').value='Ronnoco × '+company; ws.getCell('A1').font={bold:true,size:18,color:{argb:RPT_NAVY},name:'Arial'};
+  ws.mergeCells('A2:C2'); ws.getCell('A2').value='Lead Handling Executive Summary'; ws.getCell('A2').font={bold:true,size:13,color:{argb:'FF374151'},name:'Arial'};
+  ws.mergeCells('A3:C3'); ws.getCell('A3').value='Generated '+new Date().toISOString().slice(0,10)+'  ·  Distributor-facing report'; ws.getCell('A3').font={italic:true,size:10,color:{argb:RPT_GREY},name:'Arial'};
+
+  rptSection(ws,5,'PIPELINE OVERVIEW');
+  const ov=[['Total leads submitted',t],['Awaiting Ronnoco (not yet assigned)',awaiting],['Being worked (rep engaged)',working],['Won',won],['Lost',lost],['Win rate (of closed)',winRate],['Stalled — no activity '+STALL_DAYS+'+ days',stalled]];
+  ov.forEach((row,i)=>{const r=6+i;ws.getCell('A'+r).value=row[0];ws.getCell('A'+r).font={name:'Arial',size:11};const b=ws.getCell('B'+r);b.value=row[1];b.font={name:'Arial',size:11,bold:true};if(row[0].indexOf('Win rate')===0)b.numFmt='0%';});
+
+  rptSection(ws,14,'CYCLE TIMES (averages)');
+  ws.getCell('A15').value='Avg days: lead received → first contact'; ws.getCell('B15').value=ttc==null?'No data':ttc; ws.getCell('C15').value=ttc==null?'':'n = '+ttcN+' of '+t+' leads measured';
+  ws.getCell('A16').value='Avg days: first contact → close / deal'; ws.getCell('B16').value=ctc==null?'No data':ctc; ws.getCell('C16').value=ctc==null?'':'n = '+ctcN+' of '+t+' leads measured';
+  [15,16].forEach(r=>{ws.getCell('A'+r).font={name:'Arial',size:11};ws.getCell('B'+r).font={name:'Arial',size:11,bold:true};ws.getCell('C'+r).font={name:'Arial',size:10,italic:true,color:{argb:RPT_GREY}};});
+
+  ws.getCell('A18').value='Note: cycle times reflect only leads with logged stage-change timestamps. Leads imported in';
+  ws.getCell('A19').value='bulk or closed without a logged event are excluded from the averages. "Estimated" close';
+  ws.getCell('A20').value='dates (status set without a logged win/lost event) are flagged in the Lead Detail tab.';
+  [18,19,20].forEach(r=>ws.getCell('A'+r).font={name:'Arial',size:9,italic:true,color:{argb:RPT_GREY}});
+
+  rptSection(ws,22,'BY WAREHOUSE');
+  const hdr=['Warehouse','Total','Awaiting','Working','Won','Lost','Stalled','Win rate','Avg days to contact (n)','Avg days contact→close (n)'];
+  hdr.forEach((h,i)=>{const c=ws.getCell(23,i+1);c.value=h;rptHdr(c);});
+  whS.forEach((w,i)=>{const r=24+i;const vals=[w.warehouse,w.total,w.awaiting,w.working,w.won,w.lost,w.stalled,w.winRate,w.ttc==null?'—':w.ttc+'  (n='+w.ttcN+')',w.ctc==null?'—':w.ctc+'  (n='+w.ctcN+')'];vals.forEach((v,ci)=>{const c=ws.getCell(r,ci+1);c.value=v;c.font={name:'Arial',size:10};if(ci===7)c.numFmt='0%';});if(i%2)for(let ci=1;ci<=10;ci++)ws.getCell(r,ci).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};});
+}
+function addWarehouseTab(wb,whS){
+  const ws=wb.addWorksheet('By Warehouse',{views:[{state:'frozen',ySplit:1,showGridLines:false}]});
+  const h=[['Warehouse',20],['Total',8],['Awaiting',10],['Working',9],['Won',7],['Lost',7],['Stalled',9],['Win rate',10],['Avg days to contact',18],['n (contact)',11],['Avg days contact→close',22],['n (close)',10]];
+  ws.columns=h.map(c=>({width:c[1]}));
+  h.forEach((c,i)=>{const cell=ws.getCell(1,i+1);cell.value=c[0];rptHdr(cell);});
+  whS.forEach((w,i)=>{const r=2+i;const vals=[w.warehouse,w.total,w.awaiting,w.working,w.won,w.lost,w.stalled,w.winRate,w.ttc==null?'':w.ttc,w.ttcN,w.ctc==null?'':w.ctc,w.ctcN];vals.forEach((v,ci)=>{const c=ws.getCell(r,ci+1);c.value=v;c.font={name:'Arial',size:10};if(ci===7)c.numFmt='0%';});});
+  ws.autoFilter={from:{row:1,column:1},to:{row:whS.length+1,column:12}};
+}
+function addDetailSheet(wb,rows){
+  const ws=wb.addWorksheet('Lead Detail',{views:[{state:'frozen',ySplit:1,showGridLines:false}]});
+  const cols=[['Warehouse',18],['Business (DBA)',24],['Legal Name',22],['Contact',18],['Email',26],['Phone',14],['Address',30],['Distributor Rep',18],['Program',13],['Interest',16],['Stage',16],['Status',9],['Lost Reason',20],['Ronnoco Rep',16],['Received',12],['First Contact',13],['Closed',12],['Days to Contact',15],['Days Contact→Close',18],['Close Est?',11],['Days Idle',10],['Stalled',8],['Last Activity',13]];
+  ws.columns=cols.map(c=>({width:c[1]}));
+  cols.forEach((c,i)=>{const cell=ws.getCell(1,i+1);cell.value=c[0];rptHdr(cell);});
+  const d=v=>v?new Date(v).toISOString().slice(0,10):'';
+  rows.forEach((l,ri)=>{const idle=daysSince(l.last_activity_at);const r=2+ri;const vals=[(l.distributor_warehouse||'').trim()||'Unspecified',l.dba_name||'',l.legal_business_name||'',l.customer_full_name||'',l.contact_email||'',l.phone||'',l.store_address||'',l.distributor_sales_rep||'',l.program_source||'',l.customer_interest||'',stepById(l.current_step)?.label||l.current_step||'',l.status||'',l.lost_reason||'',l.assigned_sales_rep||'',d(l.received_at),d(l.contacted_at),d(l.closed_at),l.days_to_contact!=null?+l.days_to_contact:'',l.days_contact_to_close!=null?+l.days_contact_to_close:'',l.close_estimated?'ESTIMATED':'',(l.status==='active'&&isFinite(idle))?idle:'',(l.status==='active'&&idle>STALL_DAYS)?'YES':'',d(l.last_activity_at)];vals.forEach((v,ci)=>{const c=ws.getCell(r,ci+1);c.value=v;c.font={name:'Arial',size:10};});if(l.status==='active'&&idle>STALL_DAYS)ws.getCell(r,22).font={name:'Arial',size:10,bold:true,color:{argb:'FF92400E'}};if(l.close_estimated)ws.getCell(r,20).font={name:'Arial',size:10,italic:true,color:{argb:RPT_GREY}};});
+  ws.autoFilter={from:{row:1,column:1},to:{row:rows.length+1,column:cols.length}};
+}
+async function saveWorkbook(wb,filename){
+  const buf=await wb.xlsx.writeBuffer();
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+}
+async function exportMasterReport(){
+  if(typeof ExcelJS==='undefined'){ notice('Spreadsheet library still loading — try again in a moment.','warn'); return; }
+  const rows=await fetchTimingRows(); if(rows===null) return;
+  if(!rows.length){ notice('No leads to export.','warn'); return; }
+  const whS=summarize(rows);
+  const wb=new ExcelJS.Workbook(); wb.creator='Ronnoco Distributor Portal';
+  addSummarySheet(wb,scope,rows,whS);
+  addWarehouseTab(wb,whS);
+  addDetailSheet(wb,rows);
+  await saveWorkbook(wb,`${scope.replace(/\s+/g,'_')}-master-report-${new Date().toISOString().slice(0,10)}.xlsx`);
   notice('Master report exported.','ok');
 }
-// Detailed: one row per lead for the drilled-in warehouse
-function exportWarehouseReport(){
-  const scoped = scopedLeads().filter(l=>warehouseOf(l)===drillWarehouse);
-  if(!scoped.length){ notice('No leads to export.','warn'); return; }
-  const headers = ['Business (DBA)','Legal Name','Contact','Email','Phone','Address','Distributor Rep','Program','Interest','Stage','Status','Lost Reason','Ronnoco Rep','Days idle','Stalled','Submitted','Last Activity'];
-  const rows = scoped.map(l=>{
-    const idle = daysSince(l.last_activity_at);
-    return [
-      l.dba_name||'', l.legal_business_name||'', l.customer_full_name||'',
-      l.contact_email||'', l.phone||l.contact_number||'', l.store_address||'',
-      l.distributor_sales_rep||'', l.program_source||'', l.customer_interest||'',
-      stepById(l.current_step)?.label||l.current_step||'', l.status||'', l.lost_reason||'',
-      l.assigned_sales_rep||'',
-      (l.status==='active'&&isFinite(idle))?idle:'',
-      (l.status==='active'&&idle>STALL_DAYS)?'YES':'',
-      l.submission_date?new Date(l.submission_date).toISOString().slice(0,10):(l.created_at?new Date(l.created_at).toISOString().slice(0,10):''),
-      l.last_activity_at?new Date(l.last_activity_at).toISOString().slice(0,10):'',
-    ];
-  });
-  csvDownload(`${scope.replace(/\s+/g,'_')}-${drillWarehouse.replace(/[\s,]+/g,'_')}-detailed-${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+async function exportWarehouseReport(){
+  if(typeof ExcelJS==='undefined'){ notice('Spreadsheet library still loading — try again in a moment.','warn'); return; }
+  const all=await fetchTimingRows(); if(all===null) return;
+  const rows=all.filter(l=>((l.distributor_warehouse||'').trim()||'Unspecified')===drillWarehouse);
+  if(!rows.length){ notice('No leads to export.','warn'); return; }
+  const whS=summarize(rows);
+  const wb=new ExcelJS.Workbook(); wb.creator='Ronnoco Distributor Portal';
+  addSummarySheet(wb,scope+' — '+drillWarehouse,rows,whS);
+  addDetailSheet(wb,rows);
+  await saveWorkbook(wb,`${scope.replace(/\s+/g,'_')}-${drillWarehouse.replace(/[\s,]+/g,'_')}-detailed-${new Date().toISOString().slice(0,10)}.xlsx`);
   notice('Detailed report exported for '+drillWarehouse+'.','ok');
 }
 
