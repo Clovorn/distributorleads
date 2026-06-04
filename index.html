@@ -144,7 +144,7 @@ tbody tr:last-child td{border-bottom:none}
 .pill-green{background:var(--success-bg);color:var(--success)}
 .pill-amber{background:var(--warning-bg);color:var(--warning)}
 .pill-red{background:var(--danger-bg);color:var(--danger)}
-.pill-stall{color:var(--warning)}
+.pill-stall{color:var(--warning);background:var(--warning-bg);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap}
 
 /* ─── Filter bar ────────────────────────────────────── */
 .filterbar{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:12px 14px;margin-bottom:14px}
@@ -264,20 +264,40 @@ select.input:focus,input.input:focus{border-color:var(--border-strong)}
 .lite-meta{font-size:12px;color:var(--text-2);line-height:1.5}
 
 /* ─── Distributor warehouse rollup ───────────────────────── */
-.wh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
-.wh-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:16px;cursor:pointer;transition:background .12s,border-color .12s,box-shadow .12s;display:flex;flex-direction:column;gap:12px}
-.wh-card:hover{background:var(--surface-2);border-color:var(--border-strong);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.wh-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.wh-reportbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.wh-reportbar-hint{font-size:12px;color:var(--text-3)}
+.wh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.wh-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:16px;cursor:pointer;transition:background .12s,border-color .12s,box-shadow .12s;display:flex;flex-direction:column;gap:13px}
+.wh-card:hover{background:var(--surface-2);border-color:var(--border-strong);box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.wh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-height:20px}
 .wh-name{font-size:15px;font-weight:600;color:var(--text);line-height:1.25}
-.wh-count{font-size:24px;font-weight:600;color:var(--text);line-height:1;white-space:nowrap}
-.wh-count span{font-size:11px;font-weight:400;color:var(--text-3);margin-left:4px}
-.wh-bars{display:flex;flex-wrap:wrap;gap:5px;min-height:22px}
-.wh-go{font-size:12px;color:var(--accent);font-weight:500}
+.wh-body{display:flex;align-items:center;gap:16px}
+.wh-donut{flex:0 0 auto}
+.wh-legend{display:grid;grid-template-columns:1fr;gap:3px;font-size:12px;color:var(--text-2);min-width:0}
+.wh-total{display:flex;align-items:baseline;gap:5px;margin-bottom:3px}
+.wh-total-num{font-size:18px;font-weight:700;color:var(--text);line-height:1}
+.wh-total-lbl{font-size:11px;color:var(--text-3)}
+.wh-legend .lg{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.wh-legend .lg b{margin-left:auto;color:var(--text);font-weight:600;padding-left:8px}
+.wh-legend .sw{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
+.wh-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:0.5px solid var(--border);padding-top:10px}
+.wh-rate{font-size:12px;color:var(--text-2);font-weight:500}
+.wh-go{font-size:12px;color:var(--accent);font-weight:600}
+/* warehouse detail metrics table */
+.wh-metric-table{width:100%;border-collapse:collapse;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);overflow:hidden;margin-bottom:6px;font-size:13px}
+.wh-metric-table th{background:var(--surface-2);text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;border-bottom:0.5px solid var(--border)}
+.wh-metric-table td{padding:12px 14px;color:var(--text);font-size:15px}
+.wh-metric-table td b{font-weight:700}
+.wh-metric-table .dot-amber,.wh-metric-table .dot-blue,.wh-metric-table .dot-green,.wh-metric-table .dot-red{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.dot-amber{background:#d97706}.dot-blue{background:#2563eb}.dot-green{background:#16a34a}.dot-red{background:#dc2626}
+.wh-detail-actions{display:flex;justify-content:flex-end;margin:0 0 14px}
+.lite-stall{box-shadow:inset 3px 0 0 var(--warning)}
 .crumb{font-size:13px;color:var(--text-2);font-weight:400}
 .crumb a{color:var(--accent);text-decoration:none;cursor:pointer}
 .crumb a:hover{text-decoration:underline}
 .crumb .crumb-sep{color:var(--text-3);margin:0 2px}
 .crumb span:last-child:not(.crumb-sep){color:var(--text);font-weight:500}
+@media(max-width:520px){.wh-metric-table{display:block;overflow-x:auto;white-space:nowrap}}
 
 /* ─── Notice / banner ────────────────────────────────────── */
 .notice{font-size:13px;padding:9px 14px;border-radius:var(--rad);margin-bottom:14px;display:none;border:0.5px solid transparent}
@@ -1985,40 +2005,80 @@ function renderSubmitted(){
 
   // ── Warehouse rollup (top level for the company) ─────────────
   ge('sub-title').textContent = `${scope} — leads by warehouse`;
-  ge('sub-sub').textContent = `How many leads each of your warehouses has sent, and where Ronnoco is with them`;
+  ge('sub-sub').textContent = `Each warehouse's lead volume, pipeline mix, and stalled accounts at a glance`;
 
-  // Group the company's leads by warehouse
-  const byWh = {};
-  scoped.forEach(l=>{
-    const w = warehouseOf(l);
-    (byWh[w] = byWh[w] || []).push(l);
-  });
-  const rows = Object.keys(byWh).sort((a,b)=>byWh[b].length-byWh[a].length).map(w=>{
-    const ls = byWh[w];
-    const a = ls.filter(l=>l.status==='active');
-    const awaiting = a.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length;
-    const working  = a.filter(l=>['rep_assigned','customer_contacted','follow_up'].includes(l.current_step)).length;
-    const won = ls.filter(l=>l.status==='won').length;
-    const lost = ls.filter(l=>l.status==='lost').length;
+  const groups = groupByWarehouse(scoped);
+  const names = Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length);
+
+  const cards = names.map(w=>{
+    const s = whStats(groups[w]);
     return `<div class="wh-card" onclick="drillIntoWarehouse('${esc(w).replace(/'/g,"\\'")}')">
       <div class="wh-head">
         <div class="wh-name">${esc(w)}</div>
-        <div class="wh-count">${ls.length}<span>lead${ls.length===1?'':'s'}</span></div>
+        ${s.stalled?`<span class="pill-stall" title="${s.stalled} lead${s.stalled===1?'':'s'} idle ${STALL_DAYS}+ days">⚠ ${s.stalled} stalled</span>`:''}
       </div>
-      <div class="wh-bars">
-        ${awaiting?`<span class="pill pill-amber">${awaiting} awaiting</span>`:''}
-        ${working?`<span class="pill pill-blue">${working} being worked</span>`:''}
-        ${won?`<span class="pill pill-green">${won} won</span>`:''}
-        ${lost?`<span class="pill pill-red">${lost} lost</span>`:''}
-        ${!ls.length?'<span class="muted">No leads</span>':''}
+      <div class="wh-body">
+        ${donutSVG(s)}
+        <div class="wh-legend">
+          <div class="wh-total"><span class="wh-total-num">${s.total}</span><span class="wh-total-lbl">lead${s.total===1?'':'s'}</span></div>
+          <div class="lg"><i class="sw" style="background:var(--amber,#d97706)"></i>Awaiting <b>${s.awaiting}</b></div>
+          <div class="lg"><i class="sw" style="background:var(--blue,#2563eb)"></i>Being worked <b>${s.working}</b></div>
+          <div class="lg"><i class="sw" style="background:var(--green,#16a34a)"></i>Won <b>${s.won}</b></div>
+          <div class="lg"><i class="sw" style="background:var(--red,#dc2626)"></i>Lost <b>${s.lost}</b></div>
+        </div>
       </div>
-      <div class="wh-go">View leads →</div>
+      <div class="wh-foot">
+        <span class="wh-rate">${s.closed?Math.round(s.won/s.closed*100):0}% win rate</span>
+        <span class="wh-go">View leads →</span>
+      </div>
     </div>`;
   }).join('');
 
-  ge('submitted-body').innerHTML = rows
-    ? `<div class="wh-grid">${rows}</div>`
+  ge('submitted-body').innerHTML = cards
+    ? `<div class="wh-reportbar">
+         <button class="btn btn-sm btn-primary" onclick="exportMasterReport()">⤓ Master report (all warehouses)</button>
+         <span class="wh-reportbar-hint">High-level summary, one row per warehouse</span>
+       </div>
+       <div class="wh-grid">${cards}</div>`
     : `<div class="card"><div class="empty"><div class="empty-title">No leads yet</div><div class="empty-sub">Leads your warehouses submit to Ronnoco will appear here.</div></div></div>`;
+}
+
+// ── Shared warehouse helpers (single source of truth for all metrics) ──
+function groupByWarehouse(list){
+  const g={};
+  list.forEach(l=>{ const w=warehouseOf(l); (g[w]=g[w]||[]).push(l); });
+  return g;
+}
+function whStats(ls){
+  const active = ls.filter(l=>l.status==='active');
+  const awaiting = active.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length;
+  const working  = active.filter(l=>['rep_assigned','customer_contacted','follow_up'].includes(l.current_step)).length;
+  const won = ls.filter(l=>l.status==='won').length;
+  const lost = ls.filter(l=>l.status==='lost').length;
+  const stalled = active.filter(l=>daysSince(l.last_activity_at)>STALL_DAYS).length;
+  return { total:ls.length, awaiting, working, won, lost, stalled, active:active.length, closed:won+lost };
+}
+// Compact SVG donut: amber awaiting · blue working · green won · red lost
+function donutSVG(s){
+  const segs=[['#d97706',s.awaiting],['#2563eb',s.working],['#16a34a',s.won],['#dc2626',s.lost]];
+  const sum = segs.reduce((a,[,v])=>a+v,0);
+  const R=30, C=2*Math.PI*R, cx=36, cy=36;
+  let off=0, ring='';
+  if(sum>0){
+    segs.forEach(([col,v])=>{
+      if(!v) return;
+      const len=v/sum*C;
+      ring+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${col}" stroke-width="11" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;
+      off+=len;
+    });
+  } else {
+    ring=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--border)" stroke-width="11"/>`;
+  }
+  return `<svg class="wh-donut" viewBox="0 0 72 72" width="72" height="72" role="img" aria-label="pipeline distribution">
+    ${ring}
+    <text x="${cx}" y="${cy-1}" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="700" fill="var(--text)">${s.total}</text>
+    <text x="${cx}" y="${cy+12}" text-anchor="middle" dominant-baseline="central" font-size="7.5" fill="var(--text-3)">LEADS</text>
+  </svg>`;
 }
 
 // Breadcrumb for the distributor drill levels
@@ -2034,8 +2094,31 @@ function drillIntoWarehouse(w){ drillWarehouse=w; selId=null; renderSubmitted();
 function distBackToWarehouses(e){ if(e)e.preventDefault(); drillWarehouse=''; selId=null; renderSubmitted(); }
 function distBackToLeads(e){ if(e)e.preventDefault(); selId=null; renderSubmitted(); }
 
-// Render a filtered lead list (used inside a warehouse) honoring the existing filter bar
+// Render the warehouse metrics table + the filtered lead list below it
 function renderSubmittedLeadList(scopedWh){
+  const s = whStats(scopedWh);
+  const oldest = scopedWh.filter(l=>l.status==='active').reduce((m,l)=>{const d=daysSince(l.last_activity_at);return d>m?d:m;},0);
+  const metricsTable = `
+    <table class="wh-metric-table">
+      <thead><tr>
+        <th>Total</th><th>Awaiting Ronnoco</th><th>Being worked</th><th>Won</th><th>Lost</th><th>Stalled (${STALL_DAYS}d+)</th><th>Win rate</th><th>Oldest idle</th>
+      </tr></thead>
+      <tbody><tr>
+        <td><b>${s.total}</b></td>
+        <td><span class="dot-amber"></span>${s.awaiting}</td>
+        <td><span class="dot-blue"></span>${s.working}</td>
+        <td><span class="dot-green"></span>${s.won}</td>
+        <td><span class="dot-red"></span>${s.lost}</td>
+        <td>${s.stalled?`<span class="pill-stall">⚠ ${s.stalled}</span>`:'0'}</td>
+        <td>${s.closed?Math.round(s.won/s.closed*100):0}%</td>
+        <td>${oldest?oldest+'d':'—'}</td>
+      </tr></tbody>
+    </table>
+    <div class="wh-detail-actions">
+      <button class="btn btn-sm btn-primary" onclick="exportWarehouseReport()">⤓ Detailed report — ${esc(drillWarehouse)}</button>
+    </div>`;
+
+  // filters
   const q=(ge('sub-q')?.value||'').toLowerCase().trim();
   const fStep=ge('sub-step')?.value||'';
   const fStatus=ge('sub-status')?.value||'active';
@@ -2045,35 +2128,77 @@ function renderSubmittedLeadList(scopedWh){
   if(q) list = list.filter(l=>[l.dba_name,l.legal_business_name,l.customer_full_name,l.contact_email,l.phone].some(v=>(v||'').toString().toLowerCase().includes(q)));
   list.sort((a,b)=>new Date(b.last_activity_at||0)-new Date(a.last_activity_at||0));
 
-  if(!list.length){
-    ge('submitted-body').innerHTML = `<div class="card"><div class="empty"><div class="empty-title">No leads match</div><div class="empty-sub">Try clearing the status or stage filter above.</div></div></div>`;
-    return;
-  }
+  const listHtml = !list.length
+    ? `<div class="card"><div class="empty"><div class="empty-title">No leads match</div><div class="empty-sub">Try clearing the status or stage filter above.</div></div></div>`
+    : `<div class="lite-grid">${list.map(l=>{
+        const step = stepById(l.current_step);
+        let pillCls='pill-gray', pillTxt = step ? step.label : '—';
+        if(l.status==='won'){ pillCls='pill-green'; pillTxt='Won'; }
+        else if(l.status==='lost'){ pillCls='pill-red'; pillTxt='Lost'; }
+        else if(l.current_step==='lead_received'){ pillCls='pill-blue'; }
+        else if(l.current_step==='awaiting_director'){ pillCls='pill-amber'; }
+        else if(l.current_step==='awaiting_rep'){ pillCls='pill-amber'; }
+        else if(l.current_step==='rep_assigned'){ pillCls='pill-blue'; }
+        else if(l.current_step==='customer_contacted'){ pillCls='pill-green'; }
+        else if(l.current_step==='follow_up'){ pillCls='pill-blue'; }
+        const stalled = l.status==='active' && daysSince(l.last_activity_at)>STALL_DAYS;
+        return `<div class="lite-card ${stalled?'lite-stall':''}" onclick="selectLead('${l.id}')">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
+            <span class="pill ${pillCls}">${esc(pillTxt)}</span>
+            <span style="display:flex;align-items:center;gap:6px">
+              ${stalled?`<span class="pill-stall">⚠ ${daysSince(l.last_activity_at)}d idle</span>`:''}
+              <span style="font-size:11px;color:var(--text-3)">${fmtRel(l.last_activity_at||l.created_at)}</span>
+            </span>
+          </div>
+          <div class="lite-name">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown')}</div>
+          <div class="lite-meta">
+            ${l.assigned_sales_rep ? `Ronnoco rep: <strong>${esc(l.assigned_sales_rep)}</strong>` : '<em style="color:var(--warning)">Awaiting rep assignment</em>'}
+            ${l.customer_interest?`<br/><span class="muted">${esc(l.customer_interest)}</span>`:''}
+          </div>
+        </div>`;
+      }).join('')}</div>`;
 
-  ge('submitted-body').innerHTML = `<div class="lite-grid">${list.map(l=>{
-    const step = stepById(l.current_step);
-    let pillCls='pill-gray', pillTxt = step ? step.label : '—';
-    if(l.status==='won'){ pillCls='pill-green'; pillTxt='Won'; }
-    else if(l.status==='lost'){ pillCls='pill-red'; pillTxt='Lost'; }
-    else if(l.current_step==='lead_received'){ pillCls='pill-blue'; }
-    else if(l.current_step==='awaiting_director'){ pillCls='pill-amber'; }
-    else if(l.current_step==='awaiting_rep'){ pillCls='pill-amber'; }
-    else if(l.current_step==='rep_assigned'){ pillCls='pill-blue'; }
-    else if(l.current_step==='customer_contacted'){ pillCls='pill-green'; }
-    else if(l.current_step==='follow_up'){ pillCls='pill-blue'; }
+  ge('submitted-body').innerHTML = metricsTable + listHtml;
+}
 
-    return `<div class="lite-card" onclick="selectLead('${l.id}')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
-        <span class="pill ${pillCls}">${esc(pillTxt)}</span>
-        <span style="font-size:11px;color:var(--text-3)">${fmtRel(l.last_activity_at||l.created_at)}</span>
-      </div>
-      <div class="lite-name">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown')}</div>
-      <div class="lite-meta">
-        ${l.assigned_sales_rep ? `Ronnoco rep: <strong>${esc(l.assigned_sales_rep)}</strong>` : '<em style="color:var(--warning)">Awaiting rep assignment</em>'}
-        ${l.customer_interest?`<br/><span class="muted">${esc(l.customer_interest)}</span>`:''}
-      </div>
-    </div>`;
-  }).join('')}</div>`;
+// ── Distributor reports ───────────────────────────────────────
+// Master: high-level, one row per warehouse for the whole company
+function exportMasterReport(){
+  const scoped = scopedLeads();
+  if(!scoped.length){ notice('No leads to export.','warn'); return; }
+  const groups = groupByWarehouse(scoped);
+  const headers = ['Warehouse','Total leads','Awaiting Ronnoco','Being worked','Won','Lost','Stalled ('+STALL_DAYS+'d+)','Win rate %'];
+  const rows = Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length).map(w=>{
+    const s=whStats(groups[w]);
+    return [w,s.total,s.awaiting,s.working,s.won,s.lost,s.stalled,s.closed?Math.round(s.won/s.closed*100):0];
+  });
+  // company total row
+  const t=whStats(scoped);
+  rows.push(['— ALL WAREHOUSES —',t.total,t.awaiting,t.working,t.won,t.lost,t.stalled,t.closed?Math.round(t.won/t.closed*100):0]);
+  csvDownload(`${scope.replace(/\s+/g,'_')}-master-report-${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+  notice('Master report exported.','ok');
+}
+// Detailed: one row per lead for the drilled-in warehouse
+function exportWarehouseReport(){
+  const scoped = scopedLeads().filter(l=>warehouseOf(l)===drillWarehouse);
+  if(!scoped.length){ notice('No leads to export.','warn'); return; }
+  const headers = ['Business (DBA)','Legal Name','Contact','Email','Phone','Address','Distributor Rep','Program','Interest','Stage','Status','Lost Reason','Ronnoco Rep','Days idle','Stalled','Submitted','Last Activity'];
+  const rows = scoped.map(l=>{
+    const idle = daysSince(l.last_activity_at);
+    return [
+      l.dba_name||'', l.legal_business_name||'', l.customer_full_name||'',
+      l.contact_email||'', l.phone||l.contact_number||'', l.store_address||'',
+      l.distributor_sales_rep||'', l.program_source||'', l.customer_interest||'',
+      stepById(l.current_step)?.label||l.current_step||'', l.status||'', l.lost_reason||'',
+      l.assigned_sales_rep||'',
+      (l.status==='active'&&isFinite(idle))?idle:'',
+      (l.status==='active'&&idle>STALL_DAYS)?'YES':'',
+      l.submission_date?new Date(l.submission_date).toISOString().slice(0,10):(l.created_at?new Date(l.created_at).toISOString().slice(0,10):''),
+      l.last_activity_at?new Date(l.last_activity_at).toISOString().slice(0,10):'',
+    ];
+  });
+  csvDownload(`${scope.replace(/\s+/g,'_')}-${drillWarehouse.replace(/[\s,]+/g,'_')}-detailed-${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+  notice('Detailed report exported for '+drillWarehouse+'.','ok');
 }
 
 // Render the shared lead detail card into a different container id
@@ -2550,6 +2675,18 @@ async function saveNewLead(){
 // ============================================================
 // EXPORT
 // ============================================================
+// Shared CSV builder + downloader (one place for quoting rules)
+function csvDownload(filename, headers, rows){
+  const csv = [headers, ...rows].map(r=>r.map(c=>{
+    const s=String(c==null?'':c);
+    return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+  }).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=filename;
+  a.click(); URL.revokeObjectURL(url);
+}
+
 function exportCurrent(){
   const list = currentTab==='leads' ? applyFilters()
              : currentTab==='submitted' ? scopedLeads()
@@ -2568,15 +2705,10 @@ function exportCurrent(){
     l.last_activity_at?new Date(l.last_activity_at).toISOString():'',
     l.created_at?new Date(l.created_at).toISOString():'',
   ]);
-  const csv = [headers, ...rows].map(r=>r.map(c=>{
-    const s=String(c==null?'':c);
-    return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
-  }).join(',')).join('\n');
-  const blob = new Blob([csv],{type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url;
-  a.download = `leads-${role}${scope?'-'+scope.replace(/\s+/g,'_'):''}-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click(); URL.revokeObjectURL(url);
+  csvDownload(
+    `leads-${role}${scope?'-'+scope.replace(/\s+/g,'_'):''}-${new Date().toISOString().slice(0,10)}.csv`,
+    headers, rows
+  );
   notice('Exported '+list.length+' leads.','ok');
 }
 
@@ -2602,11 +2734,7 @@ function exportScorecard(){
   });
   const headers = ['Rep','Received','Awaiting Director','Awaiting Rep','Assigned','Contacted','Follow-up','Won','Lost','Days idle'];
   const rows = Object.values(byRep).map(r=>[r.rep,r.received,r.awaitingDir,r.awaitingRep,r.assigned,r.contacted,r.followup,r.won,r.lost,r.lastAct?daysSince(r.lastAct):'']);
-  const csv = [headers,...rows].map(r=>r.map(c=>{const s=String(c==null?'':c);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}).join(',')).join('\n');
-  const blob = new Blob([csv],{type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download = `scorecard-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click(); URL.revokeObjectURL(url);
+  csvDownload(`scorecard-${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
   notice('Scorecard exported.','ok');
 }
 
