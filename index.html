@@ -383,6 +383,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 
     <div class="top-right">
       <span class="dot" id="conn-dot" title="Connecting…"></span>
+      <button class="btn btn-sm btn-ghost" onclick="goDistLogin()">Distributor sign-in</button>
       <button class="btn btn-sm btn-ghost" onclick="goHelp()">Help</button>
       <button class="btn btn-sm btn-ghost" onclick="goSettings()">Settings</button>
     </div>
@@ -588,6 +589,21 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
   </div>
 </div>
 
+<div id="pg-distlogin" class="page">
+  <div class="lock-wrap">
+    <div class="lock-card">
+      <div class="brand-mark" style="margin:0 auto 14px">R</div>
+      <div style="font-size:16px;font-weight:600;margin-bottom:4px">Distributor Sign In</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:18px">View your warehouses' leads and their status with Ronnoco</div>
+      <input class="finp" type="text" id="dl-user" placeholder="Username" autocomplete="username" style="margin-bottom:8px" onkeydown="if(event.key==='Enter')ge('dl-pass').focus()"/>
+      <input class="finp" type="password" id="dl-pass" placeholder="Password" autocomplete="current-password" style="margin-bottom:10px" onkeydown="if(event.key==='Enter')distLogin()"/>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:6px" onclick="distLogin()">Sign in →</button>
+      <div id="dl-err" style="font-size:12px;color:var(--danger);display:none;margin-top:4px">Incorrect username or password</div>
+      <button class="btn btn-ghost" style="width:100%;margin-top:4px" onclick="showPage('main')">Back</button>
+    </div>
+  </div>
+</div>
+
 <div id="pg-settings" class="page">
   <div class="topbar">
     <div class="brand">
@@ -648,6 +664,30 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
         <button class="btn btn-sm btn-primary" onclick="addDirector()">Add</button>
       </div>
       <div id="director-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <div class="scard">
+      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Distributor logins</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Create a sign-in for a distributor contact. They'll see only their assigned company's warehouses and leads, with no internal rep notes. <span style="color:var(--warning)">Tier-1 access gate — see note below.</span></div>
+      <div style="display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap">
+        <input class="finp" id="du-name" placeholder="Display name…" style="flex:1.4;min-width:140px"/>
+        <input class="finp" id="du-user" placeholder="Username" style="flex:1;min-width:120px" autocomplete="off"/>
+      </div>
+      <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap">
+        <select class="finp" id="du-company" style="flex:1;min-width:130px">
+          <option value="">— Company —</option>
+          <option value="HT Hackney">HT Hackney</option>
+          <option value="Sledd">Sledd</option>
+          <option value="CoreMark">CoreMark</option>
+        </select>
+        <input class="finp" id="du-pass" type="text" placeholder="Set password" style="flex:1;min-width:120px" autocomplete="off"/>
+        <button class="btn btn-sm btn-primary" onclick="saveDistUser()">Create / update</button>
+      </div>
+      <div id="du-msg" style="font-size:13px;margin-bottom:10px"></div>
+      <div id="du-list" style="display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto"></div>
+      <div style="font-size:12px;color:var(--text-3);margin-top:12px;line-height:1.6;border-top:0.5px solid var(--border);padding-top:10px">
+        <strong>Security note:</strong> this is a usability gate, not hardened security. Passwords are stored hashed, but the database is still reachable by the app's public key. Full enforcement (database-level isolation so one distributor can never load another's rows) requires the Supabase Auth + row-level-security upgrade — planned as the next step.
+      </div>
     </div>
 
     <div class="scard">
@@ -951,7 +991,7 @@ const open_modal = id => ge(id).classList.add('open');
 const close_modal = id => ge(id).classList.remove('open');
 
 function showPage(n){
-  ['main','lock','settings','help'].forEach(p=>{const e=ge('pg-'+p);if(e)e.classList.remove('on');});
+  ['main','lock','distlogin','settings','help'].forEach(p=>{const e=ge('pg-'+p);if(e)e.classList.remove('on');});
   const t=ge('pg-'+n); if(t)t.classList.add('on');
   window.scrollTo(0,0);
 }
@@ -965,6 +1005,56 @@ function unlock(){
   if(pw===stored){ sessionStorage.setItem('unlocked','1'); ge('lock-pw').value=''; ge('lock-err').style.display='none'; showPage('settings'); refreshSettings(); }
   else ge('lock-err').style.display='block';
 }
+
+// ── Distributor session (Tier-1 UI gate) ──────────────────────
+let distSession = null; // {id, username, company, display_name} when a distributor is signed in
+function getDistSession(){
+  try{ return JSON.parse(sessionStorage.getItem('dist_session')||'null'); }catch(e){ return null; }
+}
+async function distLogin(){
+  const u=ge('dl-user').value.trim(), p=ge('dl-pass').value;
+  if(!u||!p){ ge('dl-err').textContent='Enter username and password'; ge('dl-err').style.display='block'; return; }
+  try{
+    const {data,error}=await sb.rpc('distributor_login',{p_username:u,p_password:p});
+    if(error) throw error;
+    if(!data || !data.length){ ge('dl-err').textContent='Incorrect username or password'; ge('dl-err').style.display='block'; return; }
+    const row=data[0];
+    const sess={id:row.id, username:row.username, company:row.distributor_company, display_name:row.display_name||row.username};
+    sessionStorage.setItem('dist_session', JSON.stringify(sess));
+    ge('dl-pass').value=''; ge('dl-err').style.display='none';
+    applyDistSession(sess);
+  }catch(e){
+    ge('dl-err').textContent='Sign in unavailable — '+(e.message||e); ge('dl-err').style.display='block';
+  }
+}
+// Lock the whole UI into this distributor's scoped view
+function applyDistSession(sess){
+  distSession=sess;
+  role='distributor';
+  scope=sess.company;
+  drillWarehouse=''; selId=null;
+  // hide the role switcher + scope picker; distributors don't choose
+  const rs=document.querySelector('.role-switcher'); if(rs) rs.style.display='none';
+  // swap Settings button for a signed-in identity + Log out
+  const tr=document.querySelector('#pg-main .top-right');
+  if(tr && !ge('dist-identity')){
+    tr.innerHTML = `<span class="dot live" id="conn-dot" title="Connected"></span>
+      <span id="dist-identity" style="font-size:12px;color:var(--text-2)">Signed in: <strong>${esc(sess.display_name)}</strong> · ${esc(sess.company)}</span>
+      <button class="btn btn-sm btn-ghost" onclick="goHelp()">Help</button>
+      <button class="btn btn-sm btn-ghost" onclick="distLogout()">Log out</button>`;
+  }
+  showPage('main');
+  setupScopeSelect();
+  setRoleUI();
+  renderAll();
+}
+function distLogout(){
+  sessionStorage.removeItem('dist_session');
+  distSession=null;
+  // simplest reliable reset: reload to clean admin/default state
+  window.location.href = window.location.pathname;
+}
+function goDistLogin(){ showPage('distlogin'); setTimeout(()=>ge('dl-user')?.focus(),80); }
 function notice(msg,type,elId){
   const el=ge(elId||'notice'); if(!el) return;
   el.className='notice show notice-'+(type||'info');
@@ -1230,8 +1320,14 @@ async function init(){
   try {
     await loadLeads();
     await loadReps();
-    setupScopeSelect();
-    setRoleUI();
+    const _ds = getDistSession();
+    if(_ds){
+      // Boot straight into the locked distributor view
+      applyDistSession(_ds);
+    } else {
+      setupScopeSelect();
+      setRoleUI();
+    }
     // Deep-link handler: ?lead=<uuid> opens that specific lead on load
     const _dlParams = new URLSearchParams(window.location.search);
     const _dlLeadId = _dlParams.get('lead');
@@ -2837,6 +2933,59 @@ function refreshSettings(){
   ge('s-status').innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${hasKey?'#16a34a':'#dc2626'};margin-right:5px;vertical-align:middle"></span>API Key: <strong>${hasKey?'Saved':'Not set'}</strong><br/><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:5px;vertical-align:middle"></span>Supabase: <strong>Connected</strong>`;
   // Refresh in-memory reps & directors so the UI is current, then render lists
   loadReps().then(()=>{ renderRepList(); renderDirectorList(); });
+  loadDistUsers();
+}
+
+// ── Distributor user management (admin side) ──────────────────
+async function loadDistUsers(){
+  const box=ge('du-list'); if(!box) return;
+  try{
+    const {data,error}=await sb.from('distributor_users')
+      .select('id,username,display_name,distributor_company,active,last_login_at')
+      .order('distributor_company').order('username');
+    if(error) throw error;
+    if(!data || !data.length){ box.innerHTML='<div style="font-size:12px;color:var(--text-3)">No distributor logins yet.</div>'; return; }
+    box.innerHTML = data.map(u=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface-2);border-radius:6px;${u.active?'':'opacity:.5'}">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:500">${esc(u.display_name||u.username)} <span style="color:var(--text-3);font-weight:400">· ${esc(u.username)}</span></div>
+          <div style="font-size:11px;color:var(--text-3)">${esc(u.distributor_company)}${u.last_login_at?' · last login '+fmtRel(u.last_login_at):' · never signed in'}${u.active?'':' · DISABLED'}</div>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="resetDistUser('${u.id}','${esc(u.username)}')">Reset password</button>
+        <button class="btn btn-sm btn-ghost" onclick="toggleDistUser('${u.id}',${u.active})">${u.active?'Disable':'Enable'}</button>
+      </div>`).join('');
+  }catch(e){ box.innerHTML='<div style="font-size:12px;color:var(--danger)">Could not load logins: '+esc(e.message||String(e))+'</div>'; }
+}
+async function saveDistUser(){
+  const name=ge('du-name').value.trim(), user=ge('du-user').value.trim(),
+        company=ge('du-company').value, pass=ge('du-pass').value;
+  const msg=ge('du-msg');
+  if(!user || !company || !pass){ msg.style.color='var(--danger)'; msg.textContent='Username, company, and password are required.'; return; }
+  if(pass.length<6){ msg.style.color='var(--danger)'; msg.textContent='Password should be at least 6 characters.'; return; }
+  try{
+    const {error}=await sb.rpc('distributor_user_upsert',{p_username:user,p_password:pass,p_display_name:name||user,p_company:company});
+    if(error) throw error;
+    msg.style.color='var(--success)'; msg.textContent='Saved login for '+user+' ('+company+').';
+    ge('du-name').value=''; ge('du-user').value=''; ge('du-pass').value=''; ge('du-company').value='';
+    loadDistUsers();
+  }catch(e){ msg.style.color='var(--danger)'; msg.textContent='Error: '+(e.message||e); }
+}
+async function resetDistUser(id, username){
+  const pw=prompt('New password for '+username+' (min 6 chars):');
+  if(pw==null) return;
+  if(pw.length<6){ notice('Password too short.','warn'); return; }
+  try{
+    const {error}=await sb.rpc('distributor_user_setpw',{p_id:id,p_password:pw});
+    if(error) throw error;
+    notice('Password reset for '+username+'.','ok');
+  }catch(e){ notice('Reset failed: '+(e.message||e),'warn'); }
+}
+async function toggleDistUser(id, currentlyActive){
+  try{
+    const {error}=await sb.from('distributor_users').update({active:!currentlyActive}).eq('id',id);
+    if(error) throw error;
+    loadDistUsers();
+  }catch(e){ notice('Update failed: '+(e.message||e),'warn'); }
 }
 async function testApiKey(){
   const key = ge('s-apikey').value.trim(); if(!key) return;
