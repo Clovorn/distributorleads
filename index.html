@@ -691,26 +691,35 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
     </div>
 
     <div class="scard">
-      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Distributor logins</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Create a sign-in for a distributor contact. They'll see only their assigned company's warehouses and leads, with no internal rep notes. <span style="color:var(--warning)">Tier-1 access gate — see note below.</span></div>
-      <div style="display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap">
-        <input class="finp" id="du-name" placeholder="Display name…" style="flex:1.4;min-width:140px"/>
-        <input class="finp" id="du-user" placeholder="Username" style="flex:1;min-width:120px" autocomplete="off"/>
+      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Distributor accounts</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Create a secure sign-in for a distributor. Each account is locked to one company at the database level — they can only ever load their own company's leads, even outside this app. They sign in at <code style="background:var(--surface-2);padding:1px 5px;border-radius:4px">/distributor.html</code>.</div>
+
+      <label class="flbl" style="font-size:12px;color:var(--text-2)">Admin secret <span style="color:var(--text-3)">(the DIST_ADMIN_SECRET you set in Netlify — entered once per session)</span></label>
+      <div style="display:flex;gap:7px;margin-bottom:12px">
+        <input class="finp" id="da-secret" type="password" placeholder="Admin secret" style="flex:1" autocomplete="off"/>
+        <button class="btn btn-sm" onclick="daRefresh()">Connect</button>
       </div>
-      <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap">
-        <select class="finp" id="du-company" style="flex:1;min-width:130px">
-          <option value="">— Company —</option>
-          <option value="HT Hackney">HT Hackney</option>
-          <option value="Sledd">Sledd</option>
-          <option value="CoreMark">CoreMark</option>
-        </select>
-        <input class="finp" id="du-pass" type="text" placeholder="Set password" style="flex:1;min-width:120px" autocomplete="off"/>
-        <button class="btn btn-sm btn-primary" onclick="saveDistUser()">Create / update</button>
+
+      <div id="da-form" style="opacity:.5;pointer-events:none">
+        <div style="display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap">
+          <input class="finp" id="da-name" placeholder="Display name…" style="flex:1.4;min-width:140px"/>
+          <input class="finp" id="da-email" type="email" placeholder="Email" style="flex:1.4;min-width:160px" autocomplete="off"/>
+        </div>
+        <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap">
+          <select class="finp" id="da-company" style="flex:1;min-width:130px">
+            <option value="">— Company —</option>
+            <option value="HT Hackney">HT Hackney</option>
+            <option value="Sledd">Sledd</option>
+            <option value="CoreMark">CoreMark</option>
+          </select>
+          <input class="finp" id="da-pass" type="text" placeholder="Password (8+ chars)" style="flex:1;min-width:140px" autocomplete="off"/>
+          <button class="btn btn-sm btn-primary" onclick="daCreate()">Create / update</button>
+        </div>
       </div>
-      <div id="du-msg" style="font-size:13px;margin-bottom:10px"></div>
-      <div id="du-list" style="display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto"></div>
+      <div id="da-msg" style="font-size:13px;margin-bottom:10px"></div>
+      <div id="da-list" style="display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto"></div>
       <div style="font-size:12px;color:var(--text-3);margin-top:12px;line-height:1.6;border-top:0.5px solid var(--border);padding-top:10px">
-        <strong>Security note:</strong> this is a usability gate, not hardened security. Passwords are stored hashed, but the database is still reachable by the app's public key. Full enforcement (database-level isolation so one distributor can never load another's rows) requires the Supabase Auth + row-level-security upgrade — planned as the next step.
+        Accounts are real Supabase Auth users with database-enforced isolation (Row-Level Security). The admin secret is held only in this browser tab for the session and is never stored.
       </div>
     </div>
 
@@ -2966,59 +2975,77 @@ function refreshSettings(){
   ge('s-status').innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${hasKey?'#16a34a':'#dc2626'};margin-right:5px;vertical-align:middle"></span>API Key: <strong>${hasKey?'Saved':'Not set'}</strong><br/><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:5px;vertical-align:middle"></span>Supabase: <strong>Connected</strong>`;
   // Refresh in-memory reps & directors so the UI is current, then render lists
   loadReps().then(()=>{ renderRepList(); renderDirectorList(); });
-  loadDistUsers();
+  ge('da-list').innerHTML='<div style="font-size:12px;color:var(--text-3)">Enter the admin secret and click Connect to manage distributor accounts.</div>';
 }
 
-// ── Distributor user management (admin side) ──────────────────
-async function loadDistUsers(){
-  const box=ge('du-list'); if(!box) return;
-  try{
-    const {data,error}=await sb.from('distributor_users')
-      .select('id,username,display_name,distributor_company,active,last_login_at')
-      .order('distributor_company').order('username');
-    if(error) throw error;
-    if(!data || !data.length){ box.innerHTML='<div style="font-size:12px;color:var(--text-3)">No distributor logins yet.</div>'; return; }
-    box.innerHTML = data.map(u=>`
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface-2);border-radius:6px;${u.active?'':'opacity:.5'}">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:500">${esc(u.display_name||u.username)} <span style="color:var(--text-3);font-weight:400">· ${esc(u.username)}</span></div>
-          <div style="font-size:11px;color:var(--text-3)">${esc(u.distributor_company)}${u.last_login_at?' · last login '+fmtRel(u.last_login_at):' · never signed in'}${u.active?'':' · DISABLED'}</div>
-        </div>
-        <button class="btn btn-sm btn-ghost" onclick="resetDistUser('${u.id}','${esc(u.username)}')">Reset password</button>
-        <button class="btn btn-sm btn-ghost" onclick="toggleDistUser('${u.id}',${u.active})">${u.active?'Disable':'Enable'}</button>
-      </div>`).join('');
-  }catch(e){ box.innerHTML='<div style="font-size:12px;color:var(--danger)">Could not load logins: '+esc(e.message||String(e))+'</div>'; }
+// ── Distributor accounts (real Supabase Auth users, via dist-admin Netlify fn) ──
+let _daSecret = '';
+async function daCall(payload){
+  const r = await fetch('/.netlify/functions/dist-admin', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-admin-secret':_daSecret},
+    body: JSON.stringify(payload)
+  });
+  let d; try{ d = await r.json(); }catch{ throw new Error('Server returned a non-JSON response (function may not be deployed).'); }
+  if(!r.ok) throw new Error(d.error || ('HTTP '+r.status));
+  return d;
 }
-async function saveDistUser(){
-  const name=ge('du-name').value.trim(), user=ge('du-user').value.trim(),
-        company=ge('du-company').value, pass=ge('du-pass').value;
-  const msg=ge('du-msg');
-  if(!user || !company || !pass){ msg.style.color='var(--danger)'; msg.textContent='Username, company, and password are required.'; return; }
-  if(pass.length<6){ msg.style.color='var(--danger)'; msg.textContent='Password should be at least 6 characters.'; return; }
+async function daRefresh(){
+  const sec = ge('da-secret').value.trim();
+  const msg = ge('da-msg');
+  if(!sec){ msg.style.color='var(--danger)'; msg.textContent='Enter the admin secret first.'; return; }
+  _daSecret = sec;
+  msg.style.color='var(--text-2)'; msg.textContent='Connecting…';
   try{
-    const {error}=await sb.rpc('distributor_user_upsert',{p_username:user,p_password:pass,p_display_name:name||user,p_company:company});
-    if(error) throw error;
-    msg.style.color='var(--success)'; msg.textContent='Saved login for '+user+' ('+company+').';
-    ge('du-name').value=''; ge('du-user').value=''; ge('du-pass').value=''; ge('du-company').value='';
-    loadDistUsers();
-  }catch(e){ msg.style.color='var(--danger)'; msg.textContent='Error: '+(e.message||e); }
+    const d = await daCall({action:'list'});
+    msg.textContent='';
+    ge('da-form').style.opacity='1';
+    ge('da-form').style.pointerEvents='auto';
+    renderDaList(d.users||[]);
+  }catch(e){
+    msg.style.color='var(--danger)';
+    msg.textContent = /unauthorized/i.test(e.message) ? 'Admin secret rejected — check it matches Netlify.' : ('Could not connect: '+e.message);
+    ge('da-form').style.opacity='.5'; ge('da-form').style.pointerEvents='none';
+  }
 }
-async function resetDistUser(id, username){
-  const pw=prompt('New password for '+username+' (min 6 chars):');
+function renderDaList(users){
+  const box=ge('da-list');
+  if(!users.length){ box.innerHTML='<div style="font-size:12px;color:var(--text-3)">No distributor accounts yet.</div>'; return; }
+  box.innerHTML = users.map(u=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface-2);border-radius:6px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500">${esc(u.display_name||u.email)} <span style="color:var(--text-3);font-weight:400">· ${esc(u.email)}</span></div>
+        <div style="font-size:11px;color:var(--text-3)">${esc(u.distributor_company)}${u.last_sign_in_at?' · last sign-in '+fmtRel(u.last_sign_in_at):' · never signed in'}</div>
+      </div>
+      <button class="btn btn-sm btn-ghost" onclick="daReset('${u.user_id}','${esc(u.email)}')">Reset password</button>
+      <button class="btn btn-sm btn-ghost" onclick="daDelete('${u.user_id}','${esc(u.email)}')">Remove</button>
+    </div>`).join('');
+}
+async function daCreate(){
+  const name=ge('da-name').value.trim(), email=ge('da-email').value.trim(),
+        company=ge('da-company').value, pass=ge('da-pass').value;
+  const msg=ge('da-msg');
+  if(!email || !company || !pass){ msg.style.color='var(--danger)'; msg.textContent='Email, company, and password are required.'; return; }
+  if(pass.length<8){ msg.style.color='var(--danger)'; msg.textContent='Password must be at least 8 characters.'; return; }
+  msg.style.color='var(--text-2)'; msg.textContent='Saving…';
+  try{
+    await daCall({action:'create', email, password:pass, company, display_name:name||email});
+    msg.style.color='var(--success)'; msg.textContent='Saved account for '+email+' ('+company+').';
+    ge('da-name').value=''; ge('da-email').value=''; ge('da-pass').value=''; ge('da-company').value='';
+    const d = await daCall({action:'list'}); renderDaList(d.users||[]);
+  }catch(e){ msg.style.color='var(--danger)'; msg.textContent='Error: '+e.message; }
+}
+async function daReset(user_id, email){
+  const pw=prompt('New password for '+email+' (min 8 chars):');
   if(pw==null) return;
-  if(pw.length<6){ notice('Password too short.','warn'); return; }
-  try{
-    const {error}=await sb.rpc('distributor_user_setpw',{p_id:id,p_password:pw});
-    if(error) throw error;
-    notice('Password reset for '+username+'.','ok');
-  }catch(e){ notice('Reset failed: '+(e.message||e),'warn'); }
+  if(pw.length<8){ notice('Password too short.','warn'); return; }
+  try{ await daCall({action:'setpw', user_id, password:pw}); notice('Password reset for '+email+'.','ok'); }
+  catch(e){ notice('Reset failed: '+e.message,'warn'); }
 }
-async function toggleDistUser(id, currentlyActive){
-  try{
-    const {error}=await sb.from('distributor_users').update({active:!currentlyActive}).eq('id',id);
-    if(error) throw error;
-    loadDistUsers();
-  }catch(e){ notice('Update failed: '+(e.message||e),'warn'); }
+async function daDelete(user_id, email){
+  if(!confirm('Remove distributor access for '+email+'? They will no longer be able to sign in.')) return;
+  try{ await daCall({action:'delete', user_id}); const d=await daCall({action:'list'}); renderDaList(d.users||[]); notice('Removed '+email+'.','ok'); }
+  catch(e){ notice('Remove failed: '+e.message,'warn'); }
 }
 async function testApiKey(){
   const key = ge('s-apikey').value.trim(); if(!key) return;
