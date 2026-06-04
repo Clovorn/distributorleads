@@ -34,22 +34,38 @@ html,body{height:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","SF Pro Text",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 
 /* ─── Top bar ────────────────────────────────────── */
-.topbar{background:var(--surface);border-bottom:0.5px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
-.brand-mark{width:28px;height:28px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:12px;letter-spacing:.5px}
-.brand-title{font-size:14px;font-weight:500;color:var(--text);line-height:1.2}
-.brand-sub{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.topbar{background:var(--accent);border-bottom:0.5px solid rgba(255,255,255,0.10);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:13px}
+/* Ronnoco wordmark — swap the .brand-logo block for an <img src="logo.svg" class="brand-logo-img"> later */
+.brand-logo{display:flex;flex-direction:column;line-height:1;gap:3px}
+.brand-logo .bl-name{font-size:21px;font-weight:800;letter-spacing:.14em;color:#fff;font-family:"Arial Black",Arial,Helvetica,sans-serif}
+.brand-logo .bl-sub{font-size:8.5px;font-weight:600;letter-spacing:.34em;color:#c8362f;text-transform:uppercase}
+.brand-logo-img{height:34px;width:auto;display:block}
+.brand-divider{width:1px;height:30px;background:rgba(255,255,255,0.18)}
+.brand-app{display:flex;flex-direction:column;line-height:1.15}
+.brand-title{font-size:13px;font-weight:500;color:#ffffff;line-height:1.2}
+.brand-sub{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.06em}
+/* legacy small badge — kept for any other usages, now light-on-navy */
+.brand-mark{width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:.5px;border:1px solid rgba(255,255,255,0.2)}
 
 .role-switcher{display:flex;align-items:center;gap:8px}
-.role-switcher select{font-size:12px;padding:5px 10px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit;outline:none}
-.role-switcher select:hover{border-color:var(--border-strong)}
-.role-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.role-switcher select{font-size:12px;padding:5px 10px;border:0.5px solid rgba(255,255,255,0.22);border-radius:6px;background:rgba(255,255,255,0.08);color:#fff;font-family:inherit;outline:none}
+.role-switcher select:hover{border-color:rgba(255,255,255,0.4)}
+.role-switcher select option{color:#1c1917;background:#fff}
+.role-label{font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.06em}
 
 .top-right{display:flex;align-items:center;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;background:#a8a29e;display:inline-block}
-.dot.live{background:#16a34a}
-.dot.err{background:#dc2626}
-.dot.warn{background:#d97706}
+/* buttons sitting on the navy bar */
+.topbar .btn-ghost{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.2)}
+.topbar .btn-ghost:hover{background:rgba(255,255,255,0.16)}
+.topbar .btn{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.2)}
+.topbar .btn:hover{background:rgba(255,255,255,0.16)}
+#dist-identity{color:rgba(255,255,255,0.85)!important}
+#dist-identity strong{color:#fff}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.45);display:inline-block}
+.dot.live{background:#4ade80}
+.dot.err{background:#f87171}
+.dot.warn{background:#fbbf24}
 
 /* ─── Nav tabs ────────────────────────────────────── */
 .tabs{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 24px;display:flex;gap:0;align-items:flex-end;position:sticky;top:0;z-index:50}
@@ -363,10 +379,14 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 
   <div class="topbar">
     <div class="brand">
-      <div class="brand-mark">R</div>
-      <div>
+      <div class="brand-logo">
+        <span class="bl-name">RONNOCO</span>
+        <span class="bl-sub">Beverage Solutions</span>
+      </div>
+      <div class="brand-divider"></div>
+      <div class="brand-app">
         <div class="brand-title">Distributor Leads</div>
-        <div class="brand-sub">Ronnoco Beverage</div>
+        <div class="brand-sub">Lead Portal</div>
       </div>
     </div>
 
@@ -592,7 +612,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <div id="pg-distlogin" class="page">
   <div class="lock-wrap">
     <div class="lock-card">
-      <div class="brand-mark" style="margin:0 auto 14px">R</div>
+      <div class="brand-mark" style="margin:0 auto 14px;background:var(--accent);border-color:var(--accent)">R</div>
       <div style="font-size:16px;font-weight:600;margin-bottom:4px">Distributor Sign In</div>
       <div style="font-size:13px;color:var(--text-2);margin-bottom:18px">View your warehouses' leads and their status with Ronnoco</div>
       <input class="finp" type="text" id="dl-user" placeholder="Username" autocomplete="username" style="margin-bottom:8px" onkeydown="if(event.key==='Enter')ge('dl-pass').focus()"/>
@@ -607,8 +627,12 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <div id="pg-settings" class="page">
   <div class="topbar">
     <div class="brand">
-      <div class="brand-mark">R</div>
-      <div><div class="brand-title">Settings</div><div class="brand-sub">Ronnoco Beverage</div></div>
+      <div class="brand-logo">
+        <span class="bl-name">RONNOCO</span>
+        <span class="bl-sub">Beverage Solutions</span>
+      </div>
+      <div class="brand-divider"></div>
+      <div class="brand-app"><div class="brand-title">Settings</div><div class="brand-sub">Lead Portal</div></div>
     </div>
     <button class="btn btn-sm" onclick="showPage('main')">← Dashboard</button>
   </div>
@@ -704,8 +728,12 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <div id="pg-help" class="page">
   <div class="topbar">
     <div class="brand">
-      <div class="brand-mark">R</div>
-      <div><div class="brand-title">Help</div><div class="brand-sub">Ronnoco Beverage</div></div>
+      <div class="brand-logo">
+        <span class="bl-name">RONNOCO</span>
+        <span class="bl-sub">Beverage Solutions</span>
+      </div>
+      <div class="brand-divider"></div>
+      <div class="brand-app"><div class="brand-title">Help</div><div class="brand-sub">Lead Portal</div></div>
     </div>
     <button class="btn btn-sm" onclick="showPage('main')">← Dashboard</button>
   </div>
