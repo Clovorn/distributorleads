@@ -1,519 +1,122 @@
-<!doctype html>
-<!-- BUILD: 2026-06-05-v4 -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ronnoco — Distributor Portal</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#fafaf9;--surface:#fff;--surface-2:#f5f5f4;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.16);
-  --text:#1c1917;--text-2:#57534e;--text-3:#a8a29e;--accent:#0f2347;--accent-red:#c8362f;
-  --info:#1e3a8a;--info-bg:#dbeafe;--success:#14532d;--success-bg:#dcfce7;--warning:#78350f;--warning-bg:#fef3c7;--danger:#7f1d1d;--danger-bg:#fee2e2;
-  --rad:8px;--rad-lg:12px;
-}
-html,body{height:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-.hidden{display:none!important}
-.muted{color:var(--text-3)}
-
-/* top bar */
-.topbar{background:var(--accent);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:13px}
-.bl{display:flex;flex-direction:column;line-height:1;gap:3px}
-.bl-name{font-size:21px;font-weight:800;letter-spacing:.14em;color:#fff;font-family:"Arial Black",Arial,sans-serif}
-.bl-sub{font-size:8.5px;font-weight:600;letter-spacing:.34em;color:var(--accent-red);text-transform:uppercase}
-.brand-div{width:1px;height:30px;background:rgba(255,255,255,.18)}
-.brand-app{display:flex;flex-direction:column;line-height:1.15}
-.brand-title{font-size:13px;font-weight:500;color:#fff}
-.brand-sub{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em}
-.top-right{display:flex;align-items:center;gap:8px}
-.top-id{font-size:12px;color:rgba(255,255,255,.85)}
-.top-id strong{color:#fff}
-
-/* buttons */
-.btn{font-size:13px;padding:6px 12px;border:0.5px solid var(--border-strong);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap;transition:background .12s,border-color .12s;display:inline-flex;align-items:center;gap:5px}
-.btn:hover{background:var(--surface-2)}
-.btn-sm{font-size:12px;padding:5px 10px}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-primary:hover{background:#0a1830}
-.topbar .btn{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.2)}
-.topbar .btn:hover{background:rgba(255,255,255,.16)}
-
-/* login */
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--accent)}
-.login-card{background:var(--surface);border-radius:var(--rad-lg);padding:34px 30px;width:100%;max-width:360px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.25)}
-.login-logo{margin-bottom:18px}
-.login-logo .bl-name{color:var(--accent);font-size:24px}
-.login-logo .bl-sub{color:var(--accent-red)}
-.finp{width:100%;font-size:14px;padding:10px 12px;border:0.5px solid var(--border-strong);border-radius:6px;font-family:inherit;outline:none;margin-bottom:9px}
-.finp:focus{border-color:var(--accent)}
-.login-title{font-size:16px;font-weight:600;margin-bottom:4px}
-.login-sub{font-size:13px;color:var(--text-2);margin-bottom:18px}
-.login-err{font-size:12px;color:var(--danger);margin-top:6px;display:none}
-
-/* layout */
-.wrap{max-width:1180px;margin:0 auto;padding:22px 24px 60px}
-.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.page-title{font-size:20px;font-weight:600}
-.page-sub{font-size:13px;color:var(--text-2);margin-top:2px}
-.crumb{font-size:13px;color:var(--text-2)}
-.crumb a{color:var(--accent);cursor:pointer;text-decoration:none}
-.crumb a:hover{text-decoration:underline}
-.crumb .sep{color:var(--text-3);margin:0 4px}
-.crumb span:last-child{color:var(--text);font-weight:500}
-
-.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:20px}
-@media(max-width:900px){.metrics{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:520px){.metrics{grid-template-columns:repeat(2,1fr)}}
-.mcard{background:var(--surface-2);border-radius:var(--rad);padding:11px 14px}
-.m-lbl{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em}
-.m-val{font-size:22px;font-weight:700;margin-top:3px}
-.m-sub{font-size:11px;color:var(--text-3)}
-
-/* warehouse cards */
-.wh-reportbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
-.wh-reportbar-hint{font-size:12px;color:var(--text-3)}
-.wh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
-.wh-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:16px;cursor:pointer;transition:background .12s,border-color .12s,box-shadow .12s;display:flex;flex-direction:column;gap:13px}
-.wh-card:hover{background:var(--surface-2);border-color:var(--border-strong);box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.wh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-height:20px}
-.wh-name{font-size:15px;font-weight:600;line-height:1.25}
-.wh-body{display:flex;align-items:center;gap:16px}
-.wh-legend{display:grid;gap:3px;font-size:12px;color:var(--text-2);min-width:0}
-.wh-total{display:flex;align-items:baseline;gap:5px;margin-bottom:3px}
-.wh-total-num{font-size:18px;font-weight:700;line-height:1}
-.wh-total-lbl{font-size:11px;color:var(--text-3)}
-.wh-legend .lg{display:flex;align-items:center;gap:6px;white-space:nowrap}
-.wh-legend .lg b{margin-left:auto;font-weight:600;padding-left:8px}
-.wh-legend .sw{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
-.wh-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:0.5px solid var(--border);padding-top:10px}
-.wh-rate{font-size:12px;color:var(--text-2);font-weight:500}
-.wh-go{font-size:12px;color:var(--accent);font-weight:600}
-.pill-stall{color:var(--warning);background:var(--warning-bg);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap}
-
-/* metrics table */
-.wh-metric-table{width:100%;border-collapse:collapse;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);overflow:hidden;margin-bottom:6px;font-size:13px}
-.wh-metric-table th{background:var(--surface-2);text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;border-bottom:0.5px solid var(--border)}
-.wh-metric-table td{padding:12px 14px;font-size:15px}
-.dot-amber,.dot-blue,.dot-green,.dot-red{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.dot-amber{background:#d97706}.dot-blue{background:#2563eb}.dot-green{background:#16a34a}.dot-red{background:#dc2626}
-.wh-detail-actions{display:flex;justify-content:flex-end;margin:0 0 14px}
-
-/* lead cards */
-.lite-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.lite-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:14px;cursor:pointer;transition:background .12s,border-color .12s}
-.lite-card:hover{background:var(--surface-2);border-color:var(--border-strong)}
-.lite-stall{box-shadow:inset 3px 0 0 var(--warning)}
-.lite-name{font-size:14px;font-weight:500;margin-bottom:4px}
-.lite-meta{font-size:12px;color:var(--text-2);line-height:1.5}
-.pill{font-size:11px;padding:2px 9px;border-radius:999px;font-weight:500;display:inline-block}
-.pill-gray{background:var(--surface-3,#e7e5e4);color:var(--text-2)}
-.pill-blue{background:var(--info-bg);color:var(--info)}
-.pill-green{background:var(--success-bg);color:var(--success)}
-.pill-amber{background:var(--warning-bg);color:var(--warning)}
-.pill-red{background:var(--danger-bg);color:var(--danger)}
-
-/* detail */
-.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:20px}
-.drow{display:flex;gap:14px;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px}
-.drow:last-child{border-bottom:none}
-.drow .k{color:var(--text-3);min-width:150px}
-.drow .v{color:var(--text);font-weight:500}
-.back-link{color:var(--accent);cursor:pointer;font-size:13px;display:inline-block;margin-bottom:12px}
-.back-link:hover{text-decoration:underline}
-.stage-strip{display:flex;gap:4px;margin:14px 0;flex-wrap:wrap}
-.stage-cell{flex:1;min-width:80px;padding:8px;border-radius:6px;background:var(--surface-2);font-size:11px;text-align:center;color:var(--text-3)}
-.stage-cell.done{background:var(--success-bg);color:var(--success)}
-.stage-cell.current{background:var(--info-bg);color:var(--info);box-shadow:inset 0 0 0 1.5px var(--info)}
-.stage-cell.lost{background:var(--danger-bg);color:var(--danger)}
-.tl-item{padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px}
-.tl-item:last-child{border-bottom:none}
-.tl-meta{font-size:11px;color:var(--text-3)}
-
-/* notice */
-.notice{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:8px;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.15);display:none;z-index:200}
-.notice.show{display:block}
-.notice-ok{background:var(--success-bg);color:var(--success)}
-.notice-warn{background:var(--warning-bg);color:var(--warning)}
-.notice-info{background:var(--info-bg);color:var(--info)}
-
-/* modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:150}
-.modal.open{display:flex}
-.modal-card{background:var(--surface);border-radius:var(--rad-lg);padding:22px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
-.modal-title{font-size:16px;font-weight:600;margin-bottom:14px}
-.flbl{font-size:12px;color:var(--text-2);display:block;margin:8px 0 3px}
-.empty{padding:48px 20px;text-align:center;color:var(--text-3)}
-.empty-title{font-size:14px;color:var(--text-2);font-weight:500}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Distributor View - Protected</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8fafc;color:#0f172a}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{width:100%;max-width:400px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;box-shadow:0 8px 24px rgba(15,23,42,.08)}
+    h1{font-size:18px;margin:0 0 6px}
+    p{font-size:13px;color:#475569;margin:0 0 14px}
+    label{font-size:12px;color:#334155;display:block;margin:8px 0 4px}
+    input{width:100%;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px}
+    input:focus{outline:none;border-color:#3b82f6}
+    button{width:100%;margin-top:12px;padding:10px;border:0;border-radius:8px;background:#1d4ed8;color:#fff;font-weight:600;cursor:pointer}
+    button:hover{background:#1e40af}
+    .err{margin-top:10px;font-size:12px;color:#b91c1c;display:none}
+    .hint{margin-top:8px;font-size:12px;color:#64748b}
+    .app{display:none;height:100%}
+    .top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0f172a;color:#fff}
+    .title{font-size:13px;font-weight:600}
+    .meta{font-size:11px;opacity:.85;margin-top:2px}
+    .logout{background:#334155;border:0;color:#fff;padding:7px 10px;border-radius:6px;cursor:pointer;font-size:12px}
+    iframe{width:100%;height:calc(100vh - 44px);border:0}
+  </style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div id="pg-login" class="login-wrap">
-  <div class="login-card">
-    <div class="login-logo bl" style="align-items:center">
-      <span class="bl-name">RONNOCO</span>
-      <span class="bl-sub">Beverage Solutions</span>
-    </div>
-    <div class="login-title">Distributor Portal</div>
-    <div class="login-sub">Sign in to view your leads and their status with Ronnoco</div>
-    <input class="finp" type="email" id="li-email" placeholder="Email" autocomplete="username"/>
-    <input class="finp" type="password" id="li-pass" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="doLogin()">Sign in →</button>
-    <div class="login-err" id="li-err"></div>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="pg-app" class="hidden">
-  <div class="topbar">
-    <div class="brand">
-      <div class="bl"><span class="bl-name">RONNOCO</span><span class="bl-sub">Beverage Solutions</span></div>
-      <div class="brand-div"></div>
-      <div class="brand-app"><div class="brand-title">Distributor Portal</div><div class="brand-sub" id="brand-company">—</div></div>
-    </div>
-    <div class="top-right">
-      <span class="top-id" id="top-id"></span>
-      <button class="btn btn-sm" onclick="doLogout()">Log out</button>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <div class="page-head">
-      <div>
-        <div class="page-title" id="pg-h-title">Leads by warehouse</div>
-        <div class="page-sub" id="pg-h-sub"></div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-sm btn-primary" onclick="openNewLead()">+ Submit new lead</button>
-      </div>
-    </div>
-    <div id="metrics" class="metrics"></div>
-    <div id="body"></div>
-  </div>
-</div>
-
-<!-- NEW LEAD MODAL -->
-<div id="modal-newlead" class="modal">
-  <div class="modal-card">
-    <div class="modal-title">Submit a new lead</div>
-    <label class="flbl">Business / DBA *</label><input class="finp" id="nl-dba"/>
-    <label class="flbl">Warehouse</label><input class="finp" id="nl-wh" placeholder="e.g. Columbus, OH"/>
-    <label class="flbl">Contact name</label><input class="finp" id="nl-contact"/>
-    <label class="flbl">Email</label><input class="finp" id="nl-email"/>
-    <label class="flbl">Phone</label><input class="finp" id="nl-phone"/>
-    <label class="flbl">Distributor rep</label><input class="finp" id="nl-rep"/>
-    <label class="flbl">Customer interest</label>
-    <select class="finp" id="nl-interest">
-      <option value="">—</option>
-      <option>Leasing Equipment</option>
-      <option>Buying Equipment from Ronnoco</option>
-      <option>Financing Equipment</option>
-      <option>Loaned Request</option>
-    </select>
-    <label class="flbl">Notes</label><textarea class="finp" id="nl-notes" rows="3"></textarea>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
-      <button class="btn btn-sm" onclick="closeModal('modal-newlead')">Cancel</button>
-      <button class="btn btn-sm btn-primary" onclick="submitNewLead()">Submit lead</button>
-    </div>
-  </div>
-</div>
-
-<div id="notice" class="notice"></div>
-
-<script>
-const SB_URL='https://opnpyunbccifkdnbljsz.supabase.co';
-const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
-const STALL_DAYS=14;
-const STEPS=[
-  {id:'lead_received',label:'Lead Received'},{id:'awaiting_director',label:'Awaiting Director'},
-  {id:'awaiting_rep',label:'Awaiting Rep'},{id:'rep_assigned',label:'Assigned to Rep'},
-  {id:'customer_contacted',label:'Contacted'},{id:'follow_up',label:'In Follow-up'}
-];
-const stepById=id=>STEPS.find(s=>s.id===id);
-let sb, myCompany=null, myEmail=null, leads=[], drillWh='', selId=null;
-
-const ge=id=>document.getElementById(id);
-const esc=s=>(s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const daysSince=d=>d?Math.floor((Date.now()-new Date(d))/86400000):999;
-const fmtD=d=>d?new Date(d).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'—';
-const fmtRel=d=>{if(!d)return'—';const ms=Date.now()-new Date(d);const dd=Math.floor(ms/86400000);if(dd<1)return'today';if(dd<7)return dd+'d ago';if(dd<60)return Math.floor(dd/7)+'w ago';return Math.floor(dd/30)+'mo ago';};
-const whOf=l=>(l.distributor_warehouse||'').trim()||'Unspecified';
-function notice(m,t){const e=ge('notice');e.className='notice show notice-'+(t||'info');e.textContent=m;setTimeout(()=>e.classList.remove('show'),4000);}
-function closeModal(id){ge(id).classList.remove('open');}
-
-async function boot(){
-  sb=supabase.createClient(SB_URL,SB_ANON);
-  const {data:{session}}=await sb.auth.getSession();
-  if(session) await onAuthed(); else showLogin();
-}
-function showLogin(){ ge('pg-login').classList.remove('hidden'); ge('pg-app').classList.add('hidden'); }
-
-async function doLogin(){
-  const email=ge('li-email').value.trim(), pass=ge('li-pass').value;
-  const err=ge('li-err'); err.style.display='none';
-  if(!email||!pass){ err.textContent='Enter email and password.'; err.style.display='block'; return; }
-  const {error}=await sb.auth.signInWithPassword({email,password:pass});
-  if(error){ err.textContent='Incorrect email or password.'; err.style.display='block'; return; }
-  await onAuthed();
-}
-async function doLogout(){ await sb.auth.signOut(); location.reload(); }
-
-async function onAuthed(){
-  // Look up which company this account is scoped to (RLS lets them read only their own mapping row)
-  const {data:{user}}=await sb.auth.getUser();
-  myEmail=user?.email||'';
-  const {data:acct,error}=await sb.from('distributor_accounts').select('distributor_company,display_name').maybeSingle();
-  if(error || !acct){
-    // authenticated but not provisioned as a distributor
-    notice('This account is not set up for distributor access.','warn');
-    await sb.auth.signOut(); showLogin(); return;
-  }
-  myCompany=acct.distributor_company;
-  ge('pg-login').classList.add('hidden'); ge('pg-app').classList.remove('hidden');
-  ge('brand-company').textContent=myCompany;
-  ge('top-id').innerHTML='Signed in: <strong>'+esc(acct.display_name||myEmail)+'</strong>';
-  await loadLeads();
-  render();
-}
-
-async function loadLeads(){
-  // RLS guarantees this returns ONLY this company's rows, regardless of what we ask for.
-  const {data,error}=await sb.from('leads').select('*').order('last_activity_at',{ascending:false,nullsFirst:false});
-  if(error){ notice('Could not load leads: '+error.message,'warn'); leads=[]; return; }
-  leads=data||[];
-}
-
-// ── stats / donut ──
-function whStats(ls){
-  const a=ls.filter(l=>l.status==='active');
-  const awaiting=a.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length;
-  const working=a.filter(l=>['rep_assigned','customer_contacted','follow_up'].includes(l.current_step)).length;
-  const won=ls.filter(l=>l.status==='won').length, lost=ls.filter(l=>l.status==='lost').length;
-  const stalled=a.filter(l=>daysSince(l.last_activity_at)>STALL_DAYS).length;
-  return {total:ls.length,awaiting,working,won,lost,stalled,closed:won+lost};
-}
-function donut(s){
-  const segs=[['#d97706',s.awaiting],['#2563eb',s.working],['#16a34a',s.won],['#dc2626',s.lost]];
-  const sum=segs.reduce((a,[,v])=>a+v,0),R=30,C=2*Math.PI*R,cx=36,cy=36;let off=0,ring='';
-  if(sum>0)segs.forEach(([c,v])=>{if(!v)return;const len=v/sum*C;ring+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${c}" stroke-width="11" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=len;});
-  else ring=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#e7e5e4" stroke-width="11"/>`;
-  return `<svg viewBox="0 0 72 72" width="72" height="72">${ring}<text x="${cx}" y="${cy-1}" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="700" fill="#1c1917">${s.total}</text><text x="${cx}" y="${cy+12}" text-anchor="middle" dominant-baseline="central" font-size="7.5" fill="#a8a29e">LEADS</text></svg>`;
-}
-
-function render(){
-  if(selId && leads.find(l=>l.id===selId)){ renderDetail(); return; }
-  if(drillWh){ renderWarehouse(); return; }
-  renderRollup();
-}
-
-function companyMetrics(ls){
-  const s=whStats(ls);
-  ge('metrics').innerHTML=`
-    <div class="mcard"><div class="m-lbl">Total</div><div class="m-val">${s.total}</div><div class="m-sub">All time</div></div>
-    <div class="mcard"><div class="m-lbl">Awaiting Ronnoco</div><div class="m-val">${s.awaiting}</div><div class="m-sub">Not yet assigned</div></div>
-    <div class="mcard"><div class="m-lbl">Being worked</div><div class="m-val">${s.working}</div><div class="m-sub">Rep has it</div></div>
-    <div class="mcard"><div class="m-lbl">Won</div><div class="m-val">${s.won}</div><div class="m-sub">Converted</div></div>
-    <div class="mcard"><div class="m-lbl">Lost</div><div class="m-val">${s.lost}</div><div class="m-sub">Closed</div></div>`;
-}
-
-function renderRollup(){
-  drillWh=''; selId=null;
-  ge('pg-h-title').textContent=myCompany+' — leads by warehouse';
-  ge('pg-h-sub').textContent="Each warehouse's volume, pipeline mix, and stalled accounts at a glance";
-  companyMetrics(leads);
-  const byWh={};leads.forEach(l=>{(byWh[whOf(l)]=byWh[whOf(l)]||[]).push(l);});
-  const names=Object.keys(byWh).sort((a,b)=>byWh[b].length-byWh[a].length);
-  const cards=names.map(w=>{
-    const s=whStats(byWh[w]);
-    return `<div class="wh-card" onclick="drill('${esc(w).replace(/'/g,"\\'")}')">
-      <div class="wh-head"><div class="wh-name">${esc(w)}</div>${s.stalled?`<span class="pill-stall">⚠ ${s.stalled} stalled</span>`:''}</div>
-      <div class="wh-body">${donut(s)}
-        <div class="wh-legend">
-          <div class="wh-total"><span class="wh-total-num">${s.total}</span><span class="wh-total-lbl">lead${s.total===1?'':'s'}</span></div>
-          <div class="lg"><i class="sw" style="background:#d97706"></i>Awaiting <b>${s.awaiting}</b></div>
-          <div class="lg"><i class="sw" style="background:#2563eb"></i>Being worked <b>${s.working}</b></div>
-          <div class="lg"><i class="sw" style="background:#16a34a"></i>Won <b>${s.won}</b></div>
-          <div class="lg"><i class="sw" style="background:#dc2626"></i>Lost <b>${s.lost}</b></div>
-        </div>
-      </div>
-      <div class="wh-foot"><span class="wh-rate">${s.closed?Math.round(s.won/s.closed*100):0}% win rate</span><span class="wh-go">View leads →</span></div>
-    </div>`;
-  }).join('');
-  ge('body').innerHTML = cards
-    ? `<div class="wh-reportbar"><button class="btn btn-sm btn-primary" onclick="exportMaster()">⤓ Master report (Excel)</button><span class="wh-reportbar-hint">Executive summary + per-warehouse breakdown + full lead detail</span></div><div class="wh-grid">${cards}</div>`
-    : `<div class="card"><div class="empty"><div class="empty-title">No leads yet</div></div></div>`;
-}
-
-function drill(w){ drillWh=w; selId=null; render(); }
-function crumb(atLead){
-  let p=[`<a onclick="backRollup()">${esc(myCompany)}</a>`];
-  if(drillWh) p.push(atLead?`<a onclick="backWh()">${esc(drillWh)}</a>`:`<span>${esc(drillWh)}</span>`);
-  if(atLead) p.push('<span>Lead detail</span>');
-  return `<span class="crumb">${p.join(' <span class="sep">/</span> ')}</span>`;
-}
-function backRollup(){ drillWh=''; selId=null; render(); }
-function backWh(){ selId=null; render(); }
-
-function renderWarehouse(){
-  const ls=leads.filter(l=>whOf(l)===drillWh);
-  const s=whStats(ls);
-  const oldest=ls.filter(l=>l.status==='active').reduce((m,l)=>{const d=daysSince(l.last_activity_at);return d>m?d:m;},0);
-  ge('pg-h-title').innerHTML=crumb(false);
-  ge('pg-h-sub').textContent=`Leads from ${drillWh} and how Ronnoco is progressing them`;
-  companyMetrics(ls);
-  const table=`<table class="wh-metric-table"><thead><tr><th>Total</th><th>Awaiting</th><th>Being worked</th><th>Won</th><th>Lost</th><th>Stalled</th><th>Win rate</th><th>Oldest idle</th></tr></thead>
-    <tbody><tr><td><b>${s.total}</b></td><td><span class="dot-amber"></span>${s.awaiting}</td><td><span class="dot-blue"></span>${s.working}</td><td><span class="dot-green"></span>${s.won}</td><td><span class="dot-red"></span>${s.lost}</td><td>${s.stalled?`<span class="pill-stall">⚠ ${s.stalled}</span>`:'0'}</td><td>${s.closed?Math.round(s.won/s.closed*100):0}%</td><td>${oldest?oldest+'d':'—'}</td></tr></tbody></table>
-    <div class="wh-detail-actions"><button class="btn btn-sm btn-primary" onclick="exportWarehouse()">⤓ Detailed report (Excel) — ${esc(drillWh)}</button></div>`;
-  const list=ls.slice().sort((a,b)=>new Date(b.last_activity_at||0)-new Date(a.last_activity_at||0));
-  const cards=list.map(l=>{
-    const st=stepById(l.current_step);let cls='pill-gray',txt=st?st.label:'—';
-    if(l.status==='won'){cls='pill-green';txt='Won';}else if(l.status==='lost'){cls='pill-red';txt='Lost';}
-    else if(l.current_step==='lead_received'||l.current_step==='rep_assigned'||l.current_step==='follow_up')cls='pill-blue';
-    else if(l.current_step==='awaiting_director'||l.current_step==='awaiting_rep')cls='pill-amber';
-    else if(l.current_step==='customer_contacted')cls='pill-green';
-    const stall=l.status==='active'&&daysSince(l.last_activity_at)>STALL_DAYS;
-    return `<div class="lite-card ${stall?'lite-stall':''}" onclick="openLead('${l.id}')">
-      <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:8px">
-        <span class="pill ${cls}">${esc(txt)}</span>
-        <span style="display:flex;gap:6px;align-items:center">${stall?`<span class="pill-stall">⚠ ${daysSince(l.last_activity_at)}d</span>`:''}<span style="font-size:11px;color:var(--text-3)">${fmtRel(l.last_activity_at||l.created_at)}</span></span>
-      </div>
-      <div class="lite-name">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown')}</div>
-      <div class="lite-meta">${l.assigned_sales_rep?`Ronnoco rep: <strong>${esc(l.assigned_sales_rep)}</strong>`:'<em>Awaiting rep assignment</em>'}${l.customer_interest?`<br/><span class="muted">${esc(l.customer_interest)}</span>`:''}</div>
-    </div>`;
-  }).join('');
-  ge('body').innerHTML=table+(list.length?`<div class="lite-grid">${cards}</div>`:`<div class="card"><div class="empty"><div class="empty-title">No leads</div></div></div>`);
-}
-
-async function openLead(id){ selId=id; render(); }
-async function renderDetail(){
-  const l=leads.find(x=>x.id===selId);if(!l)return;
-  ge('pg-h-title').innerHTML=crumb(true);
-  ge('pg-h-sub').textContent='';
-  ge('metrics').innerHTML='';
-  const idx=STEPS.findIndex(s=>s.id===l.current_step);
-  const strip=STEPS.map((s,i)=>{
-    let cls='';
-    if(l.status==='lost'&&i<=idx)cls=i===idx?'lost':'done';
-    else if(i<idx)cls='done';else if(i===idx)cls='current';
-    return `<div class="stage-cell ${cls}">${s.label}</div>`;
-  }).join('');
-  // activity (RLS-limited to this company)
-  let tl='';
-  const {data:logs}=await sb.from('activity_log').select('*').eq('lead_id',l.id).order('created_at',{ascending:false}).limit(50);
-  const stageLogs=(logs||[]).filter(x=>x.from_step||x.to_step);
-  tl=stageLogs.length?stageLogs.map(x=>`<div class="tl-item">${esc((x.action||'').replace(/Bulk update.*?:/,'').trim()||'Stage update')}<div class="tl-meta">${fmtD(x.created_at)}</div></div>`).join(''):'<div class="muted" style="font-size:12px">No stage updates yet.</div>';
-  const row=(k,v)=>`<div class="drow"><div class="k">${k}</div><div class="v">${v}</div></div>`;
-  let statusPill=l.status==='won'?'<span class="pill pill-green">Won</span>':l.status==='lost'?'<span class="pill pill-red">Lost</span>':`<span class="pill pill-blue">${esc(stepById(l.current_step)?.label||l.current_step)}</span>`;
-  ge('body').innerHTML=`<span class="back-link" onclick="backWh()">← ${esc(drillWh)}</span>
+  <div id="login" class="wrap">
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
-        <div><div style="font-size:18px;font-weight:600">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown')}</div>
-        <div class="muted" style="font-size:13px">${esc(l.store_address||'')}</div></div>${statusPill}
+      <h1>Distributor Access</h1>
+      <p>Sign in with your Supabase user to view your distributor-scoped live dashboard.</p>
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" />
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" />
+      <button onclick="login()">Sign In</button>
+      <div class="hint">Scope is derived from your Supabase user metadata.</div>
+      <div id="err" class="err">Invalid login or missing distributor scope metadata.</div>
+    </div>
+  </div>
+
+  <div id="app" class="app">
+    <div class="top">
+      <div>
+        <div class="title">Distributor Live View</div>
+        <div id="who" class="meta"></div>
       </div>
-      <div class="stage-strip">${strip}</div>
-      ${row('Status', statusPill)}
-      ${l.status==='lost'&&l.lost_reason?row('Lost reason', esc(l.lost_reason)):''}
-      ${row('Ronnoco rep', l.assigned_sales_rep?esc(l.assigned_sales_rep):'<em>Not yet assigned</em>')}
-      ${row('Warehouse', esc(whOf(l)))}
-      ${row('Contact', esc(l.customer_full_name||'—'))}
-      ${row('Email', esc(l.contact_email||'—'))}
-      ${row('Phone', esc(l.phone||l.contact_number||'—'))}
-      ${row('Distributor rep', esc(l.distributor_sales_rep||'—'))}
-      ${row('Interest', esc(l.customer_interest||'—'))}
-      ${row('Program', esc(l.program_source||'—'))}
-      ${l.beverage_needs?row('Beverage needs', esc(l.beverage_needs)):''}
-      ${l.notes?row('Notes', esc(l.notes)):''}
-      ${row('Submitted', fmtD(l.submission_date||l.created_at))}
-      ${row('Last activity', fmtD(l.last_activity_at))}
-      <div style="margin-top:16px;font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em">Progress updates</div>
-      <div style="margin-top:8px">${tl}</div>
-    </div>`;
-}
+      <button class="logout" onclick="logout()">Sign Out</button>
+    </div>
+    <iframe id="frame" src=""></iframe>
+  </div>
 
-// ── submit new lead (RLS forces distributor_company = my company) ──
-function openNewLead(){ ge('modal-newlead').classList.add('open'); }
-async function submitNewLead(){
-  const dba=ge('nl-dba').value.trim();
-  if(!dba){ notice('Business / DBA is required.','warn'); return; }
-  const rec={
-    jotform_submission_id:'dist-'+Date.now(),
-    dba_name:dba,
-    distributor_warehouse:ge('nl-wh').value.trim()||null,
-    customer_full_name:ge('nl-contact').value.trim()||null,
-    contact_email:ge('nl-email').value.trim()||null,
-    phone:ge('nl-phone').value.trim()||null,
-    distributor_sales_rep:ge('nl-rep').value.trim()||null,
-    customer_interest:ge('nl-interest').value||null,
-    notes:ge('nl-notes').value.trim()||null,
-    distributor_company:myCompany,
-    current_step:'lead_received', status:'active',
-    submission_date:new Date().toISOString()
-  };
-  const {error}=await sb.from('leads').insert(rec);
-  if(error){ notice('Could not submit: '+error.message,'warn'); return; }
-  closeModal('modal-newlead');
-  ['nl-dba','nl-wh','nl-contact','nl-email','nl-phone','nl-rep','nl-notes'].forEach(id=>ge(id).value='');
-  ge('nl-interest').value='';
-  notice('Lead submitted to Ronnoco.','ok');
-  await loadLeads(); render();
-}
+  <script>
+    const SB_URL = 'https://opnpyunbccifkdnbljsz.supabase.co';
+    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wbnB5dW5iY2NpZmtkbmJsanN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3NTAzODMsImV4cCI6MjA5MzMyNjM4M30.UPu8TcE7PoVV4SqzUVlTQIsy_sgszylY988iZlOfBlk';
+    const sb = supabase.createClient(SB_URL, SB_KEY);
+    const programLabel = p => (p === 'Java Select' ? 'HT Hackney' : p);
 
-// ── reports (ExcelJS) ──
-function avgN(a){const v=a.filter(n=>n!=null&&isFinite(n));return v.length?Math.round(v.reduce((x,y)=>x+y,0)/v.length*10)/10:null;}
-function summarize(ls){
-  const byWh={};ls.forEach(l=>{(byWh[whOf(l)]=byWh[whOf(l)]||[]).push(l);});
-  return Object.keys(byWh).sort((a,b)=>byWh[b].length-byWh[a].length).map(w=>{const x=whStats(byWh[w]);return {warehouse:w,...x,winRate:x.closed?x.won/x.closed:0};});
-}
-const NAVY='FF0F2347',WHITE='FFFFFFFF',GREY='FF6B7280';
-function hdr(c){c.font={bold:true,color:{argb:WHITE},name:'Arial',size:10};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:NAVY}};}
-function section(ws,r,t){const c=ws.getCell('A'+r);c.value=t;c.font={bold:true,size:11,color:{argb:WHITE},name:'Arial'};for(let i=1;i<=8;i++)ws.getCell(r,i).fill={type:'pattern',pattern:'solid',fgColor:{argb:NAVY}};}
-function summarySheet(wb,title,ls,whS){
-  const ws=wb.addWorksheet('Executive Summary',{views:[{showGridLines:false}]});
-  ws.columns=[{width:42},{width:14},{width:30},{width:10},{width:8},{width:8},{width:10},{width:11}];
-  const s=whStats(ls);
-  ws.mergeCells('A1:C1');ws.getCell('A1').value='Ronnoco × '+title;ws.getCell('A1').font={bold:true,size:18,color:{argb:NAVY},name:'Arial'};
-  ws.mergeCells('A2:C2');ws.getCell('A2').value='Lead Handling Summary';ws.getCell('A2').font={bold:true,size:13,color:{argb:'FF374151'},name:'Arial'};
-  ws.mergeCells('A3:C3');ws.getCell('A3').value='Generated '+new Date().toISOString().slice(0,10);ws.getCell('A3').font={italic:true,size:10,color:{argb:GREY},name:'Arial'};
-  section(ws,5,'PIPELINE OVERVIEW');
-  const ov=[['Total leads submitted',s.total],['Awaiting Ronnoco',s.awaiting],['Being worked',s.working],['Won',s.won],['Lost',s.lost],['Win rate (of closed)',s.closed?s.won/s.closed:0],['Stalled — no activity '+STALL_DAYS+'+ days',s.stalled]];
-  ov.forEach((r,i)=>{const rr=6+i;ws.getCell('A'+rr).value=r[0];ws.getCell('A'+rr).font={name:'Arial',size:11};const b=ws.getCell('B'+rr);b.value=r[1];b.font={name:'Arial',size:11,bold:true};if(r[0].indexOf('Win rate')===0)b.numFmt='0%';});
-  section(ws,14,'BY WAREHOUSE');
-  const h=['Warehouse','Total','Awaiting','Working','Won','Lost','Stalled','Win rate'];
-  h.forEach((x,i)=>{const c=ws.getCell(15,i+1);c.value=x;hdr(c);});
-  whS.forEach((w,i)=>{const rr=16+i;[w.warehouse,w.total,w.awaiting,w.working,w.won,w.lost,w.stalled,w.winRate].forEach((v,ci)=>{const c=ws.getCell(rr,ci+1);c.value=v;c.font={name:'Arial',size:10};if(ci===7)c.numFmt='0%';});if(i%2)for(let ci=1;ci<=8;ci++)ws.getCell(rr,ci).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};});
-}
-function detailSheet(wb,ls){
-  const ws=wb.addWorksheet('Lead Detail',{views:[{state:'frozen',ySplit:1,showGridLines:false}]});
-  const cols=[['Warehouse',18],['Business (DBA)',24],['Contact',18],['Email',26],['Phone',14],['Address',30],['Distributor Rep',18],['Interest',16],['Stage',16],['Status',9],['Lost Reason',20],['Ronnoco Rep',16],['Days Idle',10],['Stalled',8],['Submitted',12],['Last Activity',13]];
-  ws.columns=cols.map(c=>({width:c[1]}));
-  cols.forEach((c,i)=>{const cell=ws.getCell(1,i+1);cell.value=c[0];hdr(cell);});
-  const d=v=>v?new Date(v).toISOString().slice(0,10):'';
-  ls.forEach((l,ri)=>{const idle=daysSince(l.last_activity_at);const r=2+ri;[whOf(l),l.dba_name||'',l.customer_full_name||'',l.contact_email||'',l.phone||l.contact_number||'',l.store_address||'',l.distributor_sales_rep||'',l.customer_interest||'',stepById(l.current_step)?.label||l.current_step||'',l.status||'',l.lost_reason||'',l.assigned_sales_rep||'',(l.status==='active'&&isFinite(idle))?idle:'',(l.status==='active'&&idle>STALL_DAYS)?'YES':'',d(l.submission_date||l.created_at),d(l.last_activity_at)].forEach((v,ci)=>{const c=ws.getCell(r,ci+1);c.value=v;c.font={name:'Arial',size:10};});});
-  ws.autoFilter={from:{row:1,column:1},to:{row:ls.length+1,column:cols.length}};
-}
-async function saveWb(wb,fn){const buf=await wb.xlsx.writeBuffer();const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);}
-async function exportMaster(){
-  if(typeof ExcelJS==='undefined'){notice('Report library still loading.','warn');return;}
-  const whS=summarize(leads);const wb=new ExcelJS.Workbook();
-  summarySheet(wb,myCompany,leads,whS);detailSheet(wb,leads);
-  await saveWb(wb,`${myCompany.replace(/\s+/g,'_')}-master-${new Date().toISOString().slice(0,10)}.xlsx`);
-  notice('Master report exported.','ok');
-}
-async function exportWarehouse(){
-  if(typeof ExcelJS==='undefined'){notice('Report library still loading.','warn');return;}
-  const ls=leads.filter(l=>whOf(l)===drillWh);const wb=new ExcelJS.Workbook();
-  summarySheet(wb,myCompany+' — '+drillWh,ls,summarize(ls));detailSheet(wb,ls);
-  await saveWb(wb,`${myCompany.replace(/\s+/g,'_')}-${drillWh.replace(/[\s,]+/g,'_')}-${new Date().toISOString().slice(0,10)}.xlsx`);
-  notice('Detailed report exported.','ok');
-}
+    function showApp(){ document.getElementById('login').style.display='none'; document.getElementById('app').style.display='block'; }
+    function showLogin(){ document.getElementById('app').style.display='none'; document.getElementById('login').style.display='flex'; }
+    function setError(msg){ const e=document.getElementById('err'); e.textContent=msg; e.style.display='block'; }
+    function clearError(){ document.getElementById('err').style.display='none'; }
 
-boot();
-</script>
+    function resolveScope(user){
+      const md = Object.assign({}, user?.app_metadata || {}, user?.user_metadata || {});
+      const scope = (md.program_source || md.program || md.scope || 'Java Select').toString().trim();
+      const distributor = (md.distributor || md.distributor_name || '').toString().trim();
+      const warehouse = (md.distributor_warehouse || md.warehouse || '').toString().trim();
+      const repOnly = !!md.rep_only;
+      const distEmail = repOnly ? (user?.email || '') : '';
+      return { scope, distributor, warehouse, distEmail };
+    }
+
+    function loadScopedApp(user){
+      const { scope, distributor, warehouse, distEmail } = resolveScope(user);
+      if(!scope){
+        setError('Your account is missing a distributor scope (program).');
+        showLogin();
+        return;
+      }
+      const params = new URLSearchParams({
+        role: 'distributor',
+        scope
+      });
+      if(distributor) params.set('dist_name', distributor);
+      if(warehouse) params.set('dist_wh', warehouse);
+      if(distEmail) params.set('dist_email', distEmail);
+
+      document.getElementById('frame').src = '/index.html?' + params.toString();
+      document.getElementById('who').textContent = `${user.email} · ${programLabel(scope)}${distributor ? ' · ' + distributor : ''}${warehouse ? ' · ' + warehouse : ''}`;
+      showApp();
+    }
+
+    async function login(){
+      clearError();
+      const email = (document.getElementById('email').value || '').trim();
+      const password = document.getElementById('password').value || '';
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if(error || !data?.user){
+        setError('Invalid email/password for Supabase login.');
+        return;
+      }
+      loadScopedApp(data.user);
+    }
+
+    async function logout(){
+      await sb.auth.signOut();
+      showLogin();
+      document.getElementById('frame').src = '';
+    }
+
+    (async () => {
+      const { data } = await sb.auth.getSession();
+      if(data?.session?.user) loadScopedApp(data.session.user);
+      else showLogin();
+    })();
+  </script>
 </body>
 </html>

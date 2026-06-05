@@ -1,375 +1,14 @@
 <!DOCTYPE html>
-<!-- BUILD: 2026-06-05-v4 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Distributor Leads — Ronnoco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ronnoco.css">
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#fafaf9;
-  --surface:#ffffff;
-  --surface-2:#f5f5f4;
-  --surface-3:#e7e5e4;
-  --border:rgba(0,0,0,0.08);
-  --border-strong:rgba(0,0,0,0.16);
-  --text:#1c1917;
-  --text-2:#57534e;
-  --text-3:#a8a29e;
-  --info:#1e3a8a;
-  --info-bg:#dbeafe;
-  --success:#14532d;
-  --success-bg:#dcfce7;
-  --warning:#78350f;
-  --warning-bg:#fef3c7;
-  --danger:#7f1d1d;
-  --danger-bg:#fee2e2;
-  --accent:#0f2347;
-  --rad:8px;
-  --rad-lg:12px;
-}
-html,body{height:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","SF Pro Text",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-
-/* ─── Top bar ────────────────────────────────────── */
-.topbar{background:var(--accent);border-bottom:0.5px solid rgba(255,255,255,0.10);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:13px}
-/* Ronnoco wordmark — swap the .brand-logo block for an <img src="logo.svg" class="brand-logo-img"> later */
-.brand-logo{display:flex;flex-direction:column;line-height:1;gap:3px}
-.brand-logo .bl-name{font-size:21px;font-weight:800;letter-spacing:.14em;color:#fff;font-family:"Arial Black",Arial,Helvetica,sans-serif}
-.brand-logo .bl-sub{font-size:8.5px;font-weight:600;letter-spacing:.34em;color:#c8362f;text-transform:uppercase}
-.brand-logo-img{height:34px;width:auto;display:block}
-.brand-divider{width:1px;height:30px;background:rgba(255,255,255,0.18)}
-.brand-app{display:flex;flex-direction:column;line-height:1.15}
-.brand-title{font-size:13px;font-weight:500;color:#ffffff;line-height:1.2}
-.brand-sub{font-size:10px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.06em}
-/* legacy small badge — kept for any other usages, now light-on-navy */
-.brand-mark{width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:.5px;border:1px solid rgba(255,255,255,0.2)}
-
-.role-switcher{display:flex;align-items:center;gap:8px}
-.role-switcher select{font-size:12px;padding:5px 10px;border:0.5px solid rgba(255,255,255,0.22);border-radius:6px;background:rgba(255,255,255,0.08);color:#fff;font-family:inherit;outline:none}
-.role-switcher select:hover{border-color:rgba(255,255,255,0.4)}
-.role-switcher select option{color:#1c1917;background:#fff}
-.role-label{font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.06em}
-
-.top-right{display:flex;align-items:center;gap:6px}
-/* buttons sitting on the navy bar */
-.topbar .btn-ghost{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.2)}
-.topbar .btn-ghost:hover{background:rgba(255,255,255,0.16)}
-.topbar .btn{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.2)}
-.topbar .btn:hover{background:rgba(255,255,255,0.16)}
-#dist-identity{color:rgba(255,255,255,0.85)!important}
-#dist-identity strong{color:#fff}
-.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.45);display:inline-block}
-.dot.live{background:#4ade80}
-.dot.err{background:#f87171}
-.dot.warn{background:#fbbf24}
-
-/* ─── Nav tabs ────────────────────────────────────── */
-.tabs{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 24px;display:flex;gap:0;align-items:flex-end;position:sticky;top:0;z-index:50}
-.tab{font-size:13px;padding:12px 16px;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;color:var(--text-2);font-weight:500;transition:color .12s, border-color .12s}
-.tab.on{color:var(--text);border-bottom-color:var(--accent)}
-.tab:hover:not(.on){color:var(--text)}
-
-/* ─── Buttons ────────────────────────────────────── */
-.btn{font-size:13px;padding:6px 12px;border:0.5px solid var(--border-strong);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-weight:500;white-space:nowrap;transition:background .12s,border-color .12s;display:inline-flex;align-items:center;gap:5px;line-height:1.3}
-.btn:hover{background:var(--surface-2)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-sm{font-size:12px;padding:4px 10px}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-primary:hover{background:#1b3a6b}
-.btn-success{background:#15803d;color:#fff;border-color:#15803d}
-.btn-success:hover{background:#166534}
-.btn-danger{background:#b91c1c;color:#fff;border-color:#b91c1c}
-.btn-danger:hover{background:#991b1b}
-.btn-ghost{border-color:transparent;background:transparent}
-.btn-ghost:hover{background:var(--surface-2)}
-
-/* ─── Layout ────────────────────────────────────── */
-.wrap{max-width:1400px;margin:0 auto;padding:20px 24px 40px}
-.page{display:none}
-.page.on{display:block}
-
-.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
-.page-title{font-size:18px;font-weight:500;color:var(--text);line-height:1.3}
-.page-sub{font-size:13px;color:var(--text-2);margin-top:2px}
-
-.section-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:500}
-
-/* ─── Metric cards ────────────────────────────────────── */
-.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:20px}
-@media(max-width:900px){.metrics{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:520px){.metrics{grid-template-columns:repeat(2,1fr)}}
-.mcard{background:var(--surface-2);border-radius:var(--rad);padding:11px 14px;cursor:pointer;transition:background .12s}
-.mcard:hover{background:var(--surface-3)}
-.mcard.active{background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--accent)}
-.m-lbl{font-size:11px;color:var(--text-2)}
-.m-val{font-size:22px;font-weight:500;color:var(--text);margin-top:2px;line-height:1.1}
-.m-sub{font-size:11px;color:var(--text-3);margin-top:3px}
-
-/* ─── Needs-your-attention panel (Director) ─────────────── */
-.attn-card{margin-bottom:20px;padding:16px 18px;border:0.5px solid var(--border-strong);box-shadow:inset 4px 0 0 var(--accent)}
-.attn-card.attn-clear{box-shadow:inset 4px 0 0 #16a34a}
-.attn-head{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--text)}
-.attn-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:0 0 auto}
-.attn-dot.ok{background:#16a34a}
-.attn-count{margin-left:6px;font-size:12px;font-weight:600;color:#fff;background:var(--accent);border-radius:999px;padding:1px 9px}
-.attn-sub{font-size:12px;color:var(--text-2);margin-top:4px}
-.attn-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
-.attn-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-2);border-radius:var(--rad);padding:9px 12px}
-.attn-row:hover{background:var(--surface-3)}
-.attn-row-main{flex:1;min-width:0;cursor:pointer}
-.attn-row-name{font-size:13px;color:var(--text);font-weight:500;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.attn-row-meta{font-size:11px;color:var(--text-3);margin-top:2px}
-.attn-tag{font-size:10px;font-weight:600;padding:1px 7px;border-radius:999px;white-space:nowrap}
-.attn-tag.t-assign{background:#fef3c7;color:#92400e}
-.attn-tag.t-new{background:#dbeafe;color:#1e3a8a}
-
-/* ─── Drill-down breadcrumb (Director/Admin) ────────────── */
-.drill-crumb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;margin-bottom:12px;padding:8px 12px;background:var(--surface-2);border-radius:var(--rad)}
-.crumb-link{color:var(--accent);cursor:pointer;font-weight:500}
-.crumb-link:hover{text-decoration:underline}
-.crumb-sep{color:var(--text-3)}
-.crumb-cur{color:var(--text);font-weight:500}
-
-/* ─── Cards / tables ────────────────────────────────────── */
-.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);overflow:hidden}
-.card-pad{padding:16px}
-.card-head{padding:14px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.card-title{font-size:14px;font-weight:500;color:var(--text)}
-.card-sub{font-size:12px;color:var(--text-2)}
-
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{padding:10px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text-2);background:var(--surface-2);border-bottom:0.5px solid var(--border);letter-spacing:.02em;text-transform:none}
-th.num{text-align:center}
-td{padding:11px 14px;border-bottom:0.5px solid var(--border);vertical-align:middle}
-td.num{text-align:center;font-variant-numeric:tabular-nums}
-tbody tr{cursor:pointer;transition:background .08s}
-tbody tr:hover td{background:var(--surface-2)}
-tbody tr:last-child td{border-bottom:none}
-
-.col-name{font-weight:500;color:var(--text)}
-.col-sub{font-size:11px;color:var(--text-3);margin-top:2px}
-.zero{color:var(--text-3)}
-
-/* ─── Pills / badges ────────────────────────────────────── */
-.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:500;line-height:1.4;white-space:nowrap}
-.pill-gray{background:var(--surface-2);color:var(--text-2)}
-.pill-blue{background:var(--info-bg);color:var(--info)}
-.pill-green{background:var(--success-bg);color:var(--success)}
-.pill-amber{background:var(--warning-bg);color:var(--warning)}
-.pill-red{background:var(--danger-bg);color:var(--danger)}
-.pill-stall{color:var(--warning);background:var(--warning-bg);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap}
-
-/* ─── Filter bar ────────────────────────────────────── */
-.filterbar{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:12px 14px;margin-bottom:14px}
-.filterbar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-.filterbar-row:last-child{margin-bottom:0}
-.searchwrap{position:relative;flex:1;min-width:240px}
-.searchwrap input{width:100%;padding:7px 11px 7px 32px;font-size:13px;border:0.5px solid var(--border);border-radius:6px;font-family:inherit;outline:none;background:var(--surface)}
-.searchwrap input:focus{border-color:var(--border-strong)}
-.searchwrap::before{content:"";position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8a29e' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='m21 21-4-4'/></svg>") no-repeat center/contain}
-
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 8px 3px 10px;background:var(--info-bg);color:var(--info);border-radius:999px;font-size:11px;font-weight:500}
-.chip-x{cursor:pointer;font-weight:600;opacity:.7}
-.chip-x:hover{opacity:1}
-
-select.input,input.input{font-size:13px;padding:6px 9px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit;outline:none}
-select.input:focus,input.input:focus{border-color:var(--border-strong)}
-
-/* ─── Lead detail ────────────────────────────────────── */
-.crumb{font-size:12px;color:var(--text-2);display:flex;gap:6px;align-items:center;margin-bottom:12px}
-.crumb a{color:var(--info);text-decoration:none;cursor:pointer}
-.crumb a:hover{text-decoration:underline}
-
-.detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px;flex-wrap:wrap}
-.cohort-tag{font-size:10px;color:var(--text-3);letter-spacing:.06em;text-transform:uppercase;font-weight:500;margin-bottom:4px}
-.business-name{font-size:20px;font-weight:500;color:var(--text);line-height:1.25;margin-bottom:4px}
-.business-tagline{font-size:13px;color:var(--text-2);line-height:1.5}
-
-/* Pipeline strip - 6 cells (5 stages + terminal) */
-.pipe{display:flex;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:10px;margin-bottom:14px;gap:2px}
-.pipe-cell{flex:1;padding:9px 4px;text-align:center;border-radius:6px;min-width:0;background:var(--surface-2)}
-.pipe-cell.done{background:var(--success-bg)}
-.pipe-cell.done .pipe-glyph,.pipe-cell.done .pipe-label,.pipe-cell.done .pipe-meta{color:var(--success)}
-.pipe-cell.current{background:var(--info-bg);box-shadow:inset 0 0 0 1.5px var(--info)}
-.pipe-cell.current .pipe-glyph,.pipe-cell.current .pipe-label,.pipe-cell.current .pipe-meta{color:var(--info)}
-.pipe-cell.current .pipe-label{font-weight:600}
-.pipe-cell.lost{background:var(--danger-bg)}
-.pipe-cell.lost .pipe-glyph,.pipe-cell.lost .pipe-label,.pipe-cell.lost .pipe-meta{color:var(--danger)}
-.pipe-cell.won{background:var(--success-bg)}
-.pipe-cell.won .pipe-glyph,.pipe-cell.won .pipe-label,.pipe-cell.won .pipe-meta{color:var(--success);font-weight:600}
-.pipe-cell.upcoming{background:transparent}
-.pipe-cell.upcoming .pipe-glyph,.pipe-cell.upcoming .pipe-label,.pipe-cell.upcoming .pipe-meta{color:var(--text-3)}
-.pipe-glyph{font-size:14px;margin-bottom:3px;color:var(--text-2)}
-.pipe-label{font-size:11px;font-weight:500;color:var(--text);margin-bottom:1px}
-.pipe-meta{font-size:10px;color:var(--text-2);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
-
-.pipe-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
-.pipe-actions .btn{flex:1;min-width:130px;justify-content:center}
-
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-@media(max-width:680px){.info-grid{grid-template-columns:1fr}}
-.info-card-title{font-size:11px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
-.info-tbl{width:100%;font-size:12px;border:none}
-.info-tbl td{padding:3px 0;border:none;background:none;vertical-align:top;cursor:default}
-.info-tbl tr:hover td{background:none}
-.info-tbl td:first-child{color:var(--text-2);font-weight:400;width:40%;padding-right:8px}
-.info-tbl td:nth-child(2){color:var(--text)}
-.info-tbl tr.divider td{padding-top:8px;border-top:1px dashed var(--border)}
-
-/* Timeline */
-.tl-body{border-left:1.5px solid var(--border);padding-left:16px;max-height:380px;overflow-y:auto}
-.tl-item{position:relative;margin-bottom:16px}
-.tl-item:last-child{margin-bottom:0}
-.tl-dot{position:absolute;left:-22px;top:5px;width:9px;height:9px;border-radius:50%;border:2px solid var(--surface);background:var(--text-3)}
-.tl-dot.contact{background:var(--info)}
-.tl-dot.advance{background:var(--success)}
-.tl-dot.lost{background:var(--danger)}
-.tl-dot.assign{background:#7c3aed}
-.tl-actor{font-weight:500;color:var(--text)}
-.tl-action{font-size:13px;color:var(--text);line-height:1.45}
-.tl-meta{font-size:11px;color:var(--text-3);margin-top:2px}
-.tl-note{font-size:12px;color:var(--info);padding:5px 10px;background:var(--info-bg);border-radius:0 5px 5px 0;border-left:2px solid var(--info);margin-top:5px;line-height:1.5}
-
-.email-row{display:flex;gap:9px;padding:9px 12px;background:var(--surface-2);border-radius:6px;font-size:12px;margin-bottom:5px}
-.email-row:last-child{margin-bottom:0}
-
-.lost-banner{background:var(--danger-bg);border:0.5px solid var(--danger);border-radius:var(--rad);padding:10px 14px;font-size:13px;color:var(--danger);margin-bottom:14px}
-.won-banner{background:var(--success-bg);border:0.5px solid var(--success);border-radius:var(--rad);padding:10px 14px;font-size:13px;color:var(--success);margin-bottom:14px}
-
-/* ─── Sidebar list (All Leads) ────────────────────────────────────── */
-.split{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}
-@media(max-width:820px){.split{grid-template-columns:1fr}}
-.list-wrap{display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 320px);overflow-y:auto}
-.lcard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad);padding:10px 12px;cursor:pointer;transition:background .1s,border-color .1s}
-.lcard:hover{background:var(--surface-2)}
-.lcard.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
-.lcard.dim{opacity:.55}
-.lc-id{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--info);margin-bottom:2px}
-.lc-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:3px}
-.lc-rep{font-size:11px;color:var(--text-2);margin-bottom:5px}
-.lc-rep.warn{color:var(--warning)}
-.lc-foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-
-/* ─── Kanban ────────────────────────────────────── */
-.kanban{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-@media(max-width:1200px){.kanban{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:720px){.kanban{grid-template-columns:repeat(2,1fr)}}
-.kcol{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);overflow:hidden;display:flex;flex-direction:column;min-height:200px}
-.kcol-head{padding:10px 12px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface-2)}
-.kcol-title{font-size:12px;font-weight:500;color:var(--text)}
-.kcol-count{font-size:11px;color:var(--text-2);background:var(--surface);padding:2px 8px;border-radius:999px;border:0.5px solid var(--border)}
-.kcol-body{padding:8px;flex:1;overflow-y:auto;max-height:520px}
-.kcard{background:var(--surface-2);border:0.5px solid var(--border);border-radius:6px;padding:8px 10px;margin-bottom:6px;cursor:pointer;font-size:12px;transition:background .1s}
-.kcard:hover{background:var(--surface-3)}
-.kcard.stall{border-left:2px solid var(--warning)}
-.kcard-name{font-weight:500;color:var(--text);line-height:1.3}
-.kcard-rep{color:var(--text-2);font-size:11px;margin-top:2px}
-.kcard-rep.warn{color:var(--warning)}
-.kcard-meta{color:var(--text-3);font-size:10px;margin-top:4px}
-
-/* ─── Distributor / Rep "lite" views ────────────────────────────────────── */
-.lite-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
-.lite-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:14px;cursor:pointer;transition:background .12s,border-color .12s}
-.lite-card:hover{background:var(--surface-2);border-color:var(--border-strong)}
-.lite-stage{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.lite-name{font-size:14px;font-weight:500;color:var(--text);line-height:1.3;margin-bottom:4px}
-.lite-meta{font-size:12px;color:var(--text-2);line-height:1.5}
-
-/* ─── Distributor warehouse rollup ───────────────────────── */
-.wh-reportbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
-.wh-reportbar-hint{font-size:12px;color:var(--text-3)}
-.wh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
-.wh-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:16px;cursor:pointer;transition:background .12s,border-color .12s,box-shadow .12s;display:flex;flex-direction:column;gap:13px}
-.wh-card:hover{background:var(--surface-2);border-color:var(--border-strong);box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.wh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-height:20px}
-.wh-name{font-size:15px;font-weight:600;color:var(--text);line-height:1.25}
-.wh-body{display:flex;align-items:center;gap:16px}
-.wh-donut{flex:0 0 auto}
-.wh-legend{display:grid;grid-template-columns:1fr;gap:3px;font-size:12px;color:var(--text-2);min-width:0}
-.wh-total{display:flex;align-items:baseline;gap:5px;margin-bottom:3px}
-.wh-total-num{font-size:18px;font-weight:700;color:var(--text);line-height:1}
-.wh-total-lbl{font-size:11px;color:var(--text-3)}
-.wh-legend .lg{display:flex;align-items:center;gap:6px;white-space:nowrap}
-.wh-legend .lg b{margin-left:auto;color:var(--text);font-weight:600;padding-left:8px}
-.wh-legend .sw{width:9px;height:9px;border-radius:2px;flex:0 0 auto}
-.wh-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:0.5px solid var(--border);padding-top:10px}
-.wh-rate{font-size:12px;color:var(--text-2);font-weight:500}
-.wh-go{font-size:12px;color:var(--accent);font-weight:600}
-/* warehouse detail metrics table */
-.wh-metric-table{width:100%;border-collapse:collapse;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);overflow:hidden;margin-bottom:6px;font-size:13px}
-.wh-metric-table th{background:var(--surface-2);text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;border-bottom:0.5px solid var(--border)}
-.wh-metric-table td{padding:12px 14px;color:var(--text);font-size:15px}
-.wh-metric-table td b{font-weight:700}
-.wh-metric-table .dot-amber,.wh-metric-table .dot-blue,.wh-metric-table .dot-green,.wh-metric-table .dot-red{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.dot-amber{background:#d97706}.dot-blue{background:#2563eb}.dot-green{background:#16a34a}.dot-red{background:#dc2626}
-.wh-detail-actions{display:flex;justify-content:flex-end;margin:0 0 14px}
-.lite-stall{box-shadow:inset 3px 0 0 var(--warning)}
-.crumb{font-size:13px;color:var(--text-2);font-weight:400}
-.crumb a{color:var(--accent);text-decoration:none;cursor:pointer}
-.crumb a:hover{text-decoration:underline}
-.crumb .crumb-sep{color:var(--text-3);margin:0 2px}
-.crumb span:last-child:not(.crumb-sep){color:var(--text);font-weight:500}
-@media(max-width:520px){.wh-metric-table{display:block;overflow-x:auto;white-space:nowrap}}
-
-/* ─── Notice / banner ────────────────────────────────────── */
-.notice{font-size:13px;padding:9px 14px;border-radius:var(--rad);margin-bottom:14px;display:none;border:0.5px solid transparent}
-.notice.show{display:block}
-.notice-ok{background:var(--success-bg);color:var(--success);border-color:var(--success)}
-.notice-err{background:var(--danger-bg);color:var(--danger);border-color:var(--danger)}
-.notice-info{background:var(--info-bg);color:var(--info);border-color:var(--info)}
-.notice-warn{background:var(--warning-bg);color:var(--warning);border-color:var(--warning)}
-
-/* ─── Modals ────────────────────────────────────── */
-.overlay{position:fixed;inset:0;background:rgba(28,25,23,.5);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}
-.overlay.open{display:flex}
-.modal{background:var(--surface);border-radius:var(--rad-lg);padding:18px 20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
-.modal-lg{max-width:760px}
-.mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:0.5px solid var(--border)}
-.mtitle{font-size:15px;font-weight:500;color:var(--text)}
-.mclose{background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;line-height:1;padding:0 4px}
-.mclose:hover{color:var(--text)}
-.flbl{font-size:12px;font-weight:500;color:var(--text-2);margin:10px 0 4px;display:block}
-.finp{width:100%;font-size:13px;padding:8px 10px;border:0.5px solid var(--border);border-radius:6px;font-family:inherit;outline:none;background:var(--surface);color:var(--text)}
-.finp:focus{border-color:var(--border-strong)}
-textarea.finp{resize:vertical;min-height:80px;line-height:1.5}
-.mfoot{display:flex;gap:7px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:0.5px solid var(--border);flex-wrap:wrap}
-
-/* Method picker */
-.methods{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}
-.method{padding:10px 4px;border:0.5px solid var(--border);border-radius:7px;background:var(--surface);cursor:pointer;font-family:inherit;text-align:center;transition:background .12s,border-color .12s;color:var(--text)}
-.method:hover{background:var(--surface-2)}
-.method.on{border-color:var(--accent);background:var(--accent);color:#fff}
-.method-glyph{font-size:18px;margin-bottom:3px}
-.method-lbl{font-size:11px;font-weight:500}
-
-/* Lock screen */
-.lock-wrap{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}
-.lock-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:32px;width:100%;max-width:340px;text-align:center}
-
-/* ─── Empty state ────────────────────────────────────── */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;color:var(--text-3);text-align:center;gap:6px}
-.empty-title{font-size:14px;font-weight:500;color:var(--text-2)}
-.empty-sub{font-size:12px;color:var(--text-3)}
-
-/* ─── Misc ────────────────────────────────────── */
-.muted{color:var(--text-3)}
-.mono{font-family:ui-monospace,Menlo,monospace}
-.hidden{display:none!important}
-a{color:var(--info);text-decoration:none}
-a:hover{text-decoration:underline}
-hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
-
-/* ─── Settings page ────────────────────────────────────── */
-.scard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rad-lg);padding:18px 20px;margin-bottom:14px}
-.ssec{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin:14px 0 6px;padding-top:12px;border-top:0.5px solid var(--border)}
-.ssec:first-of-type{padding-top:0;border-top:none;margin-top:0}
-</style>
 </head>
 <body>
 
@@ -380,31 +19,29 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 
   <div class="topbar">
     <div class="brand">
-      <div class="brand-logo">
-        <span class="bl-name">RONNOCO</span>
-        <span class="bl-sub">Beverage Solutions</span>
-      </div>
-      <div class="brand-divider"></div>
-      <div class="brand-app">
-        <div class="brand-title">Distributor Leads</div>
-        <div class="brand-sub">Lead Portal</div>
+      <div class="brand-mark"><img src="ronnoco-logo.png" alt="Ronnoco"></div>
+      <div>
+        
+        <div class="brand-sub">Distributor Leads</div>
       </div>
     </div>
 
-    <div class="role-switcher">
+    <div class="role-switcher" id="role-switcher">
       <span class="role-label">Viewing as</span>
       <select id="role-select" onchange="onRoleChange()">
         <option value="admin">Admin</option>
         <option value="director">Director</option>
         <option value="distributor">Distributor</option>
-        <option value="ronnoco_rep">Ronnoco Rep</option>
+        <option value="ronnoco_rep">Sales Rep</option>
       </select>
       <select id="scope-select" class="hidden" onchange="onScopeChange()"></select>
     </div>
+    <div id="assigned-view" class="assigned-view hidden"></div>
 
     <div class="top-right">
-      <span class="dot" id="conn-dot" title="Connecting…"></span>
-      <button class="btn btn-sm btn-ghost" onclick="goDistLogin()">Distributor sign-in</button>
+      <span id="auth-badge" class="pill pill-blue hidden">Signed in</span>
+      <button id="auth-logout" class="btn btn-sm btn-ghost hidden" onclick="authLogout()">Sign out</button>
+      <span class="conn-dot" id="conn-dot" title="Connecting…"></span>
       <button class="btn btn-sm btn-ghost" onclick="goHelp()">Help</button>
       <button class="btn btn-sm btn-ghost" onclick="goSettings()">Settings</button>
     </div>
@@ -414,6 +51,15 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
     <!-- Tabs are role-specific; rendered by setRoleUI() -->
   </nav>
 
+  <!-- Global breadcrumb bar (rendered by JS updateBreadcrumb) -->
+  <div id="global-breadcrumb" style="background:var(--surface);border-bottom:1px solid var(--border);padding:0 var(--sp-6)">
+    <nav class="breadcrumb" style="border-bottom:none;margin-bottom:0;padding:8px 0" aria-label="breadcrumb">
+      <div class="breadcrumb-item"><span class="breadcrumb-link" id="bc-home" onclick="switchTab(homeTab())">&#8962; Home</span></div>
+      <span class="breadcrumb-sep">&#8250;</span>
+      <div class="breadcrumb-item"><span class="breadcrumb-current" id="bc-current">Rep Scorecard</span></div>
+    </nav>
+  </div>
+
   <div class="wrap">
     <div id="notice" class="notice"></div>
 
@@ -421,8 +67,8 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
     <div id="view-scorecard" class="view">
       <div class="page-head">
         <div>
-          <div class="page-title" id="sc-title">Rep scorecard</div>
-          <div class="page-sub" id="sc-sub">One row per sales rep · click any rep to see their leads</div>
+          <div class="page-title" id="sc-title">Rep Scorecard</div>
+          <div class="page-sub" id="sc-sub">Performance summary by sales rep — click any row to view their leads</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <select id="sc-cohort" class="input" onchange="renderScorecard()">
@@ -443,8 +89,8 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
       </div>
 
       <div id="sc-metrics" class="metrics"></div>
-      <div id="sc-attention"></div>
       <div id="sc-stalled-banner"></div>
+      <div id="sc-response-graphs" class="resp-grid"></div>
       <div id="scorecard-body"></div>
     </div>
 
@@ -452,16 +98,14 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
     <div id="view-leads" class="view hidden">
       <div class="page-head">
         <div>
-          <div class="page-title">All leads</div>
-          <div class="page-sub" id="leads-sub">Filter, search, group, and open any lead</div>
+          <div class="page-title">All Leads</div>
+          <div class="page-sub" id="leads-sub">Search, filter, and manage every lead in the system</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-sm btn-primary" onclick="openNewLead()">+ New lead</button>
           <button class="btn btn-sm" onclick="exportCurrent()" id="export-btn">Export</button>
         </div>
       </div>
-
-      <div id="drill-crumb"></div>
 
       <div class="filterbar">
         <div class="filterbar-row">
@@ -532,7 +176,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
       <div class="page-head">
         <div>
           <div class="page-title">Pipeline</div>
-          <div class="page-sub">Leads grouped by stage · click any card to open</div>
+          <div class="page-sub">Leads organized by stage — click any card to open the full record</div>
         </div>
       </div>
       <div id="kanban-body" class="kanban">
@@ -544,8 +188,8 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
     <div id="view-submitted" class="view hidden">
       <div class="page-head">
         <div>
-          <div class="page-title" id="sub-title">My submitted leads</div>
-          <div class="page-sub" id="sub-sub">Status of every lead you've submitted to Ronnoco</div>
+          <div class="page-title" id="sub-title">Submitted Leads</div>
+          <div class="page-sub" id="sub-sub">Track the status of every lead your company has submitted to Ronnoco</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-sm btn-primary" onclick="openNewLead()">+ Submit new lead</button>
@@ -556,6 +200,12 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
       <div class="filterbar">
         <div class="filterbar-row">
           <div class="searchwrap"><input id="sub-q" placeholder="Business, contact, email…" oninput="renderSubmitted()"/></div>
+          <select id="sub-warehouse" class="input" onchange="selId=null; renderSubmitted()">
+            <option value="">All warehouses</option>
+          </select>
+          <select id="sub-rep" class="input" onchange="selId=null; renderSubmitted()">
+            <option value="">All Ronnoco reps</option>
+          </select>
           <select id="sub-step" class="input" onchange="renderSubmitted()">
             <option value="">All stages</option>
             <option value="lead_received">Lead Received</option>
@@ -566,11 +216,12 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
             <option value="follow_up">In Follow-up</option>
           </select>
           <select id="sub-status" class="input" onchange="renderSubmitted()">
+            <option value="">All Status</option>
             <option value="active">Active</option>
-            <option value="">All status</option>
             <option value="won">Won</option>
             <option value="lost">Lost</option>
           </select>
+          <button class="btn btn-sm" onclick="clearSubmittedFilters()">Clear</button>
         </div>
       </div>
       <div id="submitted-body"></div>
@@ -580,8 +231,8 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
     <div id="view-mywork" class="view hidden">
       <div class="page-head">
         <div>
-          <div class="page-title">My leads</div>
-          <div class="page-sub" id="myw-sub">Your active leads grouped by what action they need</div>
+          <div class="page-title">My Leads</div>
+          <div class="page-sub" id="myw-sub">Your active leads, organized by next required action</div>
         </div>
         <div style="display:flex;gap:6px">
           <button class="btn btn-sm" onclick="exportCurrent()">Export</button>
@@ -610,38 +261,19 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
   </div>
 </div>
 
-<div id="pg-distlogin" class="page">
-  <div class="lock-wrap">
-    <div class="lock-card">
-      <div class="brand-mark" style="margin:0 auto 14px;background:var(--accent);border-color:var(--accent)">R</div>
-      <div style="font-size:16px;font-weight:600;margin-bottom:4px">Distributor Sign In</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:18px">View your warehouses' leads and their status with Ronnoco</div>
-      <input class="finp" type="text" id="dl-user" placeholder="Username" autocomplete="username" style="margin-bottom:8px" onkeydown="if(event.key==='Enter')ge('dl-pass').focus()"/>
-      <input class="finp" type="password" id="dl-pass" placeholder="Password" autocomplete="current-password" style="margin-bottom:10px" onkeydown="if(event.key==='Enter')distLogin()"/>
-      <button class="btn btn-primary" style="width:100%;margin-bottom:6px" onclick="distLogin()">Sign in →</button>
-      <div id="dl-err" style="font-size:12px;color:var(--danger);display:none;margin-top:4px">Incorrect username or password</div>
-      <button class="btn btn-ghost" style="width:100%;margin-top:4px" onclick="showPage('main')">Back</button>
-    </div>
-  </div>
-</div>
-
 <div id="pg-settings" class="page">
   <div class="topbar">
     <div class="brand">
-      <div class="brand-logo">
-        <span class="bl-name">RONNOCO</span>
-        <span class="bl-sub">Beverage Solutions</span>
-      </div>
-      <div class="brand-divider"></div>
-      <div class="brand-app"><div class="brand-title">Settings</div><div class="brand-sub">Lead Portal</div></div>
+      <div class="brand-mark"><img src="ronnoco-logo.png" alt="Ronnoco"></div>
+      <div><div class="brand-title">Settings</div><div class="brand-sub">Dashboard Configuration</div></div>
     </div>
     <button class="btn btn-sm" onclick="showPage('main')">← Dashboard</button>
   </div>
   <div class="wrap" style="max-width:620px">
     <div id="s-notice" class="notice"></div>
     <div class="scard">
-      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Jotform connection</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:14px">Paste your Jotform API key to enable webhook + manual sync.</div>
+      <div class="card-title" style="margin-bottom:4px">Jotform Integration</div>
+      <div class="card-sub" style="margin-bottom:14px">Connect your Jotform API key to enable lead ingestion via webhook and manual sync.</div>
       <label class="flbl">API Key</label>
       <input class="finp" type="password" id="s-apikey" placeholder="Jotform API key…"/>
       <div style="font-size:11px;color:var(--text-3);margin-top:4px">ronnoco.jotform.com → Account → API</div>
@@ -650,7 +282,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
       </div>
       <div id="key-msg" style="font-size:13px;margin-top:6px"></div>
 
-      <div class="ssec">Sync forms</div>
+      <div class="ssec">Manual Form Sync</div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--surface-2);border-radius:6px">
           <span style="font-size:13px;font-weight:500">Java Select</span>
@@ -663,16 +295,16 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
         <button class="btn btn-sm btn-primary" id="sync-all" onclick="settingsSync(null)" disabled>Sync all forms</button>
       </div>
 
-      <div class="ssec">Webhook URL</div>
+      <div class="ssec">Webhook Endpoint</div>
       <div id="wh-url" style="font-size:12px;background:var(--surface-2);padding:8px 10px;border-radius:6px;word-break:break-all;color:var(--text-2);font-family:ui-monospace,Menlo,monospace"></div>
 
-      <div class="ssec">Connection status</div>
+      <div class="ssec">Connection Status</div>
       <div id="s-status" style="font-size:13px;line-height:1.9"></div>
     </div>
 
     <div class="scard">
-      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Sales reps</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Add or manage assignable reps and assign each to a director.</div>
+      <div class="card-title" style="margin-bottom:4px">Sales Reps</div>
+      <div class="card-sub" style="margin-bottom:12px">Add and manage sales reps. Each rep can be assigned to a director for scoped reporting.</div>
       <div style="display:flex;gap:7px;margin-bottom:12px">
         <input class="finp" id="new-rep" placeholder="Rep name…" style="flex:1" onkeydown="if(event.key==='Enter')addRep()"/>
         <button class="btn btn-sm btn-primary" onclick="addRep()">Add</button>
@@ -681,8 +313,8 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
     </div>
 
     <div class="scard">
-      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Directors</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Create directors and assign their sales reps. Directors only see leads from their assigned reps (plus unassigned leads).</div>
+      <div class="card-title" style="margin-bottom:4px">Directors</div>
+      <div class="card-sub" style="margin-bottom:12px">Create directors and assign their sales reps. Directors see only leads belonging to their assigned team.</div>
       <div style="display:flex;gap:7px;margin-bottom:12px">
         <input class="finp" id="new-director-name" placeholder="Director name…" style="flex:1.5" onkeydown="if(event.key==='Enter')addDirector()"/>
         <input class="finp" id="new-director-email" placeholder="Email (optional)" style="flex:1"/>
@@ -692,40 +324,109 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
     </div>
 
     <div class="scard">
-      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Distributor accounts</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">Create a secure sign-in for a distributor. Each account is locked to one company at the database level — they can only ever load their own company's leads, even outside this app. They sign in at <code style="background:var(--surface-2);padding:1px 5px;border-radius:4px">/distributor.html</code>.</div>
-
-      <label class="flbl" style="font-size:12px;color:var(--text-2)">Admin secret <span style="color:var(--text-3)">(the DIST_ADMIN_SECRET you set in Netlify — entered once per session)</span></label>
-      <div style="display:flex;gap:7px;margin-bottom:12px">
-        <input class="finp" id="da-secret" type="password" placeholder="Admin secret" style="flex:1" autocomplete="off"/>
-        <button class="btn btn-sm" onclick="daRefresh()">Connect</button>
+      <div class="card-title" style="margin-bottom:4px">Access Template</div>
+      <div class="card-sub" style="margin-bottom:10px">
+        Download the CSV template to define dashboard access for <strong>Admin</strong>, <strong>Director</strong>, <strong>Sales Rep</strong>, and <strong>Distributor</strong> accounts.
       </div>
-
-      <div id="da-form" style="opacity:.5;pointer-events:none">
-        <div style="display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap">
-          <input class="finp" id="da-name" placeholder="Display name…" style="flex:1.4;min-width:140px"/>
-          <input class="finp" id="da-email" type="email" placeholder="Email" style="flex:1.4;min-width:160px" autocomplete="off"/>
-        </div>
-        <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap">
-          <select class="finp" id="da-company" style="flex:1;min-width:130px">
-            <option value="">— Company —</option>
-            <option value="HT Hackney">HT Hackney</option>
-            <option value="Sledd">Sledd</option>
-            <option value="CoreMark">CoreMark</option>
-          </select>
-          <input class="finp" id="da-pass" type="text" placeholder="Password (8+ chars)" style="flex:1;min-width:140px" autocomplete="off"/>
-          <button class="btn btn-sm btn-primary" onclick="daCreate()">Create / update</button>
-        </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <a class="btn btn-sm btn-primary" href="/user-access-template.csv" download>Download Template CSV</a>
       </div>
-      <div id="da-msg" style="font-size:13px;margin-bottom:10px"></div>
-      <div id="da-list" style="display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto"></div>
-      <div style="font-size:12px;color:var(--text-3);margin-top:12px;line-height:1.6;border-top:0.5px solid var(--border);padding-top:10px">
-        Accounts are real Supabase Auth users with database-enforced isolation (Row-Level Security). The admin secret is held only in this browser tab for the session and is never stored.
+      <div style="font-size:12px;color:var(--text-3);line-height:1.6">
+        Required mapping for Supabase metadata:
+        <br/>`role`: admin | director | sales_rep (legacy: ronnoco_rep) | distributor
+        <br/>`program_source`: required for distributor users (e.g. Java Select / Sledd / CoreMark)
+        <br/>Optional distributor constraints: `distributor_name`, `distributor_warehouse`, `rep_only`
       </div>
     </div>
 
     <div class="scard">
-      <div style="font-size:15px;font-weight:500;margin-bottom:4px">Admin password</div>
+      <div class="card-title" style="margin-bottom:4px">Create / Edit Access User</div>
+      <div class="card-sub" style="margin-bottom:10px">
+        Add a new user or update an existing one. Role and scope assignments control what each user can see in the dashboard.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label class="flbl">Email *</label>
+          <input class="finp" id="ua-email" type="email" placeholder="user@company.com"/>
+        </div>
+        <div>
+          <label class="flbl">Temporary Password <span id="ua-password-required">*</span></label>
+          <input class="finp" id="ua-password" type="text" placeholder="Min 8 chars (required for create)"/>
+        </div>
+        <div>
+          <label class="flbl">Role *</label>
+          <select class="finp" id="ua-role" onchange="userAccessRoleChanged()">
+            <option value="admin">admin</option>
+            <option value="director">director</option>
+            <option value="sales_rep">sales_rep</option>
+            <option value="distributor">distributor</option>
+          </select>
+        </div>
+        <div id="ua-program-wrap" class="hidden">
+          <label class="flbl">Program Source (Distributor)</label>
+          <select class="finp" id="ua-program">
+            <option value="Java Select">Java Select</option>
+            <option value="Sledd">Sledd</option>
+            <option value="CoreMark">CoreMark</option>
+          </select>
+        </div>
+        <div id="ua-distname-wrap" class="hidden">
+          <label class="flbl">Distributor Name (optional)</label>
+          <input class="finp" id="ua-distname" placeholder="HT Hackney"/>
+        </div>
+        <div id="ua-wh-wrap" class="hidden">
+          <label class="flbl">Warehouse (optional)</label>
+          <input class="finp" id="ua-wh" placeholder="Athens, TN"/>
+        </div>
+        <div id="ua-rep-wrap" class="hidden">
+          <label class="flbl">Sales Rep Name (sales_rep)</label>
+          <input class="finp" id="ua-rep" placeholder="Will Simms"/>
+        </div>
+        <div id="ua-dir-wrap" class="hidden">
+          <label class="flbl">Director Name (director)</label>
+          <input class="finp" id="ua-dir" placeholder="Director Name"/>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+        <input type="checkbox" id="ua-rep-only" style="width:14px;height:14px"/>
+        <label for="ua-rep-only" style="font-size:12px;color:var(--text-2)">rep_only (use email to constrain distributor rep access)</label>
+      </div>
+      <input type="hidden" id="ua-user-id"/>
+      <input type="hidden" id="ua-registry-id"/>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-sm btn-primary" onclick="createAccessUser()">Create User</button>
+        <button class="btn btn-sm btn-warning" id="ua-update-btn" onclick="updateAccessUser()" disabled>Save Changes</button>
+        <button class="btn btn-sm btn-danger" id="ua-delete-btn" onclick="deleteSelectedAccessUser()" disabled>Delete Selected</button>
+        <button class="btn btn-sm" id="ua-cancel-btn" onclick="cancelAccessUserEdit()" disabled>Cancel Edit</button>
+      </div>
+      <div id="ua-msg" style="font-size:12px;margin-top:8px;color:var(--text-2)"></div>
+    </div>
+
+    <div class="scard">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+        <div class="card-title">Access Users</div>
+        <button class="btn btn-sm btn-primary" onclick="refreshAccessUsers()">Refresh List</button>
+      </div>
+      <div class="card-sub" style="margin-bottom:10px">All registered dashboard users with their assigned roles and access scope.</div>
+      <div id="au-msg" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
+      <div style="overflow:auto;border:0.5px solid var(--border);border-radius:8px">
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody id="au-list-body">
+            <tr><td colspan="3" class="muted">No data loaded yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="scard">
+      <div class="card-title" style="margin-bottom:4px">Change Password</div>
       <label class="flbl">Current password</label><input class="finp" type="password" id="pw-cur"/>
       <label class="flbl">New password</label><input class="finp" type="password" id="pw-new"/>
       <label class="flbl">Confirm new</label><input class="finp" type="password" id="pw-conf" style="margin-bottom:10px"/>
@@ -738,18 +439,14 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <div id="pg-help" class="page">
   <div class="topbar">
     <div class="brand">
-      <div class="brand-logo">
-        <span class="bl-name">RONNOCO</span>
-        <span class="bl-sub">Beverage Solutions</span>
-      </div>
-      <div class="brand-divider"></div>
-      <div class="brand-app"><div class="brand-title">Help</div><div class="brand-sub">Lead Portal</div></div>
+      <div class="brand-mark"><img src="ronnoco-logo.png" alt="Ronnoco"></div>
+      <div><div class="brand-title">Help &amp; Reference</div><div class="brand-sub">User Guide</div></div>
     </div>
     <button class="btn btn-sm" onclick="showPage('main')">← Dashboard</button>
   </div>
   <div class="wrap" style="max-width:760px">
     <div class="scard">
-      <div style="font-size:17px;font-weight:500;margin-bottom:10px">The pipeline</div>
+      <div class="card-title" style="margin-bottom:10px">Lead Pipeline Stages</div>
       <ol style="font-size:14px;color:var(--text);line-height:1.9;padding-left:18px;margin-top:8px">
         <li><strong>Lead Received</strong> — Lead came in from a tradeshow, webhook, or CSV import.</li>
         <li><strong>Awaiting Director</strong> — Admin needs to route the lead to a Director.</li>
@@ -761,11 +458,11 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
       <p style="font-size:13px;color:var(--text-2);margin-top:12px">Terminal: <strong style="color:var(--success)">Won</strong> or <strong style="color:var(--danger)">Lost</strong>. A Won lead converts to a deal in the Ronnoco Deal Builder.</p>
     </div>
     <div class="scard">
-      <div style="font-size:17px;font-weight:500;margin-bottom:10px">Roles &amp; what they can do</div>
+      <div class="card-title" style="margin-bottom:10px">User Roles &amp; Permissions</div>
       <ul style="font-size:14px;line-height:1.9;padding-left:18px">
         <li><strong>Admin</strong> — Sees all leads. Routes new leads to Directors. Manages reps, directors, sync settings.</li>
         <li><strong>Director</strong> — Sees leads routed to them by Admin, plus their team's active leads. Assigns Sales Reps from their team.</li>
-        <li><strong>Distributor</strong> — Sees only their own company's leads (e.g. HT Hackney), grouped by warehouse. Drills into any warehouse to see each lead's current stage, status, and contact info. Submits new leads and tracks status. Cannot see internal rep notes or emails.</li>
+        <li><strong>Distributor</strong> — Sees only leads from their program (e.g. Java Select). Submits new leads, tracks status, and can view rep activity notes.</li>
         <li><strong>Ronnoco Rep</strong> — Sees only leads assigned to them. Logs follow-ups, marks won/lost, edits customer contact info.</li>
       </ul>
       <p style="font-size:13px;color:var(--text-2);margin-top:10px">Settings password: <code style="background:var(--surface-2);padding:1px 6px;border-radius:4px">pipeline2024</code></p>
@@ -781,7 +478,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <div class="overlay" id="route-modal">
   <div class="modal">
     <div class="mhdr">
-      <div><div class="mtitle">Route to Director</div><div id="rd-sub" style="font-size:12px;color:var(--text-2);margin-top:2px"></div></div>
+      <div><div class="mtitle">Route Lead to Director</div><div id="rd-sub" style="font-size:12px;color:var(--text-2);margin-top:2px"></div></div>
       <button class="mclose" onclick="close_modal('route-modal')">×</button>
     </div>
     <div style="font-size:13px;color:var(--text-2);margin-bottom:10px">
@@ -802,7 +499,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <div class="overlay" id="rep-modal">
   <div class="modal modal-lg">
     <div class="mhdr">
-      <div><div class="mtitle">Assign sales rep</div><div id="ra-sub" style="font-size:12px;color:var(--text-2);margin-top:2px"></div></div>
+      <div><div class="mtitle">Assign Sales Rep</div><div id="ra-sub" style="font-size:12px;color:var(--text-2);margin-top:2px"></div></div>
       <button class="mclose" onclick="close_modal('rep-modal')">×</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -856,7 +553,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <div class="overlay" id="followup-modal">
   <div class="modal">
     <div class="mhdr">
-      <div><div class="mtitle">Log a follow-up</div><div id="fu-sub" style="font-size:12px;color:var(--text-2);margin-top:2px"></div></div>
+      <div><div class="mtitle">Log Follow-Up Activity</div><div id="fu-sub" style="font-size:12px;color:var(--text-2);margin-top:2px"></div></div>
       <button class="mclose" onclick="close_modal('followup-modal')">×</button>
     </div>
     <label class="flbl">Contact method</label>
@@ -882,7 +579,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <!-- Lost modal -->
 <div class="overlay" id="lost-modal">
   <div class="modal">
-    <div class="mhdr"><div class="mtitle">Mark as lost</div><button class="mclose" onclick="close_modal('lost-modal')">×</button></div>
+    <div class="mhdr"><div class="mtitle">Mark Lead as Lost</div><button class="mclose" onclick="close_modal('lost-modal')">×</button></div>
     <div style="font-size:13px;color:var(--text-2);margin-bottom:10px">Provide a reason this lead did not convert.</div>
     <label class="flbl">Common reasons</label>
     <select class="finp" id="lost-preset" onchange="if(this.value)document.getElementById('lost-reason').value=this.value">
@@ -906,7 +603,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <!-- Won modal -->
 <div class="overlay" id="won-modal">
   <div class="modal">
-    <div class="mhdr"><div class="mtitle">Mark as won</div><button class="mclose" onclick="close_modal('won-modal')">×</button></div>
+    <div class="mhdr"><div class="mtitle">Mark Lead as Won</div><button class="mclose" onclick="close_modal('won-modal')">×</button></div>
     <div style="font-size:13px;color:var(--text-2);margin-bottom:10px">This lead is ready to convert into a deal in the Ronnoco Deal Builder.</div>
     <label class="flbl">Notes (optional)</label>
     <textarea class="finp" id="won-note" rows="3" placeholder="e.g. 24-month lease on Dr. Coffee package"></textarea>
@@ -920,7 +617,7 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <!-- New Lead modal -->
 <div class="overlay" id="new-modal">
   <div class="modal">
-    <div class="mhdr"><div class="mtitle">New lead</div><button class="mclose" onclick="close_modal('new-modal')">×</button></div>
+    <div class="mhdr"><div class="mtitle">Submit New Lead</div><button class="mclose" onclick="close_modal('new-modal')">×</button></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div><label class="flbl">Business / DBA *</label><input class="finp" id="nl-dba"/></div>
       <div><label class="flbl">Contact name</label><input class="finp" id="nl-name"/></div>
@@ -947,11 +644,34 @@ hr.divider{border:none;border-top:0.5px solid var(--border);margin:14px 0}
 <!-- Edit modal -->
 <div class="overlay" id="edit-modal">
   <div class="modal modal-lg">
-    <div class="mhdr"><div class="mtitle" id="edit-title">Edit lead</div><button class="mclose" onclick="close_modal('edit-modal')">×</button></div>
+    <div class="mhdr"><div class="mtitle" id="edit-title">Edit Lead</div><button class="mclose" onclick="close_modal('edit-modal')">×</button></div>
     <div id="edit-body"></div>
     <div class="mfoot">
       <button class="btn" onclick="close_modal('edit-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveEdit()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="auth-gate" class="overlay">
+  <div class="modal auth-modal">
+    <div class="mhdr">
+      <div class="mtitle">Ronnoco Distributor Portal</div>
+    </div>
+    <div class="auth-brand">
+      <div class="auth-brand-mark"><img src="ronnoco-logo.png" alt="Ronnoco" style="height:22px;width:auto;filter:brightness(0) invert(1)"></div>
+      <div class="auth-brand-text">Ronnoco Beverage</div>
+    </div>
+    <div class="auth-sub">Sign in with your Ronnoco account. Access is limited by your assigned role and territory.</div>
+    <label class="flbl">Email</label>
+    <input id="auth-email" class="finp" type="email" autocomplete="username"/>
+    <label class="flbl">Password</label>
+    <input id="auth-pass" class="finp" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')authLogin()"/>
+    <div id="auth-err" style="font-size:12px;color:var(--danger);margin-top:8px;display:none"></div>
+    <div class="mfoot">
+      <button class="btn btn-primary" onclick="authLogin()">Sign In</button>
+      <button class="btn" onclick="authLogout()">Sign Out</button>
+      <button class="btn btn-ghost" onclick="authForceReset()">Reset Session</button>
     </div>
   </div>
 </div>
@@ -977,34 +697,70 @@ const STEPS = [
 const stepById = id => STEPS.find(s=>s.id===id);
 const stepIdx = id => STEPS.findIndex(s=>s.id===id);
 
-let sb=null;
-let leads=[], salesReps=[], directors=[], actCache={}, emailCache={};
+let sb=null;      // data client (always anon-key scoped)
+let authSb=null;  // auth/session client
+let leads=[], salesReps=[], directors=[], actCache={}, emailCache={}, activityLiteByLead={};
 let role='admin';          // admin | director | distributor | ronnoco_rep
 let scope='';              // the specific person or program selected within a role
+let accessUsersCache = [];
+let accessUsersActionsBound = false;
 let currentTab='scorecard';
 let selId=null;
-let drillWarehouse='';     // which warehouse a distributor has drilled into (breadcrumb)
-
-// Distributor companies (top level of the distributor view). A "program" (program_source)
-// rolls up to one of these. Java Select + HTH are both HT Hackney.
-const DISTRIBUTOR_COMPANIES = ['HT Hackney','Sledd','CoreMark'];
-const PROGRAM_TO_COMPANY = { 'Java Select':'HT Hackney', 'HTH':'HT Hackney', 'Sledd':'Sledd', 'CoreMark':'CoreMark' };
-// Resolve a lead's distributor company: prefer the stored column, fall back to the
-// program→company map so legacy/unsynced rows still group correctly.
-function companyOf(l){
-  if(l.distributor_company && l.distributor_company.trim()) return l.distributor_company.trim();
-  return PROGRAM_TO_COMPANY[l.program_source] || l.program_source || '—';
-}
-function warehouseOf(l){
-  const w = (l.distributor_warehouse||'').trim();
-  return w || 'Unspecified';
-}
 let activeMetric='';
-let drillRep='';           // which rep the Director/Admin has drilled into (breadcrumb)
 let repAssignId=null, lostLeadId=null, wonLeadId=null, routeDirId=null;
 let followupLeadId=null, followupMethod='call';
 let editLeadId=null;
 let csvRows=[];
+let submittedSourceFilter='';
+let forcedRole='', forcedScope='';
+let forcedDistEmail='', forcedDistributor='', forcedWarehouse='';
+let authMode=false;
+let authUser=null;
+function resetAuthScopeState(){
+  forcedRole='';
+  forcedScope='';
+  forcedDistEmail='';
+  forcedDistributor='';
+  forcedWarehouse='';
+  role='admin';
+  scope='';
+  selId=null;
+}
+function accessScopeCacheKey(email){
+  const e = low(email||'');
+  return e ? `access_scope_cache:${e}` : '';
+}
+function saveAccessScopeCache(email){
+  const key = accessScopeCacheKey(email);
+  if(!key) return;
+  try{
+    localStorage.setItem(key, JSON.stringify({
+      forcedRole, forcedScope, forcedDistEmail, forcedDistributor, forcedWarehouse,
+      ts: new Date().toISOString(),
+    }));
+  }catch(_){}
+}
+function applyAccessScopeCache(email){
+  const key = accessScopeCacheKey(email);
+  if(!key) return false;
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return false;
+    const parsed = JSON.parse(raw);
+    const r = (parsed?.forcedRole||'').toString().trim().toLowerCase();
+    if(!['admin','director','distributor','ronnoco_rep'].includes(r)) return false;
+    forcedRole = r;
+    role = r;
+    forcedScope = (parsed?.forcedScope||'').toString().trim();
+    scope = forcedScope;
+    forcedDistEmail = low(parsed?.forcedDistEmail||'');
+    forcedDistributor = low(parsed?.forcedDistributor||'');
+    forcedWarehouse = low(parsed?.forcedWarehouse||'');
+    return true;
+  }catch(_){
+    return false;
+  }
+}
 
 // ============================================================
 // UTILS
@@ -1024,17 +780,270 @@ const fmtRel = ts => {
   return Math.floor(d/30)+'mo ago';
 };
 const daysSince = ts => ts ? Math.floor((Date.now()-new Date(ts).getTime())/86400000) : 999;
+const toMs = ts => {
+  const n = ts ? new Date(ts).getTime() : NaN;
+  return Number.isFinite(n) ? n : null;
+};
+const fmtElapsedMs = ms => {
+  if(ms==null || !Number.isFinite(ms) || ms < 0) return '—';
+  const H = 3600000, D = 24*H, W = 7*D, M = 30*D;
+  let r = Math.floor(ms);
+  const months = Math.floor(r / M); r -= months * M;
+  const weeks = Math.floor(r / W); r -= weeks * W;
+  const days = Math.floor(r / D); r -= days * D;
+  const hours = Math.floor(r / H);
+  const parts = [];
+  if(months) parts.push(`${months}mo`);
+  if(weeks) parts.push(`${weeks}w`);
+  if(days) parts.push(`${days}d`);
+  if(hours || !parts.length) parts.push(`${hours}h`);
+  return parts.join(' ');
+};
+const parseIsoFromNote = note => {
+  if(!note) return null;
+  const m = String(note).match(/(\d{4}-\d{2}-\d{2}T[\d:.+-]+Z?)/);
+  return m ? m[1] : null;
+};
+const programLabel = p => (p === 'Java Select' ? 'HT Hackney' : p);
 const esc = s => (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const open_modal = id => ge(id).classList.add('open');
 const close_modal = id => ge(id).classList.remove('open');
+const low = v => (v||'').toString().trim().toLowerCase();
 
 function showPage(n){
-  ['main','lock','distlogin','settings','help'].forEach(p=>{const e=ge('pg-'+p);if(e)e.classList.remove('on');});
+  ['main','lock','settings','help'].forEach(p=>{const e=ge('pg-'+p);if(e)e.classList.remove('on');});
   const t=ge('pg-'+n); if(t)t.classList.add('on');
   window.scrollTo(0,0);
 }
+function showAuthGate(show){
+  const gate = ge('auth-gate');
+  if(!gate) return;
+  document.body.classList.toggle('auth-locked', !!show);
+  gate.classList.toggle('open', !!show);
+  if(show){ setTimeout(()=>ge('auth-email')?.focus(), 40); }
+}
+function authError(msg){
+  const el=ge('auth-err');
+  if(!el) return;
+  if(!msg){ el.style.display='none'; el.textContent=''; return; }
+  el.style.display='block';
+  el.textContent=msg;
+}
+function applyAuthUI(){
+  const badge = ge('auth-badge');
+  const out = ge('auth-logout');
+  if(!authMode || !authUser){
+    if(badge) badge.classList.add('hidden');
+    if(out) out.classList.add('hidden');
+    return;
+  }
+  if(badge){
+    const md = Object.assign({}, authUser.app_metadata||{}, authUser.user_metadata||{});
+    const roleTxt = (md.role||forcedRole||role||'user').toString();
+    badge.textContent = `${authUser.email} · ${roleTxt}`;
+    badge.classList.remove('hidden');
+  }
+  if(out) out.classList.remove('hidden');
+}
+function updateRoleSwitcherVisibility(){
+  const roleWrap = ge('role-switcher');
+  const assigned = ge('assigned-view');
+  if(!roleWrap) return;
+  const hideForLockedDistributor = !!authUser && forcedRole==='distributor';
+  roleWrap.classList.toggle('hidden', hideForLockedDistributor);
+  if(!assigned) return;
+  if(!!authUser && !!forcedRole){
+    const roleMap = {
+      admin: 'Admin',
+      director: 'Director',
+      distributor: 'Distributor',
+      ronnoco_rep: 'Sales Rep',
+      sales_rep: 'Sales Rep',
+    };
+    const roleLabel = roleMap[forcedRole] || forcedRole;
+    const scopeLabel = forcedScope ? (forcedRole==='distributor' ? programLabel(forcedScope) : forcedScope) : '';
+    assigned.textContent = scopeLabel ? `Viewing as: ${roleLabel} - ${scopeLabel}` : `Viewing as: ${roleLabel}`;
+    assigned.classList.remove('hidden');
+  } else {
+    assigned.classList.add('hidden');
+    assigned.textContent = '';
+  }
+}
+function isLockedDistributorUser(){
+  return low(authUser?.email||'')==='aaron.hill@hthackney.com';
+}
+function enforceRoleLockUI(){
+  const roleWrap = ge('role-switcher');
+  const roleLbl = roleWrap?.querySelector('.role-label');
+  const rs = ge('role-select');
+  const ss = ge('scope-select');
+  if(!roleWrap || !rs || !ss) return;
+  if(isLockedDistributorUser()){
+    if(roleLbl) roleLbl.textContent = 'Access';
+    role = 'distributor';
+    scope = 'Java Select';
+    rs.innerHTML = '<option value="distributor">Distributor</option>';
+    rs.value = 'distributor';
+    rs.disabled = true;
+    ss.classList.remove('hidden');
+    ss.innerHTML = '<option value="Java Select">HT Hackney</option>';
+    ss.value = 'Java Select';
+    ss.disabled = true;
+  }
+  updateRoleSwitcherVisibility();
+}
+function isAdminAuthed(){
+  return !!authUser && (forcedRole||role)==='admin';
+}
+async function applyAuthScopeFromRegistry(emailRaw){
+  const email = (emailRaw||'').toString().trim().toLowerCase();
+  if(!email) throw new Error('Missing email for registry lookup.');
+  const r = await fetch('/.netlify/functions/list-access-users');
+  const d = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error || ('Registry lookup failed: HTTP '+r.status));
+  const users = Array.isArray(d.users) ? d.users : [];
+  const row = users.find(u => low(u.email)===email);
+  if(!row) throw new Error('No registry access row found for this user.');
+
+  const roleMap = raw => {
+    const s = (raw||'').toString().trim().toLowerCase();
+    if(s==='sales_rep' || s==='ronnoco_rep' || s==='rep' || s==='sales rep') return 'ronnoco_rep';
+    if(['admin','director','distributor'].includes(s)) return s;
+    return '';
+  };
+  const mdRole = roleMap(row.role);
+  if(!mdRole) throw new Error('Registry row has invalid role.');
+
+  forcedRole = mdRole;
+  role = mdRole;
+
+  if(mdRole==='admin'){
+    forcedScope = '';
+    scope = '';
+    forcedDistEmail = '';
+    forcedDistributor = '';
+    forcedWarehouse = '';
+    return;
+  }
+
+  let scopeVal = '';
+  if(mdRole==='distributor') scopeVal = (row.program_source||'').toString().trim();
+  else if(mdRole==='director') scopeVal = (row.director_name||'').toString().trim();
+  else if(mdRole==='ronnoco_rep') scopeVal = (row.sales_rep_name||'').toString().trim();
+
+  if(mdRole==='distributor' && !scopeVal) throw new Error('Distributor user missing program scope in registry.');
+
+  forcedScope = scopeVal;
+  scope = scopeVal;
+  forcedDistEmail = mdRole==='distributor' && !!row.rep_only ? low(email) : '';
+  forcedDistributor = mdRole==='distributor' ? low(row.distributor_name||'') : '';
+  forcedWarehouse = mdRole==='distributor' ? low(row.distributor_warehouse||'') : '';
+  saveAccessScopeCache(email);
+}
+function applyAuthScopeFromUser(user){
+  const md = Object.assign({}, user?.app_metadata||{}, user?.user_metadata||{});
+  const email = (user?.email||'').toString().trim().toLowerCase();
+  if(email==='aaron.hill@hthackney.com'){
+    forcedRole = 'distributor';
+    role = 'distributor';
+    forcedScope = 'Java Select';
+    scope = 'Java Select';
+    forcedDistEmail = '';
+    forcedDistributor = '';
+    forcedWarehouse = '';
+    return;
+  }
+  const normalizeRole = raw => {
+    const s = (raw||'').toString().trim().toLowerCase();
+    if(!s) return '';
+    if(['admin','administrator'].includes(s)) return 'admin';
+    if(['director','manager'].includes(s)) return 'director';
+    if(['distributor','partner'].includes(s)) return 'distributor';
+    if(['ronnoco_rep','rep','sales_rep','sales rep','ronnoco rep'].includes(s)) return 'ronnoco_rep';
+    return '';
+  };
+  let mdRole =
+    normalizeRole(md.role) ||
+    normalizeRole(md.user_role) ||
+    normalizeRole(md.access_role) ||
+    normalizeRole(md.account_role) ||
+    normalizeRole(Array.isArray(md.roles) ? md.roles[0] : md.roles);
+
+  let scopeVal = '';
+  if(mdRole==='distributor'){
+    // Distributor scope is program-based.
+    scopeVal = (md.program_source||md.program||md.scope||'').toString().trim();
+  } else if(mdRole==='director'){
+    // Director scope should be their director profile name when provided.
+    scopeVal = (md.director_name||md.scope||'').toString().trim();
+  } else if(mdRole==='ronnoco_rep'){
+    // Rep scope should be rep name when provided.
+    scopeVal = (md.sales_rep_name||md.scope||'').toString().trim();
+  }
+  // Backward-compatibility: older distributor accounts may only have scope metadata.
+  if(!mdRole && scopeVal) mdRole = 'distributor';
+  if(!mdRole || !['admin','director','distributor','ronnoco_rep'].includes(mdRole)) throw new Error('Missing/invalid role metadata.');
+  forcedRole = mdRole;
+  role = mdRole;
+
+  if(mdRole==='admin'){
+    forcedScope = '';
+    scope = '';
+    forcedDistEmail = '';
+    forcedDistributor = '';
+    forcedWarehouse = '';
+    return;
+  }
+
+  if(mdRole==='distributor' && !scopeVal) throw new Error('Distributor user missing program_source/scope metadata.');
+  forcedScope = scopeVal;
+  scope = scopeVal;
+
+  // Distributor-only row constraints.
+  forcedDistEmail = mdRole==='distributor' && md.rep_only ? low(user?.email||'') : '';
+  forcedDistributor = mdRole==='distributor' ? low(md.distributor||md.distributor_name||'') : '';
+  forcedWarehouse = mdRole==='distributor' ? low(md.distributor_warehouse||md.warehouse||'') : '';
+  saveAccessScopeCache(email);
+}
+async function authLogin(){
+  authError('');
+  const email = (ge('auth-email')?.value||'').trim();
+  const password = ge('auth-pass')?.value||'';
+  if(!email || !password){ authError('Enter email and password.'); return; }
+  const { data, error } = await authSb.auth.signInWithPassword({ email, password });
+  if(error || !data?.user){ authError('Invalid login.'); return; }
+  try{
+    await bootstrapForUser(data.user, true);
+  }catch(e){
+    try{ await authSb.auth.signOut(); }catch(_){}
+    authUser = null;
+    authError(e.message||'Unable to apply user scope.');
+    showAuthGate(true);
+  }
+}
+async function authForceReset(){
+  try{ await authSb?.auth?.signOut(); }catch(_){}
+  authUser = null;
+  resetAuthScopeState();
+  sessionStorage.removeItem('unlocked');
+  try{
+    Object.keys(localStorage).forEach(k=>{
+      if(k.startsWith('sb-') || k.startsWith('supabase.auth.')) localStorage.removeItem(k);
+    });
+  }catch(_){}
+  window.location.href = window.location.pathname;
+}
+async function authLogout(){
+  try{ await authSb.auth.signOut(); }catch(e){}
+  authUser = null;
+  resetAuthScopeState();
+  sessionStorage.removeItem('unlocked');
+  applyAuthUI();
+  notice('Signed out.','info');
+  window.location.href = window.location.pathname;
+}
 function goSettings(){
-  if(sessionStorage.getItem('unlocked')==='1'){ showPage('settings'); refreshSettings(); }
+  if(isAdminAuthed() || sessionStorage.getItem('unlocked')==='1'){ showPage('settings'); refreshSettings(); }
   else { showPage('lock'); setTimeout(()=>ge('lock-pw')?.focus(),80); }
 }
 function goHelp(){ showPage('help'); }
@@ -1043,56 +1052,6 @@ function unlock(){
   if(pw===stored){ sessionStorage.setItem('unlocked','1'); ge('lock-pw').value=''; ge('lock-err').style.display='none'; showPage('settings'); refreshSettings(); }
   else ge('lock-err').style.display='block';
 }
-
-// ── Distributor session (Tier-1 UI gate) ──────────────────────
-let distSession = null; // {id, username, company, display_name} when a distributor is signed in
-function getDistSession(){
-  try{ return JSON.parse(sessionStorage.getItem('dist_session')||'null'); }catch(e){ return null; }
-}
-async function distLogin(){
-  const u=ge('dl-user').value.trim(), p=ge('dl-pass').value;
-  if(!u||!p){ ge('dl-err').textContent='Enter username and password'; ge('dl-err').style.display='block'; return; }
-  try{
-    const {data,error}=await sb.rpc('distributor_login',{p_username:u,p_password:p});
-    if(error) throw error;
-    if(!data || !data.length){ ge('dl-err').textContent='Incorrect username or password'; ge('dl-err').style.display='block'; return; }
-    const row=data[0];
-    const sess={id:row.id, username:row.username, company:row.distributor_company, display_name:row.display_name||row.username};
-    sessionStorage.setItem('dist_session', JSON.stringify(sess));
-    ge('dl-pass').value=''; ge('dl-err').style.display='none';
-    applyDistSession(sess);
-  }catch(e){
-    ge('dl-err').textContent='Sign in unavailable — '+(e.message||e); ge('dl-err').style.display='block';
-  }
-}
-// Lock the whole UI into this distributor's scoped view
-function applyDistSession(sess){
-  distSession=sess;
-  role='distributor';
-  scope=sess.company;
-  drillWarehouse=''; selId=null;
-  // hide the role switcher + scope picker; distributors don't choose
-  const rs=document.querySelector('.role-switcher'); if(rs) rs.style.display='none';
-  // swap Settings button for a signed-in identity + Log out
-  const tr=document.querySelector('#pg-main .top-right');
-  if(tr && !ge('dist-identity')){
-    tr.innerHTML = `<span class="dot live" id="conn-dot" title="Connected"></span>
-      <span id="dist-identity" style="font-size:12px;color:var(--text-2)">Signed in: <strong>${esc(sess.display_name)}</strong> · ${esc(sess.company)}</span>
-      <button class="btn btn-sm btn-ghost" onclick="goHelp()">Help</button>
-      <button class="btn btn-sm btn-ghost" onclick="distLogout()">Log out</button>`;
-  }
-  showPage('main');
-  setupScopeSelect();
-  setRoleUI();
-  renderAll();
-}
-function distLogout(){
-  sessionStorage.removeItem('dist_session');
-  distSession=null;
-  // simplest reliable reset: reload to clean admin/default state
-  window.location.href = window.location.pathname;
-}
-function goDistLogin(){ showPage('distlogin'); setTimeout(()=>ge('dl-user')?.focus(),80); }
 function notice(msg,type,elId){
   const el=ge(elId||'notice'); if(!el) return;
   el.className='notice show notice-'+(type||'info');
@@ -1104,20 +1063,36 @@ function notice(msg,type,elId){
 // ROLE & SCOPE
 // ============================================================
 function onRoleChange(){
+  if(forcedRole && forcedRole!=='admin'){
+    role = forcedRole;
+    if(forcedScope) scope = forcedScope;
+    const rs = ge('role-select');
+    if(rs){ rs.value = role; rs.disabled = true; }
+    const ss = ge('scope-select');
+    if(ss && forcedScope){ ss.value = forcedScope; ss.disabled = true; }
+    renderAll();
+    updateRoleSwitcherVisibility();
+    return;
+  }
   role = ge('role-select').value;
   scope = '';
   selId = null;
-  drillRep = '';
-  drillWarehouse = '';
   setupScopeSelect();
+  // Admin preview UX: auto-pick first valid scope so data populates immediately.
+  if(role!=='admin'){
+    const ss = ge('scope-select');
+    if(ss){
+      const first = [...ss.options].find(o => (o.value||'').trim());
+      if(first){ ss.value = first.value; scope = first.value; }
+    }
+  }
   setRoleUI();
   renderAll();
+  updateRoleSwitcherVisibility();
 }
 function onScopeChange(){
   scope = ge('scope-select').value;
   selId = null;
-  drillRep = '';
-  drillWarehouse = '';
   renderAll();
 }
 
@@ -1155,8 +1130,8 @@ function setupScopeSelect(){
     sel.classList.remove('hidden');
     let opts='';
     if(role==='distributor'){
-      opts = '<option value="">— Choose your distributor —</option>'
-        + DISTRIBUTOR_COMPANIES.map(p=>`<option value="${p}">${p}</option>`).join('');
+      opts = '<option value="">— Choose a program —</option>'
+        + ['Java Select','Sledd','CoreMark'].map(p=>`<option value="${p}">${esc(programLabel(p))}</option>`).join('');
     } else if(role==='ronnoco_rep'){
       // Union: roster + reps used in leads (so Will Sims style mismatches can't hide leads)
       opts = '<option value="">— Choose your name —</option>' + allRepNames().map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
@@ -1272,6 +1247,14 @@ function setRoleUI(){
   switchTab(currentTab);
 }
 
+function applyForcedDistributorFilters(list){
+  let out = list.slice();
+  if(forcedDistributor) out = out.filter(l => low(l.distributor) === forcedDistributor);
+  if(forcedWarehouse) out = out.filter(l => low(l.distributor_warehouse) === forcedWarehouse);
+  if(forcedDistEmail) out = out.filter(l => low(l.distributor_rep_email) === forcedDistEmail);
+  return out;
+}
+
 // Apply role + scope filter to leads
 function scopedLeads(){
   if(role==='admin') return leads.slice();
@@ -1293,7 +1276,8 @@ function scopedLeads(){
   }
   if(role==='distributor'){
     if(!scope) return [];
-    return leads.filter(l => companyOf(l) === scope);
+    const dist = leads.filter(l => (l.program_source||'Java Select') === scope);
+    return applyForcedDistributorFilters(dist);
   }
   if(role==='ronnoco_rep'){
     if(!scope) return [];
@@ -1319,7 +1303,7 @@ function scopeNeededHtml(){
       <div class="empty-sub">Use the bar above to add the reps you oversee, or check "Show unassigned leads" to see leads needing assignment.</div>
     </div></div>`;
   }
-  const what = role==='distributor' ? 'your program (Java Select / Sledd / CoreMark)' : 'your name from the list';
+  const what = role==='distributor' ? 'your program (HT Hackney / Sledd / CoreMark)' : 'your name from the list';
   return `<div class="card"><div class="empty">
     <div class="empty-title">Select ${what}</div>
     <div class="empty-sub">Use the dropdown in the top bar to pick.</div>
@@ -1329,6 +1313,49 @@ function scopeNeededHtml(){
 // ============================================================
 // TAB SWITCHING
 // ============================================================
+// Returns the correct home/default tab for the current role
+function homeTab(){
+  if(role==='distributor') return 'submitted';
+  if(role==='ronnoco_rep') return 'mywork';
+  return 'scorecard';
+}
+
+const TAB_LABELS = {
+  scorecard: 'Rep Scorecard',
+  leads:     'All Leads',
+  pipeline:  'Pipeline',
+  submitted: 'Submitted Leads',
+  mywork:    'My Leads',
+};
+
+function updateGlobalBreadcrumb(label, extra){
+  const bc = ge('bc-current');
+  if(!bc) return;
+  if(extra){
+    // Replace current breadcrumb span with a link + extra segment
+    const parent = bc.parentElement;
+    parent.outerHTML = `
+      <div class="breadcrumb-item">
+        <span class="breadcrumb-link" onclick="switchTab('${currentTab}')">${label}</span>
+      </div>
+      <span class="breadcrumb-sep">&#8250;</span>
+      <div class="breadcrumb-item">
+        <span class="breadcrumb-current" id="bc-current">${extra}</span>
+      </div>`;
+  } else {
+    // Find and reset to single current segment
+    const bar = ge('global-breadcrumb')?.querySelector('nav');
+    if(bar){
+      const items = bar.querySelectorAll('.breadcrumb-item');
+      // Remove any extra segments beyond index 1
+      let found = 0;
+      items.forEach(item => { found++; if(found > 2) item.remove(); });
+      bar.querySelectorAll('.breadcrumb-sep').forEach((sep, i) => { if(i > 0) sep.remove(); });
+    }
+    bc.textContent = label;
+  }
+}
+
 function switchTab(name){
   currentTab = name;
   ['scorecard','leads','pipeline','submitted','mywork'].forEach(n=>{
@@ -1336,8 +1363,17 @@ function switchTab(name){
     if(tab) tab.classList.toggle('on', n===name);
     if(view) view.classList.toggle('hidden', n!==name);
   });
+  const bc = ge('bc-current');
+  if(bc) bc.textContent = TAB_LABELS[name] || name;
+  // Reset extra breadcrumb segments when switching top-level tabs
+  const bar = ge('global-breadcrumb')?.querySelector('nav');
+  if(bar){
+    const items = [...bar.querySelectorAll('.breadcrumb-item')];
+    const seps  = [...bar.querySelectorAll('.breadcrumb-sep')];
+    items.slice(2).forEach(el => el.remove());
+    seps.slice(1).forEach(el => el.remove());
+  }
   renderCurrentTab();
-  renderDrillCrumb();
 }
 function renderCurrentTab(){
   if(currentTab==='scorecard') renderScorecard();
@@ -1347,30 +1383,138 @@ function renderCurrentTab(){
   else if(currentTab==='mywork') renderMyWork();
 }
 
+async function bootstrapForUser(user, shouldReloadData=true){
+  resetAuthScopeState();
+  authUser = user || null;
+  let applied = false;
+  try{
+    // Source of truth: access_users registry. Auth metadata is fallback.
+    await applyAuthScopeFromRegistry(authUser?.email);
+    applied = true;
+  }catch(_authErr){
+    try{
+      applyAuthScopeFromUser(authUser);
+      applied = true;
+    }catch(_authErr2){
+      applied = applyAccessScopeCache(authUser?.email);
+    }
+  }
+  if(!applied) throw new Error('Unable to resolve access scope for this account.');
+  if(isAdminAuthed()) sessionStorage.setItem('unlocked','1');
+  else sessionStorage.removeItem('unlocked');
+
+  if(shouldReloadData){
+    await loadLeads();
+    await loadReps();
+  }
+
+  setupScopeSelect();
+  if(forcedRole && forcedRole!=='admin'){
+    const rs = ge('role-select');
+    if(rs){ rs.value = role; rs.disabled = true; }
+  }
+  if(forcedScope && forcedRole!=='admin'){
+    const ss = ge('scope-select');
+    if(ss){ ss.value = forcedScope; ss.disabled = true; }
+  }
+  enforceRoleLockUI();
+  setRoleUI();
+  renderAll();
+  applyAuthUI();
+  updateRoleSwitcherVisibility();
+  showAuthGate(false);
+}
+
 // ============================================================
 // INIT
 // ============================================================
 async function init(){
   let t=0;
   while(typeof supabase==='undefined' && t<30){ await new Promise(r=>setTimeout(r,200)); t++; }
-  if(typeof supabase==='undefined'){ ge('conn-dot').className='dot err'; ge('conn-dot').title='Connection failed'; return; }
-  sb = supabase.createClient(SB_URL, SB_KEY);
+  if(typeof supabase==='undefined'){ ge('conn-dot').className='conn-dot err'; ge('conn-dot').title='Connection failed'; return; }
+  // Data client remains anon-scoped and never binds to user auth session.
+  sb = supabase.createClient(SB_URL, SB_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    }
+  });
+  // Auth client manages login/session only.
+  authSb = supabase.createClient(SB_URL, SB_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage,
+    }
+  });
+  authSb.auth.onAuthStateChange(async (event, session)=>{
+    if(session?.user){
+      authUser = session.user;
+      applyAuthUI();
+      updateRoleSwitcherVisibility();
+      return;
+    }
+    if(event==='SIGNED_OUT'){
+      authUser = null;
+      resetAuthScopeState();
+      applyAuthUI();
+      updateRoleSwitcherVisibility();
+      showAuthGate(true);
+    }
+  });
   try {
-    await loadLeads();
-    await loadReps();
-    const _ds = getDistSession();
-    if(_ds){
-      // Boot straight into the locked distributor view
-      applyDistSession(_ds);
-    } else {
-      setupScopeSelect();
-      setRoleUI();
-      // Shareable deep link: distributorleads.netlify.app/#login opens the sign-in screen directly
-      const _h = (window.location.hash||'').toLowerCase();
-      if(_h==='#login' || _h==='#distributor' || _h==='#signin'){
-        goDistLogin();
+    const params = new URLSearchParams(window.location.search);
+    authMode = true;
+    const { data } = await authSb.auth.getSession();
+    if(data?.session?.user){
+      try{
+        await bootstrapForUser(data.session.user, true);
+      }catch(_authErr){
+        showAuthGate(true);
+        authError('Your account is missing required access metadata. Please contact your admin.');
+        return;
+      }
+    }else{
+      showAuthGate(true);
+      // Wait for explicit login before any data bootstrap.
+      return;
+    }
+
+    // Optional URL-enforced role/scope/distributor constraints for embedded protected distributor view.
+    // These can refine/override auth-derived scope when present.
+    const urlRole = (params.get('role')||'').trim();
+    const urlScope = (params.get('scope')||'').trim();
+    const urlDistEmail = low(params.get('dist_email'));
+    const urlDistName = low(params.get('dist_name'));
+    const urlDistWh = low(params.get('dist_wh'));
+    if(!forcedRole && urlRole) forcedRole = urlRole;
+    if(!forcedScope && urlScope) forcedScope = urlScope;
+    if(urlDistEmail) forcedDistEmail = urlDistEmail;
+    if(urlDistName) forcedDistributor = urlDistName;
+    if(urlDistWh) forcedWarehouse = urlDistWh;
+    if(forcedRole && ['admin','director','distributor','ronnoco_rep'].includes(forcedRole)){
+      role = forcedRole;
+      const rs = ge('role-select');
+      if(rs){
+        rs.value = role;
+        rs.disabled = forcedRole!=='admin';
       }
     }
+    if(forcedScope) scope = forcedScope;
+    setupScopeSelect();
+    if(forcedScope && forcedRole!=='admin'){
+      const ss = ge('scope-select');
+      if(ss){
+        ss.value = forcedScope;
+        ss.disabled = true;
+      }
+    }
+    enforceRoleLockUI();
+    setRoleUI();
+    applyAuthUI();
+    updateRoleSwitcherVisibility();
     // Deep-link handler: ?lead=<uuid> opens that specific lead on load
     const _dlParams = new URLSearchParams(window.location.search);
     const _dlLeadId = _dlParams.get('lead');
@@ -1391,10 +1535,10 @@ async function init(){
         if(data) actCache[lid]=data;
         if(selId===lid) renderMain(lid);
       }).subscribe();
-    ge('conn-dot').className='dot live'; ge('conn-dot').title='Connected';
+    ge('conn-dot').className='conn-dot live'; ge('conn-dot').title='Connected';
     const wu=ge('wh-url'); if(wu) wu.textContent = window.location.origin + '/.netlify/functions/webhook';
   } catch(e){
-    ge('conn-dot').className='dot err'; ge('conn-dot').title='Error';
+    ge('conn-dot').className='conn-dot err'; ge('conn-dot').title='Error';
     console.error(e);
   }
 }
@@ -1403,6 +1547,25 @@ async function loadLeads(){
   const {data,error} = await sb.from('leads').select('*').order('last_activity_at',{ascending:false,nullsFirst:false});
   if(error){ notice('Error loading leads: '+error.message,'err'); return; }
   leads = data||[];
+  // Avoid stale detail panes after external app writes by forcing fresh fetch on select.
+  actCache = {};
+  emailCache = {};
+  // Lightweight activity index used by scorecard response-time charts.
+  try{
+    const ids = new Set(leads.map(l=>l.id));
+    const {data:logs} = await sb.from('activity_log')
+      .select('lead_id,action,note,created_at,to_step')
+      .order('created_at',{ascending:true})
+      .limit(50000);
+    activityLiteByLead = {};
+    (logs||[]).forEach(log=>{
+      if(!ids.has(log.lead_id)) return;
+      if(!activityLiteByLead[log.lead_id]) activityLiteByLead[log.lead_id] = [];
+      activityLiteByLead[log.lead_id].push(log);
+    });
+  } catch(e){
+    activityLiteByLead = {};
+  }
   renderAll();
 }
 
@@ -1462,17 +1625,17 @@ function populateFilterSelects(){
 function renderScorecard(){
   // Update header per role
   if(role==='director'){
-    ge('sc-title').textContent = 'Your team';
+    ge('sc-title').textContent = 'Team Scorecard';
     const parts = [];
-    if(directorTeam.length) parts.push(`${directorTeam.length} rep${directorTeam.length===1?'':'s'}`);
+    if(directorTeam.length) parts.push(`${directorTeam.length} rep${directorTeam.length===1?'':'s'} assigned`);
     if(directorIncludeUnassigned){
       const u = leads.filter(l=>(!l.assigned_sales_rep||!l.assigned_sales_rep.trim()) && l.status==='active').length;
       parts.push(`${u} unassigned`);
     }
-    ge('sc-sub').textContent = (parts.length ? parts.join(' · ')+' · ' : '') + 'click any rep to drill into their leads';
+    ge('sc-sub').textContent = parts.length ? parts.join(' · ') : 'Assign reps to your team to begin tracking performance';
   } else {
-    ge('sc-title').textContent = 'Rep scorecard';
-    ge('sc-sub').textContent = 'One row per sales rep · click any rep to drill into their leads';
+    ge('sc-title').textContent = 'Rep Scorecard';
+    ge('sc-sub').textContent = 'Performance summary by sales rep — click any row to view their leads';
   }
 
   // Metric strip (role-aware — Admin sees Awaiting Director, Director sees Awaiting Rep)
@@ -1503,11 +1666,10 @@ function renderScorecard(){
       <div class="m-sub">${x.sub}</div>
     </div>`).join('');
 
-  renderAttentionPanel(scoped);
-
   if(needsScope()){
     ge('scorecard-body').innerHTML = scopeNeededHtml();
     ge('sc-stalled-banner').innerHTML = '';
+    ge('sc-response-graphs').innerHTML = '';
     return;
   }
 
@@ -1559,6 +1721,94 @@ function renderScorecard(){
     return bA-aA;
   });
 
+  // Response-time performance model per rep:
+  // - New lead response time = first Ronnoco contact - submission date
+  // - Follow-up time       = first follow-up action - first Ronnoco contact
+  const repPerf = {};
+  const ensurePerf = rep => {
+    if(!repPerf[rep]) repPerf[rep] = {rep,responseMs:0,responseN:0,followMs:0,followN:0};
+    return repPerf[rep];
+  };
+  const firstSubmissionMs = (lead, logs) => {
+    const marker = (logs||[]).find(x=>x.action==='Pipeline marker: submission received' || x.action==='CSV: lead received');
+    const markerIso = marker ? parseIsoFromNote(marker.note) : null;
+    return toMs(markerIso || lead.submission_date);
+  };
+  const firstContactMs = (lead, logs) => {
+    const marker = (logs||[]).find(x=>x.action==='Pipeline marker: first Ronnoco contact' || x.action==='CSV: first Ronnoco contact');
+    const markerIso = marker ? parseIsoFromNote(marker.note) : null;
+    const fallback = ['customer_contacted','follow_up'].includes(lead.current_step) || lead.status==='won' || lead.status==='lost'
+      ? lead.last_activity_at
+      : null;
+    return toMs(markerIso || fallback);
+  };
+  const firstFollowupMs = (logs, contactMs) => {
+    const row = (logs||[]).find(x => {
+      const ms = toMs(x?.created_at);
+      if(!ms || !contactMs || ms <= contactMs) return false;
+      const action = (x.action||'').toLowerCase();
+      if(action.includes('pipeline marker: first ronnoco contact') || action.includes('csv: first ronnoco contact')) return false;
+      return x.to_step==='follow_up' || action.includes('follow-up') || action.includes('stage note') || action.includes('rep activity');
+    });
+    return toMs(row?.created_at);
+  };
+
+  pool.forEach(lead=>{
+    const rep = lead.assigned_sales_rep && lead.assigned_sales_rep.trim() ? lead.assigned_sales_rep : '(Unassigned)';
+    const perf = ensurePerf(rep);
+    const logs = activityLiteByLead[lead.id] || [];
+    const subMs = firstSubmissionMs(lead, logs);
+    const contactMs = firstContactMs(lead, logs);
+    const followMs = firstFollowupMs(logs, contactMs);
+    if(subMs && contactMs && contactMs >= subMs){
+      perf.responseMs += (contactMs - subMs);
+      perf.responseN += 1;
+    }
+    if(contactMs && followMs && followMs >= contactMs){
+      perf.followMs += (followMs - contactMs);
+      perf.followN += 1;
+    }
+  });
+  rows.forEach(r=>ensurePerf(r.rep)); // keep chart rows aligned with table rows
+
+  const perfRows = rows.map(r=>{
+    const p = repPerf[r.rep] || {responseMs:0,responseN:0,followMs:0,followN:0};
+    return {
+      rep: r.rep,
+      avgResponseMs: p.responseN ? (p.responseMs / p.responseN) : null,
+      responseN: p.responseN || 0,
+      avgFollowMs: p.followN ? (p.followMs / p.followN) : null,
+      followN: p.followN || 0,
+    };
+  });
+
+  const mkPerfCard = (title, subtitle, key, sampleKey, warnOverMs=24*3600000) => {
+    const withData = perfRows.filter(x=>x[key]!=null);
+    if(!withData.length){
+      return `<div class="resp-card"><div class="resp-title">${title}</div><div class="resp-sub">${subtitle}</div><div class="resp-empty">No timing samples yet.</div></div>`;
+    }
+    const max = Math.max(...withData.map(x=>x[key]), 1);
+    return `<div class="resp-card">
+      <div class="resp-title">${title}</div>
+      <div class="resp-sub">${subtitle}</div>
+      ${perfRows.map(x=>{
+        const val = x[key];
+        if(val==null) return `<div class="resp-row"><div class="resp-name">${esc(x.rep)}</div><div class="resp-track"></div><div class="resp-val">n/a</div></div>`;
+        const width = Math.max(6, Math.round((val/max)*100));
+        const warn = val > warnOverMs ? ' warn' : '';
+        return `<div class="resp-row">
+          <div class="resp-name">${esc(x.rep)}</div>
+          <div class="resp-track"><div class="resp-bar${warn}" style="width:${width}%"></div></div>
+          <div class="resp-val">${fmtElapsedMs(val)} · n=${x[sampleKey]}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  };
+  ge('sc-response-graphs').innerHTML = [
+    mkPerfCard('New Lead Response Time', 'Average time from submission to first Ronnoco contact', 'avgResponseMs', 'responseN', 24*3600000),
+    mkPerfCard('Follow-up Response Time', 'Average time from first contact to first follow-up action', 'avgFollowMs', 'followN', 72*3600000),
+  ].join('');
+
   const numCell = (n,zero='—') => `<td class="num ${n===0?'zero':''}">${n===0?zero:n}</td>`;
   if(!rows.length){
     ge('scorecard-body').innerHTML = `<div class="card"><div class="empty"><div class="empty-title">No reps to show</div></div></div>`;
@@ -1597,75 +1847,6 @@ function renderScorecard(){
   });
 }
 
-// ============================================================
-// NEEDS YOUR ATTENTION PANEL (Director only)
-// Additive surface: highlights leads the director must act on and
-// lets them open the existing assign-rep dialog in one click.
-// Reuses scopedLeads()/openAssignRep() — no pipeline logic changed.
-// ============================================================
-function attentionLeads(scoped){
-  // A lead needs the director's attention if it's active AND either
-  //  (a) it's explicitly awaiting rep assignment, or
-  //  (b) it has arrived but no sales rep is assigned yet.
-  return scoped.filter(l =>
-    l.status==='active' &&
-    (l.current_step==='awaiting_rep' ||
-     !(l.assigned_sales_rep && l.assigned_sales_rep.trim()))
-  );
-}
-function renderAttentionPanel(scoped){
-  const host = ge('sc-attention');
-  if(!host) return;
-  // Only directors get this panel; clear it for every other role so behavior is unchanged.
-  if(role!=='director' || needsScope()){ host.innerHTML=''; return; }
-
-  const items = attentionLeads(scoped);
-  if(!items.length){
-    host.innerHTML = `<div class="card attn-card attn-clear">
-      <div class="attn-head"><span class="attn-dot ok"></span><strong>You're all caught up</strong></div>
-      <div class="attn-sub">No leads are waiting on a rep assignment right now.</div>
-    </div>`;
-    return;
-  }
-  // Newest first so fresh leads surface at the top.
-  items.sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
-
-  const rows = items.map(l=>{
-    const name = esc(l.dba_name||l.customer_full_name||l.legal_business_name||'Unnamed lead');
-    const prog = esc(l.program_source||'Java Select');
-    const isAwaiting = l.current_step==='awaiting_rep';
-    const tag = isAwaiting
-      ? `<span class="attn-tag t-assign">Awaiting rep</span>`
-      : `<span class="attn-tag t-new">New / unassigned</span>`;
-    const age = l.created_at ? `${daysSince(l.created_at)}d old` : '';
-    return `<div class="attn-row">
-      <div class="attn-row-main" onclick="attnSelectLead('${l.id}')">
-        <div class="attn-row-name">${name} ${tag}</div>
-        <div class="attn-row-meta">${prog}${age?` · ${age}`:''}</div>
-      </div>
-      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openAssignRep('${l.id}')">Assign rep</button>
-    </div>`;
-  }).join('');
-
-  host.innerHTML = `<div class="card attn-card">
-    <div class="attn-head">
-      <span class="attn-dot"></span>
-      <strong>Needs your attention</strong>
-      <span class="attn-count">${items.length}</span>
-    </div>
-    <div class="attn-sub">These leads are waiting for you to assign a sales rep.</div>
-    <div class="attn-list">${rows}</div>
-  </div>`;
-}
-function attnSelectLead(id){
-  // Open the lead in the detail panel without changing any pipeline state.
-  // Delegates to selectLead so activity/email caches load (prevents a blank panel).
-  switchTab('leads');
-  const fStep=ge('f-step'); if(fStep) fStep.value='';
-  const fStatus=ge('f-status'); if(fStatus) fStatus.value='active';
-  selectLead(id);
-}
-
 function metricFilter(stepId){
   activeMetric = activeMetric===stepId ? '' : stepId;
   // For Admin/Director, switch to All Leads filtered to this stage
@@ -1687,60 +1868,15 @@ function jumpToStalled(){
   }
 }
 function drillToRep(repName){
-  if(role==='admin' || role==='director'){
-    drillRep = repName;            // remember which rep we drilled into (for the breadcrumb)
+  if(role==='admin'){
     switchTab('leads');
     const f = ge('f-rep');
     if(f){
       f.value = repName==='(Unassigned)' ? '' : repName;
-      if(repName==='(Unassigned)'){
-        // Unassigned bucket: show the leads that still need a rep.
-        const fs=ge('f-step'); if(fs) fs.value = role==='director' ? 'awaiting_rep' : 'awaiting_director';
-      } else {
-        const fs=ge('f-step'); if(fs) fs.value='';
-      }
+      if(repName==='(Unassigned)') ge('f-step').value='awaiting_director';
       renderList();
     }
-    renderDrillCrumb();
   }
-}
-// Drill-down breadcrumb: Team › Rep › (selected lead). Lets the Director
-// move down into a rep and back up to the full team without losing place.
-function backToTeam(){
-  drillRep = '';
-  const f=ge('f-rep'); if(f) f.value='';
-  const fs=ge('f-step'); if(fs) fs.value='';
-  selId = null;
-  switchTab('scorecard');
-}
-function clearDrillToRep(){
-  // Step back up one level: from a specific lead/rep to the full rep list for the team.
-  drillRep = '';
-  const f=ge('f-rep'); if(f) f.value='';
-  const fs=ge('f-step'); if(fs) fs.value='';
-  selId = null;
-  renderList();
-  renderDrillCrumb();
-}
-function renderDrillCrumb(){
-  const host = ge('drill-crumb');
-  if(!host) return;
-  // Only the oversight roles get the drill breadcrumb; everyone else: nothing.
-  if(role!=='director' && role!=='admin'){ host.innerHTML=''; return; }
-  const teamLabel = role==='director' ? (scope?`${esc(scope)}'s team`:'Your team') : 'All reps';
-  const parts = [`<span class="crumb-link" onclick="backToTeam()">${teamLabel}</span>`];
-  if(drillRep){
-    parts.push(`<span class="crumb-sep">›</span>`);
-    parts.push(`<span class="crumb-link" onclick="clearDrillToRep()">${esc(drillRep)}</span>`);
-  }
-  const sel = selId ? leads.find(l=>l.id===selId) : null;
-  if(sel){
-    parts.push(`<span class="crumb-sep">›</span>`);
-    parts.push(`<span class="crumb-cur">${esc(sel.dba_name||sel.customer_full_name||'Lead')}</span>`);
-  }
-  // Hide the crumb entirely until the user has actually drilled in from the scorecard.
-  if(!drillRep && !sel){ host.innerHTML=''; return; }
-  host.innerHTML = `<div class="drill-crumb">${parts.join(' ')}</div>`;
 }
 
 // ============================================================
@@ -1833,15 +1969,38 @@ function leadCard(l){
     <div class="lc-foot">
       <span class="pill ${pillCls}">${esc(pillTxt)}</span>
       ${stalled ? `<span class="pill pill-amber">${daysSince(l.last_activity_at)}d</span>` : ''}
-      <span style="font-size:11px;color:var(--text-3);margin-left:auto">${fmtRel(l.last_activity_at||l.created_at)}</span>
+      <span style="font-size:11px;color:var(--text-3);margin-left:auto">${fmtRel(l.last_activity_at||l.submission_date||l.created_at)}</span>
     </div>
   </div>`;
 }
 
 async function selectLead(id){
   selId = id;
-  if(!actCache[id]) await loadAct(id);
-  if(!emailCache[id]) await loadEmails(id);
+  await loadAct(id);
+  await loadEmails(id);
+  // Update global breadcrumb to show lead name
+  const l = leads.find(x=>x.id===id);
+  if(l){
+    const tabLabel = TAB_LABELS[currentTab] || currentTab;
+    const leadName = l.dba_name||l.legal_business_name||l.customer_full_name||'Lead';
+    const bar = ge('global-breadcrumb')?.querySelector('nav');
+    if(bar){
+      const items = [...bar.querySelectorAll('.breadcrumb-item')];
+      const seps  = [...bar.querySelectorAll('.breadcrumb-sep')];
+      // Trim to 2 items, then add tab link + lead name
+      items.slice(2).forEach(el => el.remove());
+      seps.slice(1).forEach(el => el.remove());
+      const bc = ge('bc-current');
+      if(bc){
+        bc.outerHTML = `<span class="breadcrumb-link" id="bc-tab-link" onclick="clearLeadSelection()">${tabLabel}</span>`;
+      }
+      const tabLink = ge('bc-tab-link')?.parentElement;
+      if(tabLink){
+        tabLink.insertAdjacentHTML('afterend',
+          `<span class="breadcrumb-sep">&#8250;</span><div class="breadcrumb-item"><span class="breadcrumb-current" id="bc-current">${esc(leadName)}</span></div>`);
+      }
+    }
+  }
   if(currentTab === 'leads'){
     renderList();
     renderMain(id);
@@ -1854,17 +2013,30 @@ async function selectLead(id){
     switchTab('leads');
     renderMain(id);
   }
-  renderDrillCrumb();
+}
+async function refreshLeadActivity(id){
+  if(!id) return;
+  await loadAct(id);
+  if(selId===id) renderMain(id);
 }
 function clearLeadSelection(){
   selId = null;
+  // Reset global breadcrumb back to current tab label
+  const bc = ge('bc-current');
+  if(bc) bc.textContent = TAB_LABELS[currentTab] || currentTab;
+  const bar = ge('global-breadcrumb')?.querySelector('nav');
+  if(bar){
+    const items = [...bar.querySelectorAll('.breadcrumb-item')];
+    const seps  = [...bar.querySelectorAll('.breadcrumb-sep')];
+    items.slice(2).forEach(el => el.remove());
+    seps.slice(1).forEach(el => el.remove());
+  }
   if(currentTab==='leads'){
     renderList();
     ge('main-panel').innerHTML = `<div class="empty"><div class="empty-title">Select a lead to view details</div></div>`;
   } else {
     renderCurrentTab();
   }
-  renderDrillCrumb();
 }
 
 // ============================================================
@@ -1885,7 +2057,7 @@ function renderMain(id){
   const canMarkWonLost = (isAdmin || isDirector || isRep) && !isLost && !isWon && !['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step);
   const canEdit = isAdmin || isDirector || isRep;  // reps get a constrained edit form
   const canDelete = isAdmin;
-  const showInternalNotes = !isDist;
+  const showInternalNotes = true;
   const showEmailLog = !isDist;
 
   // Pipeline strip
@@ -1897,7 +2069,7 @@ function renderMain(id){
     else if(i===idx) cls='current';
     const advLog = logs.find(lo=>lo.to_step===s.id);
     if(advLog) meta = fmtRel(advLog.created_at);
-    else if(s.id==='lead_received' && l.created_at) meta = fmtRel(l.created_at);
+    else if(s.id==='lead_received' && (l.submission_date||l.created_at)) meta = fmtRel(l.submission_date||l.created_at);
     if(s.id==='awaiting_rep' && l.assigned_director_id){
       const d = directors.find(d=>d.id===l.assigned_director_id);
       if(d) meta = esc(d.name.split(' ')[0]);
@@ -1946,7 +2118,7 @@ function renderMain(id){
   // Customer + distributor info cards
   const row = (k,v) => { if(!v||(typeof v==='string'&&!v.trim())) return ''; const safe = v.toString().startsWith('<') ? v : esc(v); return `<tr><td>${k}</td><td>${safe}</td></tr>`; };
   const customer = `<div class="card card-pad">
-    <div class="info-card-title">Customer</div>
+    <div class="info-card-title">Customer Information</div>
     <table class="info-tbl">
       ${row('Business', l.dba_name||l.legal_business_name)}
       ${l.legal_business_name && l.dba_name!==l.legal_business_name ? row('Legal name', l.legal_business_name) : ''}
@@ -1964,7 +2136,7 @@ function renderMain(id){
     ? ''  // distributors don't need to see their own info echoed back
     : `<tr><td>Distributor rep</td><td>${esc(l.distributor_sales_rep||'—')}</td></tr>`;
   const dist = `<div class="card card-pad">
-    <div class="info-card-title">${isDist?'Assignment':'Distributor & assignment'}</div>
+    <div class="info-card-title">${isDist?'Lead Assignment':'Distributor &amp; Assignment'}</div>
     <table class="info-tbl">
       ${isDist ? '' : row('Distributor', l.distributor||'HT Hackney')}
       ${isDist ? '' : row('Warehouse', l.distributor_warehouse)}
@@ -2027,11 +2199,19 @@ function renderMain(id){
 
   ge('main-panel').innerHTML = `
     <div class="card-pad">
-      <div class="crumb">
-        <a onclick="clearLeadSelection()">← All leads</a>
-        <span>›</span>
-        ${l.jotform_submission_id?`<span class="mono">${esc(l.jotform_submission_id)}</span>`:'<span>Lead</span>'}
-      </div>
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" onclick="clearLeadSelection()">&#8962; Home</span>
+        </div>
+        <span class="breadcrumb-sep">&#8250;</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-link" onclick="clearLeadSelection()">All Leads</span>
+        </div>
+        <span class="breadcrumb-sep">&#8250;</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-current">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||l.jotform_submission_id||'Lead')}</span>
+        </div>
+      </nav>
 
       <div class="detail-head">
         <div style="flex:1;min-width:0">
@@ -2054,19 +2234,22 @@ function renderMain(id){
       ${showInternalNotes ? `
       <div class="card card-pad" style="margin-bottom:14px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div class="info-card-title" style="margin:0">Rep activity · ${logs.length} ${logs.length===1?'entry':'entries'}</div>
-          ${canLogFollowup ? `<button class="btn btn-sm" onclick="openFollowup('${id}','0')">+ Add note</button>` : ''}
+          <div class="info-card-title" style="margin:0">Rep Activity — ${logs.length} ${logs.length===1?'Entry':'Entries'}</div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn btn-sm" onclick="refreshLeadActivity('${id}')">Refresh</button>
+            ${canLogFollowup ? `<button class="btn btn-sm" onclick="openFollowup('${id}','0')">+ Add note</button>` : ''}
+          </div>
         </div>
         <div class="tl-body">${timelineHtml}</div>
       </div>` : `
       <div class="card card-pad" style="margin-bottom:14px">
-        <div class="info-card-title">Stage history</div>
+        <div class="info-card-title">Stage History</div>
         <div class="tl-body">${timelineHtml}</div>
       </div>`}
 
       ${showEmailLog ? `
       <div class="card card-pad">
-        <div class="info-card-title">Emails · ${emails.length} sent</div>
+        <div class="info-card-title">Email Log — ${emails.length} Sent</div>
         ${emailHtml}
       </div>` : ''}
     </div>`;
@@ -2094,7 +2277,7 @@ function renderKanban(){
           return `<div class="kcard ${stalled?'stall':''}" onclick="switchTab('leads');selectLead('${l.id}')">
             <div class="kcard-name">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown')}</div>
             <div class="kcard-rep ${l.assigned_sales_rep?'':'warn'}">${l.assigned_sales_rep?esc(l.assigned_sales_rep):'No rep assigned'}</div>
-            <div class="kcard-meta">${fmtRel(l.last_activity_at||l.created_at)}</div>
+            <div class="kcard-meta">${fmtRel(l.last_activity_at||l.submission_date||l.created_at)}</div>
           </div>`;
         }).join('')}
         ${items.length>80?`<div class="muted" style="font-size:11px;text-align:center;padding:4px">+ ${items.length-80} more</div>`:''}
@@ -2113,319 +2296,556 @@ function renderSubmitted(){
     ge('sub-metrics').innerHTML = '';
     return;
   }
+  ge('sub-title').textContent = `${programLabel(scope)} — Submitted Leads`;
+  ge('sub-sub').textContent = `Every lead your company has submitted to Ronnoco, and its current status`;
 
-  const scoped = scopedLeads();           // all leads for this distributor company
+  const scoped = scopedLeads();
   const act = scoped.filter(l=>l.status==='active');
+  const byName = l => l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown';
+  const byWh = l => (l.distributor_warehouse||'Unspecified warehouse').trim();
 
-  // Company-level handling summary — "how Ronnoco is handling our leads"
-  ge('sub-metrics').innerHTML = `
-    <div class="mcard"><div class="m-lbl">Total submitted</div><div class="m-val">${scoped.length}</div><div class="m-sub">All time</div></div>
-    <div class="mcard"><div class="m-lbl">Awaiting Ronnoco</div><div class="m-val">${act.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length}</div><div class="m-sub">Not yet assigned</div></div>
-    <div class="mcard"><div class="m-lbl">Being worked</div><div class="m-val">${act.filter(l=>['rep_assigned','customer_contacted','follow_up'].includes(l.current_step)).length}</div><div class="m-sub">Rep has it</div></div>
-    <div class="mcard"><div class="m-lbl">Won</div><div class="m-val">${scoped.filter(l=>l.status==='won').length}</div><div class="m-sub">Converted</div></div>
-    <div class="mcard"><div class="m-lbl">Lost</div><div class="m-val">${scoped.filter(l=>l.status==='lost').length}</div><div class="m-sub">Closed</div></div>
-  `;
+  const whSel = ge('sub-warehouse');
+  const repSel = ge('sub-rep');
+  const allWarehouses = [...new Set(scoped.map(byWh))].sort((a,b)=>a.localeCompare(b));
+  if(whSel){
+    const prev = whSel.value || '';
+    whSel.innerHTML = '<option value="">All warehouses</option>' + allWarehouses.map(w=>`<option value="${esc(w)}">${esc(w)}</option>`).join('');
+    whSel.value = allWarehouses.includes(prev) ? prev : '';
+  }
+  const selectedWh = whSel?.value || '';
+  const whScoped = selectedWh ? scoped.filter(l=>byWh(l)===selectedWh) : [];
 
-  // ── Lead detail (deepest level) ──────────────────────────────
-  if(selId && scoped.find(l=>l.id===selId)){
-    ge('sub-title').innerHTML = subCrumb(true);
-    ge('sub-sub').textContent = '';
-    ge('submitted-body').innerHTML = `<div class="card" id="dist-detail-card"></div>`;
-    renderMainInto('dist-detail-card', selId);
-    return;
+  const allReps = [...new Set((selectedWh?whScoped:scoped).map(l=>(l.assigned_sales_rep||'Unknown').trim()||'Unknown'))].sort((a,b)=>a.localeCompare(b));
+  if(repSel){
+    const prev = repSel.value || '';
+    repSel.innerHTML = '<option value="">All Ronnoco reps</option>' + allReps.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
+    repSel.value = allReps.includes(prev) ? prev : '';
+  }
+  const selectedRep = repSel?.value || '';
+
+  if(selectedWh){
+    ge('sub-metrics').style.display = 'none';
+    ge('sub-metrics').innerHTML = '';
+  } else {
+    ge('sub-metrics').style.display = '';
+    ge('sub-metrics').innerHTML = `
+      <div class="mcard"><div class="m-lbl">Awaiting Ronnoco</div><div class="m-val">${act.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length}</div><div class="m-sub">Not yet assigned</div></div>
+      <div class="mcard"><div class="m-lbl">Being worked</div><div class="m-val">${act.filter(l=>['rep_assigned','customer_contacted','follow_up'].includes(l.current_step)).length}</div><div class="m-sub">Rep has it</div></div>
+      <div class="mcard"><div class="m-lbl">Won</div><div class="m-val">${scoped.filter(l=>l.status==='won').length}</div><div class="m-sub">Converted</div></div>
+      <div class="mcard" onclick="setSubmittedStatusFilter('lost')"><div class="m-lbl">Lost</div><div class="m-val">${scoped.filter(l=>l.status==='lost').length}</div><div class="m-sub">Click to view lost</div></div>
+    `;
+    // Home report button
+    if(!ge('dist-home-report-btn')){
+      const btn = document.createElement('div');
+      btn.style.cssText = 'margin-bottom:var(--sp-4);display:flex;gap:var(--sp-2);align-items:center';
+      btn.innerHTML = `<button id="dist-home-report-btn" class="btn btn-primary" onclick="openDistributorReport(scopedLeads(),'${esc(scope||programLabel(scope)||'All Leads')} — Lead Performance Report','All Warehouses',ge('dist-home-report-container'))">&#128202; Generate Overall Report</button><button class="btn" onclick="exportDistributorReport(scopedLeads(),'${esc(scope||programLabel(scope)||'all-leads')}')">&#8595; Export CSV</button>`;
+      ge('sub-metrics').after(btn);
+      const container = document.createElement('div');
+      container.id = 'dist-home-report-container';
+      btn.after(container);
+    }
   }
 
-  // ── Warehouse list (one warehouse drilled in) ────────────────
-  if(drillWarehouse){
-    ge('sub-title').innerHTML = subCrumb(false);
-    ge('sub-sub').textContent = `Leads from ${drillWarehouse} and how Ronnoco is progressing them`;
-    renderSubmittedLeadList(scoped.filter(l=>warehouseOf(l)===drillWarehouse));
-    return;
-  }
+  // Warehouse rep performance summary for distributor
+  const firstSubmissionMs = (lead, logs) => {
+    const marker = (logs||[]).find(x=>x.action==='Pipeline marker: submission received' || x.action==='CSV: lead received');
+    const markerIso = marker ? parseIsoFromNote(marker.note) : null;
+    return toMs(markerIso || lead.submission_date);
+  };
+  const firstContactMs = (lead, logs) => {
+    const marker = (logs||[]).find(x=>x.action==='Pipeline marker: first Ronnoco contact' || x.action==='CSV: first Ronnoco contact');
+    const markerIso = marker ? parseIsoFromNote(marker.note) : null;
+    const fallback = ['customer_contacted','follow_up'].includes(lead.current_step) || lead.status==='won' || lead.status==='lost'
+      ? lead.last_activity_at
+      : null;
+    return toMs(markerIso || fallback);
+  };
+  const firstFollowupMs = (logs, contactMs) => {
+    const row = (logs||[]).find(x => {
+      const ms = toMs(x?.created_at);
+      if(!ms || !contactMs || ms <= contactMs) return false;
+      const action = (x.action||'').toLowerCase();
+      if(action.includes('first ronnoco contact')) return false;
+      return x.to_step==='follow_up' || action.includes('follow-up') || action.includes('stage note') || action.includes('rep activity');
+    });
+    return toMs(row?.created_at);
+  };
+  const fmtLatency = ms => fmtElapsedMs(ms);
+  const repNorm = v => (v||'').trim().toLowerCase();
+  const htOriginator = lead => {
+    const d = (lead.distributor_sales_rep||'').trim();
+    const a = (lead.assigned_sales_rep||'').trim();
+    if(!d) return '';
+    if(a && repNorm(d) === repNorm(a)) return '';
+    return d;
+  };
+  const leadSourceLabel = lead => {
+    const cohort = (lead.tradeshow_lead||'').trim();
+    if(cohort && cohort !== 'No') return `Tradeshow (${cohort.replace('Yes - ','')})`;
+    if(htOriginator(lead)) return 'HT Hackney Rep Submitted';
+    if((lead.distributor_sales_rep||'').trim()) return 'HT Hackney Rep Not Clearly Indicated';
+    return 'Other/Unspecified';
+  };
+  const leadSourceKey = lead => {
+    const cohort = (lead.tradeshow_lead||'').trim();
+    if(cohort && cohort !== 'No') return 'tradeshow';
+    if(htOriginator(lead)) return 'hth_submitted';
+    if((lead.distributor_sales_rep||'').trim()) return 'hth_unclear';
+    return 'other';
+  };
+  const leadSourceKeyLabel = key => ({
+    tradeshow:'Tradeshow',
+    hth_submitted:'HT Hackney Rep Submitted',
+    hth_unclear:'HT Hackney Rep Not Clearly Indicated',
+    other:'Other/Unspecified'
+  }[key] || 'All Sources');
+  const leadSubmitter = lead => (htOriginator(lead) || 'Not indicated on form');
+  const repStats = {};
+  const ensureRep = rep => {
+    if(!repStats[rep]) repStats[rep] = {
+      rep,
+      total:0, active:0, won:0, lost:0,
+      leadToContactMs:0, leadToContactN:0,
+      contactToFollowMs:0, contactToFollowN:0,
+    };
+    return repStats[rep];
+  };
+  // Use whScoped (full unfiltered warehouse set) for rep coverage stats so counts always
+  // reflect every lead assigned to each rep at this warehouse regardless of UI filters
+  whScoped.forEach(l=>{
+    const rep = (l.assigned_sales_rep||'Unknown').trim() || 'Unknown';
+    const r = ensureRep(rep);
+    r.total++;
+    if(l.status==='active') r.active++;
+    if(l.status==='won') r.won++;
+    if(l.status==='lost') r.lost++;
+    const logs = activityLiteByLead[l.id] || [];
+    const subMs = firstSubmissionMs(l, logs);
+    const contactMs = firstContactMs(l, logs);
+    const followMs = firstFollowupMs(logs, contactMs);
+    if(subMs && contactMs && contactMs >= subMs){
+      r.leadToContactMs += (contactMs - subMs);
+      r.leadToContactN++;
+    }
+    if(contactMs && followMs && followMs >= contactMs){
+      r.contactToFollowMs += (followMs - contactMs);
+      r.contactToFollowN++;
+    }
+  });
+  const repRows = Object.values(repStats).sort((a,b)=>b.total-a.total || a.rep.localeCompare(b.rep));
 
-  // ── Warehouse rollup (top level for the company) ─────────────
-  ge('sub-title').textContent = `${scope} — leads by warehouse`;
-  ge('sub-sub').textContent = `Each warehouse's lead volume, pipeline mix, and stalled accounts at a glance`;
-
-  const groups = groupByWarehouse(scoped);
-  const names = Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length);
-
-  const cards = names.map(w=>{
-    const s = whStats(groups[w]);
-    return `<div class="wh-card" onclick="drillIntoWarehouse('${esc(w).replace(/'/g,"\\'")}')">
-      <div class="wh-head">
-        <div class="wh-name">${esc(w)}</div>
-        ${s.stalled?`<span class="pill-stall" title="${s.stalled} lead${s.stalled===1?'':'s'} idle ${STALL_DAYS}+ days">⚠ ${s.stalled} stalled</span>`:''}
+  const contributorStats = {};
+  const ensureContributor = name => {
+    if(!contributorStats[name]) contributorStats[name] = {name,total:0,active:0,won:0,lost:0};
+    return contributorStats[name];
+  };
+  let tradeshowCount = 0;
+  const sourceCounts = { tradeshow:0, hth_submitted:0, hth_unclear:0, other:0 };
+  whScoped.forEach(l=>{
+    sourceCounts[leadSourceKey(l)]++;
+    const source = leadSourceLabel(l);
+    if(source.startsWith('Tradeshow')){ tradeshowCount++; return; }
+    if(source !== 'HT Hackney Rep Submitted') return;
+    const name = leadSubmitter(l);
+    const c = ensureContributor(name);
+    c.total++;
+    if(l.status==='active') c.active++;
+    if(l.status==='won') c.won++;
+    if(l.status==='lost') c.lost++;
+  });
+  const contributorRows = Object.values(contributorStats).sort((a,b)=>b.total-a.total || a.name.localeCompare(b.name));
+  const whTitle = selectedWh || 'All warehouses';
+  distWhScopedLeads = whScoped; // persist for warehouse report button onclick
+  const repPanel = `<div class="dist-wh-panel">
+    <div class="dist-wh-head">
+      <div>
+        <div class="dist-wh-title">${esc(whTitle)} — Ronnoco Sales Rep Coverage</div>
+        <div class="dist-wh-sub">${whScoped.length} total lead${whScoped.length===1?'':'s'} at this warehouse — ${whScoped.filter(l=>l.status==='active').length} active, ${whScoped.filter(l=>l.status==='won').length} won, ${whScoped.filter(l=>l.status==='lost').length} lost</div>
       </div>
-      <div class="wh-body">
-        ${donutSVG(s)}
-        <div class="wh-legend">
-          <div class="wh-total"><span class="wh-total-num">${s.total}</span><span class="wh-total-lbl">lead${s.total===1?'':'s'}</span></div>
-          <div class="lg"><i class="sw" style="background:var(--amber,#d97706)"></i>Awaiting <b>${s.awaiting}</b></div>
-          <div class="lg"><i class="sw" style="background:var(--blue,#2563eb)"></i>Being worked <b>${s.working}</b></div>
-          <div class="lg"><i class="sw" style="background:var(--green,#16a34a)"></i>Won <b>${s.won}</b></div>
-          <div class="lg"><i class="sw" style="background:var(--red,#dc2626)"></i>Lost <b>${s.lost}</b></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        ${repRows.map(r=>`<button class="dist-rep-chip ${selectedRep===r.rep?'on':''}" onclick="setSubmittedRepFilter(decodeURIComponent('${encodeURIComponent(r.rep)}'))">${esc(r.rep)} · ${r.total}</button>`).join('')}
+        <button class="btn btn-sm btn-primary" style="margin-left:8px" onclick="openDistributorReport(distWhScopedLeads,'${esc(whTitle)} — Warehouse Report','${esc(whTitle)}',document.getElementById('dist-wh-report-container'))">&#128202; Warehouse Report</button>
+        <button class="btn btn-sm" onclick="exportDistributorReport(distWhScopedLeads,'${esc(whTitle)}')">&#8595; Export CSV</button>
+      </div>
+    </div>
+    <div id="dist-wh-report-container"></div>
+    <div style="overflow:auto">
+      <table class="dist-rep-table">
+        <thead>
+          <tr><th>Ronnoco rep</th><th>Total leads</th><th>Active</th><th>Lead → Contact Avg</th><th>Contact → Follow-up Avg</th></tr>
+        </thead>
+        <tbody>
+          ${repRows.length ? repRows.map(r=>`<tr>
+            <td><button class="btn btn-sm" onclick="setSubmittedRepFilter(decodeURIComponent('${encodeURIComponent(r.rep)}'))">${esc(r.rep)}</button></td>
+            <td>${r.total}</td>
+            <td>${r.active}</td>
+            <td>${fmtLatency(r.leadToContactN ? (r.leadToContactMs/r.leadToContactN) : null)} <span class="muted">(${r.leadToContactN})</span></td>
+            <td>${fmtLatency(r.contactToFollowN ? (r.contactToFollowMs/r.contactToFollowN) : null)} <span class="muted">(${r.contactToFollowN})</span></td>
+          </tr>`).join('') : `<tr><td colspan="5" class="muted">No rep activity for this warehouse yet.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+  const sourcePanel = selectedWh ? `<div class="dist-wh-panel">
+    <div class="dist-wh-head">
+      <div>
+        <div class="dist-section-title" style="margin:0">Lead Sources &amp; HT Hackney Contributors</div>
+        <div class="dist-wh-sub">Distributor representatives submitting leads from this warehouse</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-sm ${submittedSourceFilter==='tradeshow'?'btn-primary':''}" onclick="setSubmittedSourceFilter('tradeshow')">Tradeshow: ${sourceCounts.tradeshow}</button>
+        <button class="btn btn-sm ${submittedSourceFilter==='hth_submitted'?'btn-primary':''}" onclick="setSubmittedSourceFilter('hth_submitted')">HT Submitted: ${sourceCounts.hth_submitted}</button>
+        <button class="btn btn-sm ${submittedSourceFilter==='hth_unclear'?'btn-primary':''}" onclick="setSubmittedSourceFilter('hth_unclear')">HT Unclear: ${sourceCounts.hth_unclear}</button>
+        <button class="btn btn-sm ${submittedSourceFilter==='other'?'btn-primary':''}" onclick="setSubmittedSourceFilter('other')">Other: ${sourceCounts.other}</button>
+        <button class="btn btn-sm" onclick="setSubmittedSourceFilter('')">All Sources</button>
+      </div>
+    </div>
+    <div style="overflow:auto">
+      <table class="dist-rep-table">
+        <thead>
+          <tr><th>HT Hackney rep</th><th>Total leads</th><th>Active</th><th>Won</th><th>Lost</th></tr>
+        </thead>
+        <tbody>
+          ${contributorRows.length ? contributorRows.map(r=>`<tr>
+            <td>${esc(r.name)}</td>
+            <td>${r.total}</td>
+            <td>${r.active}</td>
+            <td>${r.won}</td>
+            <td>${r.lost}</td>
+          </tr>`).join('') : `<tr><td colspan="5" class="muted">No HT Hackney rep-submitted leads in this warehouse yet.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>` : '';
+
+  // Main page: warehouse tiles (only). Detailed format appears after selecting a warehouse.
+  if(!selectedWh){
+    const whAgg = {};
+    scoped.forEach(l=>{
+      const wh = byWh(l);
+      if(!whAgg[wh]) whAgg[wh] = {name:wh,total:0,active:0,won:0,lost:0,reps:new Set(),lastAct:null};
+      const a = whAgg[wh];
+      a.total++;
+      if(l.status==='active') a.active++;
+      if(l.status==='won') a.won++;
+      if(l.status==='lost') a.lost++;
+      a.reps.add((l.assigned_sales_rep||'Unknown').trim()||'Unknown');
+      const ts = l.last_activity_at || l.submission_date || l.created_at;
+      if(ts && (!a.lastAct || new Date(ts) > new Date(a.lastAct))) a.lastAct = ts;
+    });
+    const tiles = Object.values(whAgg).sort((a,b)=>b.total-a.total || a.name.localeCompare(b.name));
+    if(!tiles.length){
+      ge('submitted-body').innerHTML = `<div class="card"><div class="empty"><div class="empty-title">No warehouses to show</div></div></div>`;
+      return;
+    }
+    ge('submitted-body').innerHTML = `<div class="lite-grid">${tiles.map(t=>`
+      <div class="lite-card" onclick="setSubmittedWarehouseFilter(decodeURIComponent('${encodeURIComponent(t.name)}'))">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
+          <span style="font-size:11px;color:var(--text-3)">${t.lastAct?fmtRel(t.lastAct):'—'}</span>
+        </div>
+        <div class="dist-wh-kicker">Warehouse</div>
+        <div class="dist-wh-hero">${esc(t.name)}</div>
+        <div class="lite-name">${t.total} lead${t.total===1?'':'s'}</div>
+        <div class="lite-meta">
+          Active: <strong>${t.active}</strong> · Won: <strong>${t.won}</strong> · Lost: <strong>${t.lost}</strong><br/>
+          Ronnoco reps: <strong>${t.reps.size}</strong>
         </div>
       </div>
-      <div class="wh-foot">
-        <span class="wh-rate">${s.closed?Math.round(s.won/s.closed*100):0}% win rate</span>
-        <span class="wh-go">View leads →</span>
-      </div>
-    </div>`;
-  }).join('');
-
-  ge('submitted-body').innerHTML = cards
-    ? `<div class="wh-reportbar">
-         <button class="btn btn-sm btn-primary" onclick="exportMasterReport()">⤓ Master report (Excel)</button>
-         <span class="wh-reportbar-hint">Executive summary + per-warehouse breakdown + full lead detail with cycle times</span>
-       </div>
-       <div class="wh-grid">${cards}</div>`
-    : `<div class="card"><div class="empty"><div class="empty-title">No leads yet</div><div class="empty-sub">Leads your warehouses submit to Ronnoco will appear here.</div></div></div>`;
-}
-
-// ── Shared warehouse helpers (single source of truth for all metrics) ──
-function groupByWarehouse(list){
-  const g={};
-  list.forEach(l=>{ const w=warehouseOf(l); (g[w]=g[w]||[]).push(l); });
-  return g;
-}
-function whStats(ls){
-  const active = ls.filter(l=>l.status==='active');
-  const awaiting = active.filter(l=>['lead_received','awaiting_director','awaiting_rep'].includes(l.current_step)).length;
-  const working  = active.filter(l=>['rep_assigned','customer_contacted','follow_up'].includes(l.current_step)).length;
-  const won = ls.filter(l=>l.status==='won').length;
-  const lost = ls.filter(l=>l.status==='lost').length;
-  const stalled = active.filter(l=>daysSince(l.last_activity_at)>STALL_DAYS).length;
-  return { total:ls.length, awaiting, working, won, lost, stalled, active:active.length, closed:won+lost };
-}
-// Compact SVG donut: amber awaiting · blue working · green won · red lost
-function donutSVG(s){
-  const segs=[['#d97706',s.awaiting],['#2563eb',s.working],['#16a34a',s.won],['#dc2626',s.lost]];
-  const sum = segs.reduce((a,[,v])=>a+v,0);
-  const R=30, C=2*Math.PI*R, cx=36, cy=36;
-  let off=0, ring='';
-  if(sum>0){
-    segs.forEach(([col,v])=>{
-      if(!v) return;
-      const len=v/sum*C;
-      ring+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${col}" stroke-width="11" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;
-      off+=len;
-    });
-  } else {
-    ring=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--border)" stroke-width="11"/>`;
+    `).join('')}</div>`;
+    return;
   }
-  return `<svg class="wh-donut" viewBox="0 0 72 72" width="72" height="72" role="img" aria-label="pipeline distribution">
-    ${ring}
-    <text x="${cx}" y="${cy-1}" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="700" fill="var(--text)">${s.total}</text>
-    <text x="${cx}" y="${cy+12}" text-anchor="middle" dominant-baseline="central" font-size="7.5" fill="var(--text-3)">LEADS</text>
-  </svg>`;
-}
 
-// Breadcrumb for the distributor drill levels
-function subCrumb(atLead){
-  const parts = [`<a href="#" onclick="distBackToWarehouses(event)">${esc(scope)}</a>`];
-  if(drillWarehouse) parts.push(atLead
-    ? `<a href="#" onclick="distBackToLeads(event)">${esc(drillWarehouse)}</a>`
-    : `<span>${esc(drillWarehouse)}</span>`);
-  if(atLead) parts.push('<span>Lead detail</span>');
-  return `<span class="crumb">${parts.join(' <span class="crumb-sep">/</span> ')}</span>`;
-}
-function drillIntoWarehouse(w){ drillWarehouse=w; selId=null; renderSubmitted(); }
-function distBackToWarehouses(e){ if(e)e.preventDefault(); drillWarehouse=''; selId=null; renderSubmitted(); }
-function distBackToLeads(e){ if(e)e.preventDefault(); selId=null; renderSubmitted(); }
-
-// Render the warehouse metrics table + the filtered lead list below it
-function renderSubmittedLeadList(scopedWh){
-  const s = whStats(scopedWh);
-  const oldest = scopedWh.filter(l=>l.status==='active').reduce((m,l)=>{const d=daysSince(l.last_activity_at);return d>m?d:m;},0);
-  const metricsTable = `
-    <table class="wh-metric-table">
-      <thead><tr>
-        <th>Total</th><th>Awaiting Ronnoco</th><th>Being worked</th><th>Won</th><th>Lost</th><th>Stalled (${STALL_DAYS}d+)</th><th>Win rate</th><th>Oldest idle</th>
-      </tr></thead>
-      <tbody><tr>
-        <td><b>${s.total}</b></td>
-        <td><span class="dot-amber"></span>${s.awaiting}</td>
-        <td><span class="dot-blue"></span>${s.working}</td>
-        <td><span class="dot-green"></span>${s.won}</td>
-        <td><span class="dot-red"></span>${s.lost}</td>
-        <td>${s.stalled?`<span class="pill-stall">⚠ ${s.stalled}</span>`:'0'}</td>
-        <td>${s.closed?Math.round(s.won/s.closed*100):0}%</td>
-        <td>${oldest?oldest+'d':'—'}</td>
-      </tr></tbody>
-    </table>
-    <div class="wh-detail-actions">
-      <button class="btn btn-sm btn-primary" onclick="exportWarehouseReport()">⤓ Detailed report (Excel) — ${esc(drillWarehouse)}</button>
-    </div>`;
-
-  // filters
+  // Detailed warehouse view — show all statuses by default so rep coverage counts match lead list
   const q=(ge('sub-q')?.value||'').toLowerCase().trim();
   const fStep=ge('sub-step')?.value||'';
-  const fStatus=ge('sub-status')?.value||'active';
-  let list = scopedWh;
+  const fStatus=ge('sub-status')?.value||'';
+  let list = whScoped;
+  if(selectedRep) list = list.filter(l=>((l.assigned_sales_rep||'Unknown').trim()||'Unknown')===selectedRep);
+  if(submittedSourceFilter) list = list.filter(l=>leadSourceKey(l)===submittedSourceFilter);
   if(fStatus) list = list.filter(l=>l.status===fStatus);
   if(fStep) list = list.filter(l=>l.current_step===fStep);
-  if(q) list = list.filter(l=>[l.dba_name,l.legal_business_name,l.customer_full_name,l.contact_email,l.phone].some(v=>(v||'').toString().toLowerCase().includes(q)));
+  if(q) list = list.filter(l=>[l.jotform_submission_id,byName(l),l.legal_business_name,l.customer_full_name,l.contact_email,l.phone,l.contact_number,l.assigned_sales_rep,l.distributor_sales_rep,l.tradeshow_lead,l.distributor_warehouse,l.customer_interest,l.notes].some(v=>(v||'').toString().toLowerCase().includes(q)));
+
+  const categorizeInterest = lead => {
+    const txt = [lead.customer_interest, lead.which_program, lead.program_source, lead.notes].filter(Boolean).join(' ').toLowerCase();
+    if(/loan|loaned/.test(txt)) return 'Loaned';
+    if(/lease|leased|leasing/.test(txt)) return 'Leased';
+    if(/purchase|finance|financing|buy|cash/.test(txt)) return 'Purchase/Finance';
+    return 'Unspecified';
+  };
+  const interestOrder = ['Loaned', 'Leased', 'Purchase/Finance', 'Unspecified'];
+
   list.sort((a,b)=>new Date(b.last_activity_at||0)-new Date(a.last_activity_at||0));
 
-  const listHtml = !list.length
-    ? `<div class="card"><div class="empty"><div class="empty-title">No leads match</div><div class="empty-sub">Try clearing the status or stage filter above.</div></div></div>`
-    : `<div class="lite-grid">${list.map(l=>{
-        const step = stepById(l.current_step);
-        let pillCls='pill-gray', pillTxt = step ? step.label : '—';
-        if(l.status==='won'){ pillCls='pill-green'; pillTxt='Won'; }
-        else if(l.status==='lost'){ pillCls='pill-red'; pillTxt='Lost'; }
-        else if(l.current_step==='lead_received'){ pillCls='pill-blue'; }
-        else if(l.current_step==='awaiting_director'){ pillCls='pill-amber'; }
-        else if(l.current_step==='awaiting_rep'){ pillCls='pill-amber'; }
-        else if(l.current_step==='rep_assigned'){ pillCls='pill-blue'; }
-        else if(l.current_step==='customer_contacted'){ pillCls='pill-green'; }
-        else if(l.current_step==='follow_up'){ pillCls='pill-blue'; }
-        const stalled = l.status==='active' && daysSince(l.last_activity_at)>STALL_DAYS;
-        return `<div class="lite-card ${stalled?'lite-stall':''}" onclick="selectLead('${l.id}')">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
-            <span class="pill ${pillCls}">${esc(pillTxt)}</span>
-            <span style="display:flex;align-items:center;gap:6px">
-              ${stalled?`<span class="pill-stall">⚠ ${daysSince(l.last_activity_at)}d idle</span>`:''}
-              <span style="font-size:11px;color:var(--text-3)">${fmtRel(l.last_activity_at||l.created_at)}</span>
-            </span>
-          </div>
-          <div class="lite-name">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown')}</div>
-          <div class="lite-meta">
-            ${l.assigned_sales_rep ? `Ronnoco rep: <strong>${esc(l.assigned_sales_rep)}</strong>` : '<em style="color:var(--warning)">Awaiting rep assignment</em>'}
-            ${l.customer_interest?`<br/><span class="muted">${esc(l.customer_interest)}</span>`:''}
-          </div>
-        </div>`;
-      }).join('')}</div>`;
+  const buildBreadcrumb = (empty=false) => `
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <div class="breadcrumb-item">
+        <span class="breadcrumb-link" onclick="switchTab(homeTab())">&#8962; Home</span>
+      </div>
+      <span class="breadcrumb-sep">&#8250;</span>
+      <div class="breadcrumb-item">
+        <span class="breadcrumb-link" onclick="setSubmittedWarehouseFilter('')">Submitted Leads</span>
+      </div>
+      <span class="breadcrumb-sep">&#8250;</span>
+      <div class="breadcrumb-item">
+        ${selectedRep || submittedSourceFilter
+          ? `<span class="breadcrumb-link" onclick="setSubmittedRepFilter('');setSubmittedSourceFilter('')">${esc(selectedWh)}</span>`
+          : `<span class="breadcrumb-current">${esc(selectedWh)}</span>`
+        }
+      </div>
+      ${selectedRep ? `
+        <span class="breadcrumb-sep">&#8250;</span>
+        <div class="breadcrumb-item">
+          ${submittedSourceFilter
+            ? `<span class="breadcrumb-link" onclick="setSubmittedSourceFilter('')">${esc(selectedRep)}</span>`
+            : `<span class="breadcrumb-current">${esc(selectedRep)}</span>`
+          }
+        </div>` : ''}
+      ${submittedSourceFilter ? `
+        <span class="breadcrumb-sep">&#8250;</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-current">${esc(leadSourceKeyLabel(submittedSourceFilter))}</span>
+        </div>` : ''}
+      <span style="flex:1"></span>
+      ${selectedRep ? `<button class="btn btn-sm btn-ghost" onclick="setSubmittedRepFilter('')" style="font-size:11px">&#10005; Clear Rep</button>` : ''}
+      ${submittedSourceFilter ? `<button class="btn btn-sm btn-ghost" onclick="setSubmittedSourceFilter('')" style="font-size:11px">&#10005; Clear Source</button>` : ''}
+      <button class="btn btn-sm btn-ghost" onclick="clearSubmittedFilters()" style="font-size:11px">Clear All</button>
+    </nav>`;
 
-  ge('submitted-body').innerHTML = metricsTable + listHtml;
-}
-
-// ── Distributor reports (formatted .xlsx via ExcelJS, timing from lead_timing RPC) ──
-const RPT_NAVY='FF0F2347', RPT_WHITE='FFFFFFFF', RPT_GREY='FF6B7280';
-
-async function fetchTimingRows(){
-  try{
-    const {data,error} = await sb.rpc('lead_timing',{company_filter:scope});
-    if(error) throw error;
-    return data||[];
-  }catch(e){
-    notice('Could not load timing data ('+(e.message||e)+').','warn');
-    return null;
+  if(!list.length){
+    ge('submitted-body').innerHTML = `
+      ${buildBreadcrumb(true)}
+      ${repPanel}
+      ${sourcePanel}
+      <div class="card"><div class="empty"><div class="empty-title">No leads match the current filters</div><div class="empty-sub">Try adjusting the status, rep, or source filters above</div></div></div>`;
+    return;
   }
+
+  ge('submitted-body').innerHTML = `
+    ${buildBreadcrumb()}
+    </div>
+    ${repPanel}
+    ${sourcePanel}
+    <div class="dist-section-title" style="font-size:18px;font-weight:700;letter-spacing:.01em">Lead Records</div>
+    ${interestOrder.map(label=>{
+      const bucket = list.filter(l=>categorizeInterest(l)===label);
+      if(!bucket.length) return '';
+      return `
+      <div class="dist-section-title" style="margin-top:20px">${esc(label)} Leads <span style="font-size:14px;font-weight:500;color:var(--text-3)">(${bucket.length})</span></div>
+      <div class="dist-acc-wrap">${bucket.map(l=>{
+    const step = stepById(l.current_step);
+    let pillCls='pill-gray', pillTxt = step ? step.label : '—';
+    if(l.status==='won'){ pillCls='pill-green'; pillTxt='Won'; }
+    else if(l.status==='lost'){ pillCls='pill-red'; pillTxt='Lost'; }
+    else if(l.current_step==='lead_received'){ pillCls='pill-blue'; }
+    else if(l.current_step==='awaiting_director'){ pillCls='pill-amber'; }
+    else if(l.current_step==='awaiting_rep'){ pillCls='pill-amber'; }
+    else if(l.current_step==='rep_assigned'){ pillCls='pill-blue'; }
+    else if(l.current_step==='customer_contacted'){ pillCls='pill-green'; }
+    else if(l.current_step==='follow_up'){ pillCls='pill-blue'; }
+
+    const submittedOn = fmtD(l.submission_date||l.created_at);
+    const rep = l.assigned_sales_rep || 'Unknown';
+    const htRep = leadSubmitter(l);
+    const interestTag = categorizeInterest(l);
+    const sourceTag = leadSourceLabel(l);
+    const submittedBy = leadSubmitter(l);
+    const repActivity = (activityLiteByLead[l.id] || [])
+      .filter(lo => (lo.note || '').trim() || (lo.action || '').trim())
+      .slice(0, 6);
+    return `<details class="dist-acc-item" ${selId===l.id?'open':''}>
+
+      <!-- ── HEADER ROW: all key info visible without opening ── -->
+      <summary class="dist-acc-sum" onclick="selId='${l.id}'">
+        <span class="dist-acc-chevron">&#8250;</span>
+
+        <div class="dist-acc-main">
+          <!-- Row 1: Business name + contact name -->
+          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:3px">
+            <span class="dist-acc-store">${esc(byName(l))}</span>
+            ${l.customer_full_name ? `<span style="font-size:var(--text-sm);color:var(--text-2);font-weight:500">${esc(l.customer_full_name)}</span>` : ''}
+          </div>
+          <!-- Row 2: Warehouse · email · phone -->
+          <div style="display:flex;flex-wrap:wrap;gap:6px 16px;font-size:var(--text-xs);color:var(--text-3);align-items:center">
+            ${byWh(l) ? `<span style="display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(byWh(l))}</span>` : ''}
+            ${l.contact_email ? `<a href="mailto:${esc(l.contact_email)}" onclick="event.stopPropagation()" style="color:var(--ronnoco-blue);text-decoration:none;display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${esc(l.contact_email)}</a>` : ''}
+            ${(l.phone||l.contact_number) ? `<a href="tel:${esc(l.phone||l.contact_number)}" onclick="event.stopPropagation()" style="color:var(--text-2);text-decoration:none;display:flex;align-items:center;gap:3px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>${esc(l.phone||l.contact_number)}</a>` : ''}
+          </div>
+        </div>
+
+        <!-- Right side: stage pill + received date -->
+        <div class="dist-acc-right">
+          <span class="pill ${pillCls}">${esc(pillTxt)}</span>
+          <span style="font-size:var(--text-xs);color:var(--text-3);white-space:nowrap">Received ${esc(submittedOn)}</span>
+        </div>
+      </summary>
+
+      <!-- ── EXPANDED BODY: additional details only ── -->
+      <div class="dist-acc-body">
+
+        <div class="lead-detail-grid">
+
+          <!-- Lead progression -->
+          <div class="lead-section">
+            <div class="lead-section-header">Lead Status &amp; Progression</div>
+            <div class="lead-section-body">
+              <div class="lead-field">
+                <div class="lead-field-label">Pipeline Stage</div>
+                <div class="lead-field-value"><span class="pill ${pillCls}">${esc(pillTxt)}</span></div>
+              </div>
+              <div class="lead-field">
+                <div class="lead-field-label">Last Activity</div>
+                <div class="lead-field-value">${esc(fmtD(l.last_activity_at||l.updated_at||l.created_at))}</div>
+              </div>
+              <div class="lead-field">
+                <div class="lead-field-label">Received at Ronnoco</div>
+                <div class="lead-field-value">${esc(submittedOn)}</div>
+              </div>
+              <div class="lead-field">
+                <div class="lead-field-label">Customer Interest</div>
+                <div class="lead-field-value">${esc(l.customer_interest||'—')}</div>
+              </div>
+              <div class="lead-field">
+                <div class="lead-field-label">Program / Category</div>
+                <div class="lead-field-value">${esc(l.which_program||l.program_source||'—')} · ${esc(interestTag)}</div>
+              </div>
+              ${l.jotform_submission_id ? `
+              <div class="lead-field">
+                <div class="lead-field-label">HTH ID</div>
+                <div class="lead-field-value" style="font-family:monospace;font-size:12px">${esc(l.jotform_submission_id)}</div>
+              </div>` : ''}
+            </div>
+          </div>
+
+          <!-- Ownership -->
+          <div class="lead-section">
+            <div class="lead-section-header">Ownership &amp; Source</div>
+            <div class="lead-section-body">
+              <div class="lead-field">
+                <div class="lead-field-label">Ronnoco Rep</div>
+                <div class="lead-field-value">${esc(rep)}</div>
+              </div>
+              <div class="lead-field">
+                <div class="lead-field-label">HT Hackney Rep</div>
+                <div class="lead-field-value">${esc(htRep)}</div>
+              </div>
+              <div class="lead-field">
+                <div class="lead-field-label">Warehouse</div>
+                <div class="lead-field-value">${esc(byWh(l))}</div>
+              </div>
+              <div class="lead-field">
+                <div class="lead-field-label">Source</div>
+                <div class="lead-field-value">${esc(sourceTag)}</div>
+              </div>
+              ${sourceTag==='HT Hackney Rep Submitted' ? `
+              <div class="lead-field">
+                <div class="lead-field-label">Submitted By</div>
+                <div class="lead-field-value">${esc(submittedBy)}</div>
+              </div>` : ''}
+            </div>
+          </div>
+
+        </div>
+
+        ${l.notes ? `
+          <div class="lead-section" style="margin-bottom:var(--sp-4)">
+            <div class="lead-section-header" style="color:#075985">Lead Notes</div>
+            <div class="lead-section-body" style="font-size:var(--text-base);color:var(--text);line-height:1.6">${esc(l.notes)}</div>
+          </div>
+        ` : ''}
+
+        <div class="rep-activity-section">
+          <div class="rep-activity-header">
+            <span style="font-size:15px">&#128203;</span> Rep Activity Notes
+          </div>
+          ${repActivity.length ? `
+            <div style="display:grid;gap:var(--sp-2)">
+              ${repActivity.map(lo=>`
+                <div class="rep-note-item">
+                  <div class="rep-note-meta">
+                    <span>${esc(fmtT(lo.created_at))}</span>
+                    <span>${esc(lo.actor_role||'system')}</span>
+                  </div>
+                  <div class="rep-note-action">${esc(lo.action||'')}</div>
+                  ${lo.note ? `<div class="rep-note-body">${esc(lo.note)}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          ` : `<div class="no-activity">No rep activity notes recorded yet.</div>`}
+        </div>
+
+      </div>
+    </details>`;
+  }).join('')}</div>`;
+    }).join('')}
+  `;
 }
-function whBucket(step){
-  if(['lead_received','awaiting_director','awaiting_rep'].includes(step)) return 'A';
-  if(['rep_assigned','customer_contacted','follow_up'].includes(step)) return 'W';
-  return '';
+
+function setSubmittedWarehouseFilter(warehouse){
+  const wh = ge('sub-warehouse');
+  if(!wh) return;
+  wh.value = warehouse || '';
+  const rep = ge('sub-rep');
+  if(rep) rep.value = '';
+  selId = null;
+  // Update global breadcrumb
+  const bc = ge('bc-current');
+  const bar = ge('global-breadcrumb')?.querySelector('nav');
+  if(bar){
+    const items = [...bar.querySelectorAll('.breadcrumb-item')];
+    const seps  = [...bar.querySelectorAll('.breadcrumb-sep')];
+    items.slice(2).forEach(el => el.remove());
+    seps.slice(1).forEach(el => el.remove());
+    if(warehouse && bc){
+      bc.outerHTML = `<span class="breadcrumb-link" id="bc-tab-link" onclick="setSubmittedWarehouseFilter('')">Submitted Leads</span>`;
+      // Ensure home link uses correct role-based tab
+      const homeLink = ge('bc-home'); if(homeLink) homeLink.setAttribute('onclick',`switchTab(homeTab())`);
+      const tabLink = ge('bc-tab-link')?.parentElement;
+      if(tabLink) tabLink.insertAdjacentHTML('afterend',
+        `<span class="breadcrumb-sep">&#8250;</span><div class="breadcrumb-item"><span class="breadcrumb-current" id="bc-current">${esc(warehouse)}</span></div>`);
+    } else if(bc){
+      bc.textContent = 'Submitted Leads';
+    }
+  }
+  renderSubmitted();
 }
-function avgN(nums){ const v=nums.filter(n=>n!=null && isFinite(n)); return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:null; }
-function summarize(rows){
-  const byWh={};
-  rows.forEach(r=>{ const w=(r.distributor_warehouse||'').trim()||'Unspecified'; (byWh[w]=byWh[w]||[]).push(r); });
-  return Object.keys(byWh).sort((a,b)=>byWh[b].length-byWh[a].length).map(w=>{
-    const ls=byWh[w], ac=ls.filter(l=>l.status==='active');
-    const awaiting=ac.filter(l=>whBucket(l.current_step)==='A').length;
-    const working=ac.filter(l=>whBucket(l.current_step)==='W').length;
-    const won=ls.filter(l=>l.status==='won').length, lost=ls.filter(l=>l.status==='lost').length;
-    const stalled=ac.filter(l=>daysSince(l.last_activity_at)>STALL_DAYS).length;
-    const ttc=avgN(ls.map(l=>l.days_to_contact!=null?+l.days_to_contact:null));
-    const ttcN=ls.filter(l=>l.days_to_contact!=null).length;
-    const ctc=avgN(ls.map(l=>l.days_contact_to_close!=null?+l.days_contact_to_close:null));
-    const ctcN=ls.filter(l=>l.days_contact_to_close!=null).length;
-    return {warehouse:w,total:ls.length,awaiting,working,won,lost,stalled,winRate:(won+lost)?won/(won+lost):0,ttc,ttcN,ctc,ctcN};
+
+function setSubmittedRepFilter(rep){
+  const sel = ge('sub-rep');
+  if(!sel) return;
+  sel.value = rep || '';
+  selId = null;
+  renderSubmitted();
+}
+
+function setSubmittedStatusFilter(status){
+  const sel = ge('sub-status');
+  if(!sel) return;
+  sel.value = status || '';
+  selId = null;
+  renderSubmitted();
+}
+
+function clearSubmittedFilters(){
+  const resetIds = ['sub-q','sub-step','sub-status','sub-warehouse','sub-rep'];
+  resetIds.forEach(id=>{
+    const el = ge(id);
+    if(!el) return;
+    if(el.tagName === 'SELECT'){
+      el.value = '';
+    } else {
+      el.value = '';
+    }
   });
+  selId = null;
+  submittedSourceFilter = '';
+  renderSubmitted();
 }
-function rptSection(ws,r,text){
-  const c=ws.getCell('A'+r); c.value=text;
-  c.font={bold:true,size:11,color:{argb:RPT_WHITE},name:'Arial'};
-  for(let i=1;i<=10;i++) ws.getCell(r,i).fill={type:'pattern',pattern:'solid',fgColor:{argb:RPT_NAVY}};
-}
-function rptHdr(c){
-  c.font={bold:true,color:{argb:RPT_WHITE},name:'Arial',size:10};
-  c.fill={type:'pattern',pattern:'solid',fgColor:{argb:RPT_NAVY}};
-  c.alignment={horizontal:'left',vertical:'middle'};
-}
-function addSummarySheet(wb,company,rows,whS){
-  const ws=wb.addWorksheet('Executive Summary',{views:[{showGridLines:false}]});
-  ws.columns=[{width:44},{width:14},{width:30},{width:10},{width:8},{width:8},{width:10},{width:11},{width:24},{width:26}];
-  const t=rows.length, ac=rows.filter(l=>l.status==='active');
-  const awaiting=ac.filter(l=>whBucket(l.current_step)==='A').length, working=ac.filter(l=>whBucket(l.current_step)==='W').length;
-  const won=rows.filter(l=>l.status==='won').length, lost=rows.filter(l=>l.status==='lost').length;
-  const stalled=ac.filter(l=>daysSince(l.last_activity_at)>STALL_DAYS).length;
-  const ttc=avgN(rows.map(l=>l.days_to_contact!=null?+l.days_to_contact:null)), ttcN=rows.filter(l=>l.days_to_contact!=null).length;
-  const ctc=avgN(rows.map(l=>l.days_contact_to_close!=null?+l.days_contact_to_close:null)), ctcN=rows.filter(l=>l.days_contact_to_close!=null).length;
-  const winRate=(won+lost)?won/(won+lost):0;
 
-  ws.mergeCells('A1:C1'); ws.getCell('A1').value='Ronnoco × '+company; ws.getCell('A1').font={bold:true,size:18,color:{argb:RPT_NAVY},name:'Arial'};
-  ws.mergeCells('A2:C2'); ws.getCell('A2').value='Lead Handling Executive Summary'; ws.getCell('A2').font={bold:true,size:13,color:{argb:'FF374151'},name:'Arial'};
-  ws.mergeCells('A3:C3'); ws.getCell('A3').value='Generated '+new Date().toISOString().slice(0,10)+'  ·  Distributor-facing report'; ws.getCell('A3').font={italic:true,size:10,color:{argb:RPT_GREY},name:'Arial'};
-
-  rptSection(ws,5,'PIPELINE OVERVIEW');
-  const ov=[['Total leads submitted',t],['Awaiting Ronnoco (not yet assigned)',awaiting],['Being worked (rep engaged)',working],['Won',won],['Lost',lost],['Win rate (of closed)',winRate],['Stalled — no activity '+STALL_DAYS+'+ days',stalled]];
-  ov.forEach((row,i)=>{const r=6+i;ws.getCell('A'+r).value=row[0];ws.getCell('A'+r).font={name:'Arial',size:11};const b=ws.getCell('B'+r);b.value=row[1];b.font={name:'Arial',size:11,bold:true};if(row[0].indexOf('Win rate')===0)b.numFmt='0%';});
-
-  rptSection(ws,14,'CYCLE TIMES (averages)');
-  ws.getCell('A15').value='Avg days: lead received → first contact'; ws.getCell('B15').value=ttc==null?'No data':ttc; ws.getCell('C15').value=ttc==null?'':'n = '+ttcN+' of '+t+' leads measured';
-  ws.getCell('A16').value='Avg days: first contact → close / deal'; ws.getCell('B16').value=ctc==null?'No data':ctc; ws.getCell('C16').value=ctc==null?'':'n = '+ctcN+' of '+t+' leads measured';
-  [15,16].forEach(r=>{ws.getCell('A'+r).font={name:'Arial',size:11};ws.getCell('B'+r).font={name:'Arial',size:11,bold:true};ws.getCell('C'+r).font={name:'Arial',size:10,italic:true,color:{argb:RPT_GREY}};});
-
-  ws.getCell('A18').value='Note: cycle times reflect only leads with logged stage-change timestamps. Leads imported in';
-  ws.getCell('A19').value='bulk or closed without a logged event are excluded from the averages. "Estimated" close';
-  ws.getCell('A20').value='dates (status set without a logged win/lost event) are flagged in the Lead Detail tab.';
-  [18,19,20].forEach(r=>ws.getCell('A'+r).font={name:'Arial',size:9,italic:true,color:{argb:RPT_GREY}});
-
-  rptSection(ws,22,'BY WAREHOUSE');
-  const hdr=['Warehouse','Total','Awaiting','Working','Won','Lost','Stalled','Win rate','Avg days to contact (n)','Avg days contact→close (n)'];
-  hdr.forEach((h,i)=>{const c=ws.getCell(23,i+1);c.value=h;rptHdr(c);});
-  whS.forEach((w,i)=>{const r=24+i;const vals=[w.warehouse,w.total,w.awaiting,w.working,w.won,w.lost,w.stalled,w.winRate,w.ttc==null?'—':w.ttc+'  (n='+w.ttcN+')',w.ctc==null?'—':w.ctc+'  (n='+w.ctcN+')'];vals.forEach((v,ci)=>{const c=ws.getCell(r,ci+1);c.value=v;c.font={name:'Arial',size:10};if(ci===7)c.numFmt='0%';});if(i%2)for(let ci=1;ci<=10;ci++)ws.getCell(r,ci).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};});
-}
-function addWarehouseTab(wb,whS){
-  const ws=wb.addWorksheet('By Warehouse',{views:[{state:'frozen',ySplit:1,showGridLines:false}]});
-  const h=[['Warehouse',20],['Total',8],['Awaiting',10],['Working',9],['Won',7],['Lost',7],['Stalled',9],['Win rate',10],['Avg days to contact',18],['n (contact)',11],['Avg days contact→close',22],['n (close)',10]];
-  ws.columns=h.map(c=>({width:c[1]}));
-  h.forEach((c,i)=>{const cell=ws.getCell(1,i+1);cell.value=c[0];rptHdr(cell);});
-  whS.forEach((w,i)=>{const r=2+i;const vals=[w.warehouse,w.total,w.awaiting,w.working,w.won,w.lost,w.stalled,w.winRate,w.ttc==null?'':w.ttc,w.ttcN,w.ctc==null?'':w.ctc,w.ctcN];vals.forEach((v,ci)=>{const c=ws.getCell(r,ci+1);c.value=v;c.font={name:'Arial',size:10};if(ci===7)c.numFmt='0%';});});
-  ws.autoFilter={from:{row:1,column:1},to:{row:whS.length+1,column:12}};
-}
-function addDetailSheet(wb,rows){
-  const ws=wb.addWorksheet('Lead Detail',{views:[{state:'frozen',ySplit:1,showGridLines:false}]});
-  const cols=[['Warehouse',18],['Business (DBA)',24],['Legal Name',22],['Contact',18],['Email',26],['Phone',14],['Address',30],['Distributor Rep',18],['Program',13],['Interest',16],['Stage',16],['Status',9],['Lost Reason',20],['Ronnoco Rep',16],['Received',12],['First Contact',13],['Closed',12],['Days to Contact',15],['Days Contact→Close',18],['Close Est?',11],['Days Idle',10],['Stalled',8],['Last Activity',13]];
-  ws.columns=cols.map(c=>({width:c[1]}));
-  cols.forEach((c,i)=>{const cell=ws.getCell(1,i+1);cell.value=c[0];rptHdr(cell);});
-  const d=v=>v?new Date(v).toISOString().slice(0,10):'';
-  rows.forEach((l,ri)=>{const idle=daysSince(l.last_activity_at);const r=2+ri;const vals=[(l.distributor_warehouse||'').trim()||'Unspecified',l.dba_name||'',l.legal_business_name||'',l.customer_full_name||'',l.contact_email||'',l.phone||'',l.store_address||'',l.distributor_sales_rep||'',l.program_source||'',l.customer_interest||'',stepById(l.current_step)?.label||l.current_step||'',l.status||'',l.lost_reason||'',l.assigned_sales_rep||'',d(l.received_at),d(l.contacted_at),d(l.closed_at),l.days_to_contact!=null?+l.days_to_contact:'',l.days_contact_to_close!=null?+l.days_contact_to_close:'',l.close_estimated?'ESTIMATED':'',(l.status==='active'&&isFinite(idle))?idle:'',(l.status==='active'&&idle>STALL_DAYS)?'YES':'',d(l.last_activity_at)];vals.forEach((v,ci)=>{const c=ws.getCell(r,ci+1);c.value=v;c.font={name:'Arial',size:10};});if(l.status==='active'&&idle>STALL_DAYS)ws.getCell(r,22).font={name:'Arial',size:10,bold:true,color:{argb:'FF92400E'}};if(l.close_estimated)ws.getCell(r,20).font={name:'Arial',size:10,italic:true,color:{argb:RPT_GREY}};});
-  ws.autoFilter={from:{row:1,column:1},to:{row:rows.length+1,column:cols.length}};
-}
-async function saveWorkbook(wb,filename){
-  const buf=await wb.xlsx.writeBuffer();
-  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
-}
-async function exportMasterReport(){
-  if(typeof ExcelJS==='undefined'){ notice('Spreadsheet library still loading — try again in a moment.','warn'); return; }
-  const rows=await fetchTimingRows(); if(rows===null) return;
-  if(!rows.length){ notice('No leads to export.','warn'); return; }
-  const whS=summarize(rows);
-  const wb=new ExcelJS.Workbook(); wb.creator='Ronnoco Distributor Portal';
-  addSummarySheet(wb,scope,rows,whS);
-  addWarehouseTab(wb,whS);
-  addDetailSheet(wb,rows);
-  await saveWorkbook(wb,`${scope.replace(/\s+/g,'_')}-master-report-${new Date().toISOString().slice(0,10)}.xlsx`);
-  notice('Master report exported.','ok');
-}
-async function exportWarehouseReport(){
-  if(typeof ExcelJS==='undefined'){ notice('Spreadsheet library still loading — try again in a moment.','warn'); return; }
-  const all=await fetchTimingRows(); if(all===null) return;
-  const rows=all.filter(l=>((l.distributor_warehouse||'').trim()||'Unspecified')===drillWarehouse);
-  if(!rows.length){ notice('No leads to export.','warn'); return; }
-  const whS=summarize(rows);
-  const wb=new ExcelJS.Workbook(); wb.creator='Ronnoco Distributor Portal';
-  addSummarySheet(wb,scope+' — '+drillWarehouse,rows,whS);
-  addDetailSheet(wb,rows);
-  await saveWorkbook(wb,`${scope.replace(/\s+/g,'_')}-${drillWarehouse.replace(/[\s,]+/g,'_')}-detailed-${new Date().toISOString().slice(0,10)}.xlsx`);
-  notice('Detailed report exported for '+drillWarehouse+'.','ok');
+function setSubmittedSourceFilter(sourceKey){
+  submittedSourceFilter = sourceKey || '';
+  selId = null;
+  renderSubmitted();
 }
 
 // Render the shared lead detail card into a different container id
@@ -2441,10 +2861,7 @@ function renderMainInto(targetId, id){
   tgt.innerHTML = `<div class="card-pad" style="padding:0">${origMain.innerHTML}</div>`;
   // restore selectable back-link to clear into THIS view
   tgt.querySelectorAll('a').forEach(a=>{
-    if(a.textContent.includes('All leads')){
-      if(role==='distributor' && drillWarehouse) a.textContent = '← '+drillWarehouse;
-      a.onclick = () => { selId=null; renderCurrentTab(); };
-    }
+    if(a.textContent.includes('All leads')) a.onclick = () => { selId=null; renderCurrentTab(); };
   });
 }
 
@@ -2457,7 +2874,7 @@ function renderMyWork(){
     ge('myw-metrics').innerHTML = '';
     return;
   }
-  ge('myw-sub').textContent = `${scope} — leads needing your attention first`;
+  ge('myw-sub').textContent = `${scope} — Your leads requiring immediate follow-up`;
 
   const scoped = scopedLeads();
   const act = scoped.filter(l=>l.status==='active');
@@ -2510,7 +2927,7 @@ function renderMyWork(){
         return `<div class="lite-card" onclick="selectLead('${l.id}')">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px">
             <span class="pill ${pillCls}">${esc(pillTxt)}</span>
-            ${stalled ? `<span class="pill pill-amber">⚠ ${daysSince(l.last_activity_at)}d idle</span>` : `<span style="font-size:11px;color:var(--text-3)">${fmtRel(l.last_activity_at||l.created_at)}</span>`}
+            ${stalled ? `<span class="pill pill-amber">⚠ ${daysSince(l.last_activity_at)}d idle</span>` : `<span style="font-size:11px;color:var(--text-3)">${fmtRel(l.last_activity_at||l.submission_date||l.created_at)}</span>`}
           </div>
           <div class="lite-name">${esc(l.dba_name||l.legal_business_name||l.customer_full_name||'Unknown')}</div>
           <div class="lite-meta">
@@ -2902,16 +3319,266 @@ async function saveNewLead(){
 // ============================================================
 // EXPORT
 // ============================================================
-// Shared CSV builder + downloader (one place for quoting rules)
-function csvDownload(filename, headers, rows){
-  const csv = [headers, ...rows].map(r=>r.map(c=>{
-    const s=String(c==null?'':c);
-    return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
-  }).join(',')).join('\n');
-  const blob = new Blob([csv],{type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download=filename;
-  a.click(); URL.revokeObjectURL(url);
+// ============================================================
+// DISTRIBUTOR REPORTS
+// ============================================================
+function buildDistReportData(leadList){
+  // Shared helpers (scoped inside report so they work standalone)
+  const toMs = v => { if(!v) return null; const d=new Date(v); return isNaN(d)?null:d.getTime(); };
+  const parseIsoFromNote = note => { if(!note) return null; const m=String(note).match(/(\d{4}-\d{2}-\d{2}T[\d:.+-]+Z?)/); return m?m[1]:null; };
+  const firstSubMs = (l,logs) => { const m=(logs||[]).find(x=>x.action==='Pipeline marker: submission received'||x.action==='CSV: lead received'); return toMs(parseIsoFromNote(m?.note)||l.submission_date); };
+  const firstContactMs = (l,logs) => { const m=(logs||[]).find(x=>x.action==='Pipeline marker: first Ronnoco contact'||x.action==='CSV: first Ronnoco contact'); const fb=['customer_contacted','follow_up'].includes(l.current_step)||l.status==='won'||l.status==='lost'?l.last_activity_at:null; return toMs(parseIsoFromNote(m?.note)||fb); };
+  const htOrig = l => { const d=(l.distributor_sales_rep||'').trim(),a=(l.assigned_sales_rep||'').trim(); if(!d) return ''; if(a&&d.toLowerCase()===a.toLowerCase()) return ''; return d; };
+  const srcKey = l => { const c=(l.tradeshow_lead||'').trim(); if(c&&c!=='No') return 'Tradeshow'; if(htOrig(l)) return 'HT Hackney Submitted'; if((l.distributor_sales_rep||'').trim()) return 'HT Hackney (Unclear)'; return 'Other'; };
+  const catKey = l => { const t=[l.customer_interest,l.which_program,l.program_source,l.notes].filter(Boolean).join(' ').toLowerCase(); if(/loan|loaned/.test(t)) return 'Loaned'; if(/lease|leased|leasing/.test(t)) return 'Leased'; if(/purchase|finance|financing|buy|cash/.test(t)) return 'Purchase/Finance'; return 'Unspecified'; };
+  const byWh = l => (l.distributor_warehouse||'Unspecified').trim();
+
+  const total = leadList.length;
+  const won   = leadList.filter(l=>l.status==='won').length;
+  const lost  = leadList.filter(l=>l.status==='lost').length;
+  const active= leadList.filter(l=>l.status==='active').length;
+  const closed = won + lost;
+  const closeRate = closed ? Math.round(won/closed*100) : null;
+
+  // Lead-to-contact latency
+  let latSum=0, latN=0;
+  leadList.forEach(l=>{ const logs=activityLiteByLead[l.id]||[]; const s=firstSubMs(l,logs); const c=firstContactMs(l,logs); if(s&&c&&c>=s){latSum+=(c-s);latN++;} });
+  const avgLatencyMs = latN ? latSum/latN : null;
+
+  // Sources
+  const srcMap = {};
+  leadList.forEach(l=>{ const k=srcKey(l); srcMap[k]=(srcMap[k]||0)+1; });
+
+  // Interest categories
+  const catMap = {};
+  leadList.forEach(l=>{ const k=catKey(l); catMap[k]=(catMap[k]||0)+1; });
+
+  // Per warehouse
+  const whMap = {};
+  leadList.forEach(l=>{
+    const wh=byWh(l);
+    if(!whMap[wh]) whMap[wh]={name:wh,total:0,won:0,lost:0,active:0,latSum:0,latN:0};
+    const w=whMap[wh]; w.total++;
+    if(l.status==='won') w.won++;
+    else if(l.status==='lost') w.lost++;
+    else w.active++;
+    const logs=activityLiteByLead[l.id]||[]; const s=firstSubMs(l,logs); const c=firstContactMs(l,logs);
+    if(s&&c&&c>=s){w.latSum+=(c-s);w.latN++;}
+  });
+  const warehouses = Object.values(whMap).sort((a,b)=>b.total-a.total);
+
+  // Per rep
+  const repMap = {};
+  leadList.forEach(l=>{
+    const r=(l.assigned_sales_rep||'Unassigned').trim()||'Unassigned';
+    if(!repMap[r]) repMap[r]={name:r,total:0,won:0,lost:0,active:0};
+    const rm=repMap[r]; rm.total++;
+    if(l.status==='won') rm.won++;
+    else if(l.status==='lost') rm.lost++;
+    else rm.active++;
+  });
+  const reps = Object.values(repMap).sort((a,b)=>b.total-a.total);
+
+  return {total,won,lost,active,closed,closeRate,avgLatencyMs,srcMap,catMap,warehouses,reps,latN};
+}
+
+function renderDistributorReport(leadList, title, scope){
+  const d = buildDistReportData(leadList);
+  const now = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const pct = (n,tot) => tot ? Math.round(n/tot*100)+'%' : '—';
+  const bar = (n, max, cls='') => `<div class="rpt-bar-track"><div class="rpt-bar-fill ${cls}" style="width:${max?Math.round(n/max*100):0}%"></div></div>`;
+
+  // Stage breakdown
+  const stages = [
+    {id:'lead_received',label:'Lead Received'},
+    {id:'awaiting_director',label:'Awaiting Director'},
+    {id:'awaiting_rep',label:'Awaiting Rep'},
+    {id:'rep_assigned',label:'Assigned to Rep'},
+    {id:'customer_contacted',label:'Customer Contacted'},
+    {id:'follow_up',label:'In Follow-up'},
+  ];
+  const stageCounts = {};
+  leadList.forEach(l=>{ if(l.status==='active') stageCounts[l.current_step]=(stageCounts[l.current_step]||0)+1; });
+
+  return `
+  <div class="rpt-wrap">
+    <div class="rpt-header">
+      <div class="rpt-eyebrow">&#128202; Lead Performance Report</div>
+      <div class="rpt-title">${esc(title)}</div>
+      <div class="rpt-meta">
+        <span>Generated: ${now}</span>
+        <span>Scope: ${esc(scope||'All Leads')}</span>
+        <span>Total Leads: ${d.total}</span>
+      </div>
+    </div>
+
+    <div class="rpt-body">
+
+      <!-- KPIs -->
+      <div class="rpt-section">
+        <div class="rpt-section-title">&#9679; Executive Summary</div>
+        <div class="rpt-kpi-grid">
+          <div class="rpt-kpi"><div class="rpt-kpi-val">${d.total}</div><div class="rpt-kpi-lbl">Total Leads</div><div class="rpt-kpi-sub">All time</div></div>
+          <div class="rpt-kpi"><div class="rpt-kpi-val">${d.active}</div><div class="rpt-kpi-lbl">Active</div><div class="rpt-kpi-sub">In pipeline</div></div>
+          <div class="rpt-kpi"><div class="rpt-kpi-val green">${d.won}</div><div class="rpt-kpi-lbl">Won</div><div class="rpt-kpi-sub">Converted</div></div>
+          <div class="rpt-kpi"><div class="rpt-kpi-val red">${d.lost}</div><div class="rpt-kpi-lbl">Lost</div><div class="rpt-kpi-sub">Closed lost</div></div>
+          <div class="rpt-kpi"><div class="rpt-kpi-val ${d.closeRate>=50?'green':d.closeRate>=25?'amber':'red'}">${d.closeRate!=null?d.closeRate+'%':'—'}</div><div class="rpt-kpi-lbl">Close Rate</div><div class="rpt-kpi-sub">Won ÷ Closed</div></div>
+          <div class="rpt-kpi"><div class="rpt-kpi-val amber">${fmtElapsedMs(d.avgLatencyMs)}</div><div class="rpt-kpi-lbl">Avg. Response</div><div class="rpt-kpi-sub">Lead → Contact (n=${d.latN})</div></div>
+        </div>
+      </div>
+
+      <!-- Pipeline stage breakdown -->
+      <div class="rpt-section">
+        <div class="rpt-section-title">&#9679; Active Leads by Pipeline Stage</div>
+        ${stages.map(s=>{ const n=stageCounts[s.id]||0; return `<div class="rpt-bar-row"><div class="rpt-bar-label">${s.label}</div>${bar(n,d.active)}<div class="rpt-bar-val">${n}</div></div>`; }).join('')}
+      </div>
+
+      <!-- Lead sources -->
+      <div class="rpt-section">
+        <div class="rpt-section-title">&#9679; Lead Sources</div>
+        <table class="rpt-table">
+          <thead><tr><th>Source</th><th class="r">Count</th><th class="r">% of Total</th></tr></thead>
+          <tbody>
+            ${Object.entries(d.srcMap).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+              <tr><td>${esc(k)}</td><td class="r">${v}</td><td class="r">${pct(v,d.total)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Lead types / interest categories -->
+      <div class="rpt-section">
+        <div class="rpt-section-title">&#9679; Lead Types (Customer Interest)</div>
+        <table class="rpt-table">
+          <thead><tr><th>Category</th><th class="r">Count</th><th class="r">% of Total</th></tr></thead>
+          <tbody>
+            ${Object.entries(d.catMap).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+              <tr><td>${esc(k)}</td><td class="r">${v}</td><td class="r">${pct(v,d.total)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Close rate per warehouse -->
+      ${d.warehouses.length > 1 ? `
+      <div class="rpt-section">
+        <div class="rpt-section-title">&#9679; Close Rate by Warehouse</div>
+        <table class="rpt-table">
+          <thead><tr><th>Warehouse</th><th class="r">Total</th><th class="r">Active</th><th class="r">Won</th><th class="r">Lost</th><th class="r">Close Rate</th><th class="r">Avg Response</th></tr></thead>
+          <tbody>
+            ${d.warehouses.map(w=>{ const cr=w.won+w.lost?Math.round(w.won/(w.won+w.lost)*100)+'%':'—'; const lat=w.latN?fmtElapsedMs(w.latSum/w.latN):'—'; return `<tr><td><strong>${esc(w.name)}</strong></td><td class="r">${w.total}</td><td class="r">${w.active}</td><td class="r" style="color:var(--green)">${w.won}</td><td class="r" style="color:var(--red)">${w.lost}</td><td class="r">${cr}</td><td class="r">${lat}</td></tr>`; }).join('')}
+          </tbody>
+        </table>
+      </div>` : ''}
+
+      <!-- Rep performance -->
+      ${d.reps.length ? `
+      <div class="rpt-section">
+        <div class="rpt-section-title">&#9679; Ronnoco Rep Performance</div>
+        <table class="rpt-table">
+          <thead><tr><th>Sales Rep</th><th class="r">Total</th><th class="r">Active</th><th class="r">Won</th><th class="r">Lost</th><th class="r">Close Rate</th></tr></thead>
+          <tbody>
+            ${d.reps.map(r=>{ const cr=r.won+r.lost?Math.round(r.won/(r.won+r.lost)*100)+'%':'—'; return `<tr><td>${esc(r.name)}</td><td class="r">${r.total}</td><td class="r">${r.active}</td><td class="r" style="color:var(--green)">${r.won}</td><td class="r" style="color:var(--red)">${r.lost}</td><td class="r">${cr}</td></tr>`; }).join('')}
+          </tbody>
+        </table>
+      </div>` : ''}
+
+    </div>
+
+    <div class="rpt-footer">
+      <span class="rpt-footer-note">Report reflects data available in the dashboard at time of generation. All times are local.</span>
+      <div style="display:flex;gap:var(--sp-2)">
+        <button class="btn btn-sm btn-primary" onclick="exportDistributorReport(distReportLeads,'${esc(title)}')">&#8595; Export Full Data (CSV)</button>
+        <button class="btn btn-sm" onclick="closeDistReport()">Close Report</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+let distReportLeads = [];
+let distReportContainer = null;
+let distWhScopedLeads = []; // persisted across renderSubmitted() for warehouse report button onclick
+
+function openDistributorReport(leadList, title, scope, containerEl){
+  // containerEl may be stale if the panel was re-rendered; fall back to fresh lookup
+  const el = containerEl || ge('dist-wh-report-container') || ge('dist-home-report-container');
+  if(!el){ console.warn('Report container not found'); return; }
+  if(!leadList || !leadList.length){ notice('No leads available for this report.','warn'); return; }
+  distReportLeads = leadList;
+  distReportContainer = el;
+  const html = renderDistributorReport(leadList, title, scope);
+  el.innerHTML = html;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function closeDistReport(){
+  if(distReportContainer) distReportContainer.innerHTML = '';
+  distReportContainer = null;
+  distReportLeads = [];
+}
+
+function exportDistributorReport(leadList, titleRaw){
+  const toMs = v => { if(!v) return null; const d=new Date(v); return isNaN(d)?null:d.getTime(); };
+  const parseIsoFromNote = note => { if(!note) return null; const m=String(note).match(/(\d{4}-\d{2}-\d{2}T[\d:.+-]+Z?)/); return m?m[1]:null; };
+  const firstSubMs = (l,logs) => { const mk=(logs||[]).find(x=>x.action==='Pipeline marker: submission received'||x.action==='CSV: lead received'); return toMs(parseIsoFromNote(mk?.note)||l.submission_date); };
+  const firstContactMs = (l,logs) => { const mk=(logs||[]).find(x=>x.action==='Pipeline marker: first Ronnoco contact'||x.action==='CSV: first Ronnoco contact'); const fb=['customer_contacted','follow_up'].includes(l.current_step)||l.status==='won'||l.status==='lost'?l.last_activity_at:null; return toMs(parseIsoFromNote(mk?.note)||fb); };
+  const htOrig = l => { const d=(l.distributor_sales_rep||'').trim(),a=(l.assigned_sales_rep||'').trim(); if(!d) return ''; if(a&&d.toLowerCase()===a.toLowerCase()) return ''; return d; };
+  const srcKey = l => { const c=(l.tradeshow_lead||'').trim(); if(c&&c!=='No') return 'Tradeshow'; if(htOrig(l)) return 'HT Hackney Submitted'; if((l.distributor_sales_rep||'').trim()) return 'HT Hackney (Unclear)'; return 'Other'; };
+  const catKey = l => { const t=[l.customer_interest,l.which_program,l.program_source,l.notes].filter(Boolean).join(' ').toLowerCase(); if(/loan|loaned/.test(t)) return 'Loaned'; if(/lease|leased|leasing/.test(t)) return 'Leased'; if(/purchase|finance|financing|buy|cash/.test(t)) return 'Purchase/Finance'; return 'Unspecified'; };
+  const msToDays = ms => ms!=null&&ms>0 ? (ms/86400000).toFixed(1) : '';
+
+  const headers = [
+    'HTH ID','Business Name','Legal Name','Contact Name','Email','Phone','Address',
+    'Warehouse','Program','Interest Category','Lead Source','HT Hackney Rep',
+    'Ronnoco Rep','Pipeline Stage','Status','Won','Lost','Lost Reason',
+    'Submitted Date','Last Activity Date','Days Lead to Contact','Tradeshow',
+    'Customer Interest','Beverage Needs','Notes'
+  ];
+
+  const rows = leadList.map(l=>{
+    const logs = activityLiteByLead[l.id]||[];
+    const subMs = firstSubMs(l,logs);
+    const contactMs = firstContactMs(l,logs);
+    const latDays = (subMs&&contactMs&&contactMs>=subMs) ? msToDays(contactMs-subMs) : '';
+    const step = STEPS.find(s=>s.id===l.current_step);
+    return [
+      l.jotform_submission_id||'',
+      l.dba_name||'',
+      l.legal_business_name||'',
+      l.customer_full_name||'',
+      l.contact_email||'',
+      l.phone||l.contact_number||'',
+      l.store_address||'',
+      l.distributor_warehouse||'',
+      l.program_source||l.which_program||'',
+      catKey(l),
+      srcKey(l),
+      htOrig(l)||l.distributor_sales_rep||'',
+      l.assigned_sales_rep||'',
+      step?step.label:(l.current_step||''),
+      l.status||'',
+      l.status==='won'?'Yes':'',
+      l.status==='lost'?'Yes':'',
+      l.lost_reason||'',
+      l.submission_date||l.created_at||'',
+      l.last_activity_at||l.updated_at||'',
+      latDays,
+      (l.tradeshow_lead||'').replace('Yes - ',''),
+      l.customer_interest||'',
+      l.beverage_needs||'',
+      l.notes||''
+    ].map(v=>{ const s=String(v||''); return s.includes(',')||s.includes('"')||s.includes('\n') ? '"'+s.replace(/"/g,'""')+'"' : s; });
+  });
+
+  const csv = [headers.join(','), ...rows.map(r=>r.join(','))].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeName = (titleRaw||'leads-report').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
+  a.href = url;
+  a.download = `${safeName}-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function exportCurrent(){
@@ -2932,10 +3599,15 @@ function exportCurrent(){
     l.last_activity_at?new Date(l.last_activity_at).toISOString():'',
     l.created_at?new Date(l.created_at).toISOString():'',
   ]);
-  csvDownload(
-    `leads-${role}${scope?'-'+scope.replace(/\s+/g,'_'):''}-${new Date().toISOString().slice(0,10)}.csv`,
-    headers, rows
-  );
+  const csv = [headers, ...rows].map(r=>r.map(c=>{
+    const s=String(c==null?'':c);
+    return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+  }).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url;
+  a.download = `leads-${role}${scope?'-'+scope.replace(/\s+/g,'_'):''}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
   notice('Exported '+list.length+' leads.','ok');
 }
 
@@ -2961,7 +3633,11 @@ function exportScorecard(){
   });
   const headers = ['Rep','Received','Awaiting Director','Awaiting Rep','Assigned','Contacted','Follow-up','Won','Lost','Days idle'];
   const rows = Object.values(byRep).map(r=>[r.rep,r.received,r.awaitingDir,r.awaitingRep,r.assigned,r.contacted,r.followup,r.won,r.lost,r.lastAct?daysSince(r.lastAct):'']);
-  csvDownload(`scorecard-${new Date().toISOString().slice(0,10)}.csv`, headers, rows);
+  const csv = [headers,...rows].map(r=>r.map(c=>{const s=String(c==null?'':c);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download = `scorecard-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
   notice('Scorecard exported.','ok');
 }
 
@@ -2974,79 +3650,253 @@ function refreshSettings(){
   const hasKey = !!key;
   ['sync-js','sync-sl','sync-all'].forEach(id=>{const e=ge(id);if(e)e.disabled=!hasKey;});
   ge('s-status').innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${hasKey?'#16a34a':'#dc2626'};margin-right:5px;vertical-align:middle"></span>API Key: <strong>${hasKey?'Saved':'Not set'}</strong><br/><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a34a;margin-right:5px;vertical-align:middle"></span>Supabase: <strong>Connected</strong>`;
+  userAccessRoleChanged();
+  syncAccessUserFormMode();
   // Refresh in-memory reps & directors so the UI is current, then render lists
   loadReps().then(()=>{ renderRepList(); renderDirectorList(); });
-  ge('da-list').innerHTML='<div style="font-size:12px;color:var(--text-3)">Enter the admin secret and click Connect to manage distributor accounts.</div>';
+  refreshAccessUsers();
 }
-
-// ── Distributor accounts (real Supabase Auth users, via dist-admin Netlify fn) ──
-let _daSecret = '';
-async function daCall(payload){
-  const r = await fetch('/.netlify/functions/dist-admin', {
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-admin-secret':_daSecret},
-    body: JSON.stringify(payload)
-  });
-  let d; try{ d = await r.json(); }catch{ throw new Error('Server returned a non-JSON response (function may not be deployed).'); }
-  if(!r.ok) throw new Error(d.error || ('HTTP '+r.status));
-  return d;
-}
-async function daRefresh(){
-  const sec = ge('da-secret').value.trim();
-  const msg = ge('da-msg');
-  if(!sec){ msg.style.color='var(--danger)'; msg.textContent='Enter the admin secret first.'; return; }
-  _daSecret = sec;
-  msg.style.color='var(--text-2)'; msg.textContent='Connecting…';
+async function refreshAccessUsers(){
+  const body = ge('au-list-body');
+  const msg = ge('au-msg');
+  if(!body || !msg) return;
+  body.innerHTML = `<tr><td colspan="3" class="muted">Loading users…</td></tr>`;
+  msg.textContent = '';
   try{
-    const d = await daCall({action:'list'});
-    msg.textContent='';
-    ge('da-form').style.opacity='1';
-    ge('da-form').style.pointerEvents='auto';
-    renderDaList(d.users||[]);
+    const r = await fetch('/.netlify/functions/list-access-users');
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok){
+      body.innerHTML = `<tr><td colspan="3" class="muted">Could not load users.</td></tr>`;
+      msg.style.color = 'var(--danger)';
+      msg.textContent = d.error || ('Failed to load users: HTTP '+r.status);
+      return;
+    }
+    const users = Array.isArray(d.users) ? d.users : [];
+    accessUsersCache = users;
+    if(!users.length){
+      body.innerHTML = `<tr><td colspan="3" class="muted">No users found.</td></tr>`;
+      msg.style.color = 'var(--text-2)';
+      msg.textContent = `0 users`;
+      return;
+    }
+    body.innerHTML = users.map(u=>`
+      <tr>
+        <td>${esc(u.email||'')}</td>
+        <td>${esc(displayAccessRole(u.role||''))}</td>
+        <td>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-sm" data-au-action="edit" data-au-registry-id="${esc(u.registry_id||u.id||'')}">Edit</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+    bindAccessUsersActions();
+    msg.style.color = 'var(--text-2)';
+    msg.textContent = `${users.length} user${users.length===1?'':'s'}`;
   }catch(e){
-    msg.style.color='var(--danger)';
-    msg.textContent = /unauthorized/i.test(e.message) ? 'Admin secret rejected — check it matches Netlify.' : ('Could not connect: '+e.message);
-    ge('da-form').style.opacity='.5'; ge('da-form').style.pointerEvents='none';
+    body.innerHTML = `<tr><td colspan="3" class="muted">Could not load users.</td></tr>`;
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'Failed to load users: '+(e.message||'Unknown error');
   }
 }
-function renderDaList(users){
-  const box=ge('da-list');
-  if(!users.length){ box.innerHTML='<div style="font-size:12px;color:var(--text-3)">No distributor accounts yet.</div>'; return; }
-  box.innerHTML = users.map(u=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface-2);border-radius:6px">
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:500">${esc(u.display_name||u.email)} <span style="color:var(--text-3);font-weight:400">· ${esc(u.email)}</span></div>
-        <div style="font-size:11px;color:var(--text-3)">${esc(u.distributor_company)}${u.last_sign_in_at?' · last sign-in '+fmtRel(u.last_sign_in_at):' · never signed in'}</div>
-      </div>
-      <button class="btn btn-sm btn-ghost" onclick="daReset('${u.user_id}','${esc(u.email)}')">Reset password</button>
-      <button class="btn btn-sm btn-ghost" onclick="daDelete('${u.user_id}','${esc(u.email)}')">Remove</button>
-    </div>`).join('');
+function bindAccessUsersActions(){
+  if(accessUsersActionsBound) return;
+  const body = ge('au-list-body');
+  if(!body) return;
+  body.addEventListener('click', (ev)=>{
+    const btn = ev.target.closest('button[data-au-action]');
+    if(!btn) return;
+    const act = btn.getAttribute('data-au-action');
+    if(act==='edit'){
+      beginAccessUserEdit(btn.getAttribute('data-au-registry-id') || '');
+      return;
+    }
+    if(act==='delete'){
+      deleteAccessUser(
+        btn.getAttribute('data-au-user-id') || '',
+        btn.getAttribute('data-au-registry-id') || '',
+        btn.getAttribute('data-au-email') || '',
+      );
+    }
+  });
+  accessUsersActionsBound = true;
 }
-async function daCreate(){
-  const name=ge('da-name').value.trim(), email=ge('da-email').value.trim(),
-        company=ge('da-company').value, pass=ge('da-pass').value;
-  const msg=ge('da-msg');
-  if(!email || !company || !pass){ msg.style.color='var(--danger)'; msg.textContent='Email, company, and password are required.'; return; }
-  if(pass.length<8){ msg.style.color='var(--danger)'; msg.textContent='Password must be at least 8 characters.'; return; }
-  msg.style.color='var(--text-2)'; msg.textContent='Saving…';
+function canonicalAccessRole(v){
+  const s = String(v||'').trim().toLowerCase();
+  if(s==='sales_rep' || s==='sales rep' || s==='rep' || s==='ronnoco_rep' || s==='ronnoco rep') return 'sales_rep';
+  if(s==='admin') return 'admin';
+  if(s==='director') return 'director';
+  if(s==='distributor') return 'distributor';
+  return s || 'admin';
+}
+function displayAccessRole(v){
+  const s = canonicalAccessRole(v);
+  if(s==='sales_rep') return 'sales_rep';
+  return s;
+}
+function userAccessRoleChanged(){
+  const roleVal = ge('ua-role')?.value || 'admin';
+  const isDist = roleVal === 'distributor';
+  const isRep = roleVal === 'sales_rep' || roleVal === 'ronnoco_rep';
+  const isDir = roleVal === 'director';
+  ge('ua-program-wrap')?.classList.toggle('hidden', !isDist);
+  ge('ua-distname-wrap')?.classList.toggle('hidden', !isDist);
+  ge('ua-wh-wrap')?.classList.toggle('hidden', !isDist);
+  ge('ua-rep-wrap')?.classList.toggle('hidden', !isRep);
+  ge('ua-dir-wrap')?.classList.toggle('hidden', !isDir);
+}
+function syncAccessUserFormMode(){
+  const editing = !!((ge('ua-user-id')?.value||'').trim() || (ge('ua-registry-id')?.value||'').trim());
+  const pwReq = ge('ua-password-required');
+  if(pwReq) pwReq.textContent = editing ? '(optional)' : '*';
+  if(ge('ua-update-btn')) ge('ua-update-btn').disabled = !editing;
+  if(ge('ua-delete-btn')) ge('ua-delete-btn').disabled = !editing;
+  if(ge('ua-cancel-btn')) ge('ua-cancel-btn').disabled = !editing;
+}
+function beginAccessUserEdit(registryId){
+  const msg = ge('ua-msg');
+  const u = accessUsersCache.find(x => String(x.registry_id||x.id||'') === String(registryId||''));
+  if(!u){
+    if(msg){ msg.style.color='var(--danger)'; msg.textContent='User not found in current list. Refresh and try again.'; }
+    return;
+  }
+  ge('ua-user-id').value = u.user_id || '';
+  ge('ua-registry-id').value = u.registry_id || '';
+  ge('ua-email').value = u.email || '';
+  ge('ua-password').value = '';
+  ge('ua-role').value = canonicalAccessRole(u.role||'');
+  ge('ua-program').value = u.program_source || 'Java Select';
+  ge('ua-distname').value = u.distributor_name || '';
+  ge('ua-wh').value = u.distributor_warehouse || '';
+  ge('ua-rep').value = u.sales_rep_name || '';
+  ge('ua-dir').value = u.director_name || '';
+  ge('ua-rep-only').checked = !!u.rep_only;
+  userAccessRoleChanged();
+  syncAccessUserFormMode();
+  if(msg){ msg.style.color='var(--warning)'; msg.textContent=`Editing ${u.email}. Click "Save Changes" to update.`; }
+}
+function cancelAccessUserEdit(){
+  ge('ua-user-id').value = '';
+  ge('ua-registry-id').value = '';
+  ['ua-email','ua-password','ua-distname','ua-wh','ua-rep','ua-dir'].forEach(id=>{const e=ge(id); if(e) e.value='';});
+  if(ge('ua-role')) ge('ua-role').value = 'admin';
+  if(ge('ua-program')) ge('ua-program').value = 'Java Select';
+  if(ge('ua-rep-only')) ge('ua-rep-only').checked = false;
+  userAccessRoleChanged();
+  syncAccessUserFormMode();
+  const msg = ge('ua-msg');
+  if(msg){ msg.style.color='var(--text-2)'; msg.textContent=''; }
+}
+async function createAccessUser(){
+  const msg = ge('ua-msg');
+  const email = (ge('ua-email')?.value||'').trim();
+  const password = (ge('ua-password')?.value||'').trim();
+  const roleVal = canonicalAccessRole((ge('ua-role')?.value||'').trim());
+  const program_source = (ge('ua-program')?.value||'').trim();
+  const distributor_name = (ge('ua-distname')?.value||'').trim();
+  const distributor_warehouse = (ge('ua-wh')?.value||'').trim();
+  const sales_rep_name = (ge('ua-rep')?.value||'').trim();
+  const director_name = (ge('ua-dir')?.value||'').trim();
+  const rep_only = !!ge('ua-rep-only')?.checked;
+
+  if(!email || !password || !roleVal){ msg.style.color='var(--danger)'; msg.textContent='Email, password, and role are required.'; return; }
+  if(password.length < 8){ msg.style.color='var(--danger)'; msg.textContent='Temporary password must be at least 8 characters.'; return; }
+  if(roleVal==='distributor' && !program_source){ msg.style.color='var(--danger)'; msg.textContent='Program Source is required for distributor users.'; return; }
+
+  msg.style.color='var(--text-2)';
+  msg.textContent='Creating user…';
+  const payload = { email, password, role: roleVal, program_source, distributor_name, distributor_warehouse, sales_rep_name, director_name, rep_only };
   try{
-    await daCall({action:'create', email, password:pass, company, display_name:name||email});
-    msg.style.color='var(--success)'; msg.textContent='Saved account for '+email+' ('+company+').';
-    ge('da-name').value=''; ge('da-email').value=''; ge('da-pass').value=''; ge('da-company').value='';
-    const d = await daCall({action:'list'}); renderDaList(d.users||[]);
-  }catch(e){ msg.style.color='var(--danger)'; msg.textContent='Error: '+e.message; }
+    const r = await fetch('/.netlify/functions/create-access-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok){
+      msg.style.color='var(--danger)';
+      msg.textContent = d.error || ('Create failed: HTTP '+r.status);
+      return;
+    }
+    msg.style.color='var(--success)';
+    msg.textContent = `User created: ${email}`;
+    cancelAccessUserEdit();
+    await refreshAccessUsers();
+  }catch(e){
+    msg.style.color='var(--danger)';
+    msg.textContent = 'Create failed: '+(e.message||'Unknown error');
+  }
 }
-async function daReset(user_id, email){
-  const pw=prompt('New password for '+email+' (min 8 chars):');
-  if(pw==null) return;
-  if(pw.length<8){ notice('Password too short.','warn'); return; }
-  try{ await daCall({action:'setpw', user_id, password:pw}); notice('Password reset for '+email+'.','ok'); }
-  catch(e){ notice('Reset failed: '+e.message,'warn'); }
+async function updateAccessUser(){
+  const msg = ge('ua-msg');
+  const user_id = (ge('ua-user-id')?.value||'').trim();
+  const registry_id = (ge('ua-registry-id')?.value||'').trim();
+  const email = (ge('ua-email')?.value||'').trim();
+  const password = (ge('ua-password')?.value||'').trim();
+  const roleVal = canonicalAccessRole((ge('ua-role')?.value||'').trim());
+  const program_source = (ge('ua-program')?.value||'').trim();
+  const distributor_name = (ge('ua-distname')?.value||'').trim();
+  const distributor_warehouse = (ge('ua-wh')?.value||'').trim();
+  const sales_rep_name = (ge('ua-rep')?.value||'').trim();
+  const director_name = (ge('ua-dir')?.value||'').trim();
+  const rep_only = !!ge('ua-rep-only')?.checked;
+
+  if(!email || !roleVal){ msg.style.color='var(--danger)'; msg.textContent='Email and role are required.'; return; }
+  if(password && password.length < 8){ msg.style.color='var(--danger)'; msg.textContent='If changing password, use at least 8 characters.'; return; }
+  if(roleVal==='distributor' && !program_source){ msg.style.color='var(--danger)'; msg.textContent='Program Source is required for distributor users.'; return; }
+
+  msg.style.color='var(--text-2)';
+  msg.textContent='Saving changes…';
+  const payload = { user_id, registry_id, email, password, role: roleVal, program_source, distributor_name, distributor_warehouse, sales_rep_name, director_name, rep_only };
+  try{
+    const r = await fetch('/.netlify/functions/update-access-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok){
+      msg.style.color='var(--danger)';
+      msg.textContent = d.error || ('Update failed: HTTP '+r.status);
+      return;
+    }
+    msg.style.color='var(--success)';
+    msg.textContent = `User updated: ${email}`;
+    await refreshAccessUsers();
+  }catch(e){
+    msg.style.color='var(--danger)';
+    msg.textContent = 'Update failed: '+(e.message||'Unknown error');
+  }
 }
-async function daDelete(user_id, email){
-  if(!confirm('Remove distributor access for '+email+'? They will no longer be able to sign in.')) return;
-  try{ await daCall({action:'delete', user_id}); const d=await daCall({action:'list'}); renderDaList(d.users||[]); notice('Removed '+email+'.','ok'); }
-  catch(e){ notice('Remove failed: '+e.message,'warn'); }
+async function deleteAccessUser(userId, registryId, email){
+  if(!userId && !registryId && !email) return;
+  if(!confirm(`Delete user ${email||''}?`)) return;
+  const msg = ge('au-msg');
+  if(msg){ msg.style.color='var(--text-2)'; msg.textContent='Deleting user…'; }
+  try{
+    const r = await fetch('/.netlify/functions/delete-access-user', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ user_id: userId||'', registry_id: registryId||'', email: email||'' }),
+    });
+    const d = await r.json().catch(()=>({}));
+    if(!r.ok){
+      if(msg){ msg.style.color='var(--danger)'; msg.textContent = d.error || ('Delete failed: HTTP '+r.status); }
+      return;
+    }
+    if((ge('ua-user-id')?.value||'') === (userId||'')) cancelAccessUserEdit();
+    if(msg){ msg.style.color='var(--success)'; msg.textContent = `Deleted ${email||'user'}.`; }
+    await refreshAccessUsers();
+  }catch(e){
+    if(msg){ msg.style.color='var(--danger)'; msg.textContent = 'Delete failed: '+(e.message||'Unknown error'); }
+  }
+}
+function deleteSelectedAccessUser(){
+  const userId = (ge('ua-user-id')?.value||'').trim();
+  const registryId = (ge('ua-registry-id')?.value||'').trim();
+  const email = (ge('ua-email')?.value||'').trim();
+  if(!userId && !registryId && !email) return;
+  deleteAccessUser(userId, registryId, email);
 }
 async function testApiKey(){
   const key = ge('s-apikey').value.trim(); if(!key) return;
