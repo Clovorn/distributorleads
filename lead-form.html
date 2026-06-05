@@ -87,6 +87,23 @@
   @keyframes spin{to{transform:rotate(360deg)}}
 
   .hidden{display:none!important}
+
+  /* photo grid */
+  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:480px){.photo-grid{grid-template-columns:1fr 1fr}}
+  .photo-slot{border:2px dashed var(--border);border-radius:var(--rad-lg);overflow:hidden;aspect-ratio:1;position:relative;background:var(--surface-2);transition:border-color .15s}
+  .photo-slot:has(.photo-prompt):hover{border-color:var(--navy-2);cursor:pointer}
+  .photo-prompt{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:12px;text-align:center;cursor:pointer;gap:6px}
+  .photo-icon{font-size:28px;line-height:1}
+  .photo-slot-title{font-size:12px;font-weight:600;color:var(--text)}
+  .photo-slot-sub{font-size:10px;color:var(--text-3)}
+  .photo-preview{position:relative;height:100%;width:100%}
+  .photo-preview.show{display:block!important}
+  .photo-thumb{width:100%;height:100%;object-fit:cover;display:block}
+  .photo-preview-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:600;text-align:center;padding:4px 6px}
+  .photo-remove{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .photo-remove:hover{background:var(--bad)}
+  .photo-uploading{position:absolute;inset:0;background:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-2);gap:6px}
 </style>
 </head>
 <body>
@@ -240,23 +257,10 @@
     </div>
   </div>
 
-  <!-- ⑤ Program & Interest -->
+  <!-- ⑤ Equipment Interest -->
   <div class="form-section">
-    <div class="section-title">Program &amp; Equipment Interest</div>
-    <div class="fg c2">
-      <div class="field">
-        <label class="flbl">Program <span class="req">*</span></label>
-        <select class="finp" id="f-program">
-          <option value="">— Select program —</option>
-          <option value="Java Select">Java Select</option>
-          <option value="Small Coffee">Small Coffee — under $500/mo</option>
-          <option value="Medium Coffee">Medium Coffee — over $500/mo</option>
-          <option value="Full Beverage Bar">Full Beverage Bar</option>
-          <option value="Polar Wave Frozen">Polar Wave Frozen</option>
-          <option value="My Daily Crave Program">My Daily Crave Program</option>
-          <option value="Other">Other / Custom</option>
-        </select>
-      </div>
+    <div class="section-title">Equipment Interest</div>
+    <div class="fg">
       <div class="field">
         <label class="flbl">Equipment interest <span class="req">*</span></label>
         <select class="finp" id="f-interest">
@@ -272,6 +276,53 @@
       <div class="field">
         <label class="flbl">Current beverage setup / what they're looking for</label>
         <textarea class="finp" id="f-beverage" placeholder="e.g. Currently using drip coffee, interested in bean-to-cup…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ Photos -->
+  <div class="form-section">
+    <div class="section-title">Beverage Bar Photos <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-3);font-size:10px">(optional — up to 3)</span></div>
+    <p style="font-size:12px;color:var(--text-2);margin-bottom:16px">Take or upload photos of the power outlet, water source, and counter setup. These help Ronnoco recommend the right equipment.</p>
+    <div class="photo-grid" id="photo-grid">
+      <div class="photo-slot" id="slot-0" data-label="Power Setup">
+        <div class="photo-prompt" onclick="triggerPick(0)">
+          <div class="photo-icon">📷</div>
+          <div class="photo-slot-title">Power Setup</div>
+          <div class="photo-slot-sub">Outlet / panel</div>
+        </div>
+        <div class="photo-preview hidden" id="preview-0">
+          <img id="thumb-0" class="photo-thumb" alt="Power Setup"/>
+          <div class="photo-preview-label">Power Setup</div>
+          <button class="photo-remove" type="button" onclick="removePhoto(0)" aria-label="Remove">✕</button>
+        </div>
+        <input type="file" id="pick-0" class="hidden" accept="image/*" capture="environment" onchange="onPhotoPicked(0,this)"/>
+      </div>
+      <div class="photo-slot" id="slot-1" data-label="Water Source">
+        <div class="photo-prompt" onclick="triggerPick(1)">
+          <div class="photo-icon">📷</div>
+          <div class="photo-slot-title">Water Source</div>
+          <div class="photo-slot-sub">Drain / supply line</div>
+        </div>
+        <div class="photo-preview hidden" id="preview-1">
+          <img id="thumb-1" class="photo-thumb" alt="Water Source"/>
+          <div class="photo-preview-label">Water Source</div>
+          <button class="photo-remove" type="button" onclick="removePhoto(1)" aria-label="Remove">✕</button>
+        </div>
+        <input type="file" id="pick-1" class="hidden" accept="image/*" capture="environment" onchange="onPhotoPicked(1,this)"/>
+      </div>
+      <div class="photo-slot" id="slot-2" data-label="Counter Setup">
+        <div class="photo-prompt" onclick="triggerPick(2)">
+          <div class="photo-icon">📷</div>
+          <div class="photo-slot-title">Counter Setup</div>
+          <div class="photo-slot-sub">Available space</div>
+        </div>
+        <div class="photo-preview hidden" id="preview-2">
+          <img id="thumb-2" class="photo-thumb" alt="Counter Setup"/>
+          <div class="photo-preview-label">Counter Setup</div>
+          <button class="photo-remove" type="button" onclick="removePhoto(2)" aria-label="Remove">✕</button>
+        </div>
+        <input type="file" id="pick-2" class="hidden" accept="image/*" capture="environment" onchange="onPhotoPicked(2,this)"/>
       </div>
     </div>
   </div>
@@ -362,7 +413,59 @@ const DEFAULT_WAREHOUSES = [
 ];
 
 // ── State ───────────────────────────────────────────────────────────────────
-let lockedCompany = ''; // set when a distributor slug is in the URL
+let lockedCompany  = ''; // set when a distributor slug is in the URL
+let lockedProgram  = ''; // default program for this distributor
+
+// photos[i] = { data: base64string, mimeType, label } or null
+const photos = [null, null, null];
+const PHOTO_LABELS = ['Power Setup', 'Water Source', 'Counter Setup'];
+
+// ── Photo helpers ────────────────────────────────────────────────────────────
+function triggerPick(i){ ge('pick-'+i).click(); }
+
+function onPhotoPicked(i, input){
+  const file = input.files[0];
+  if(!file) return;
+  compressImage(file, 1024, 0.78, (base64, mimeType) => {
+    photos[i] = { data: base64, mimeType, label: PHOTO_LABELS[i] };
+    ge('thumb-'+i).src = 'data:'+mimeType+';base64,'+base64;
+    ge('preview-'+i).classList.remove('hidden');
+    ge('preview-'+i).classList.add('show');
+    ge('slot-'+i).querySelector('.photo-prompt').style.display = 'none';
+  });
+}
+
+function removePhoto(i){
+  photos[i] = null;
+  ge('pick-'+i).value = '';
+  ge('thumb-'+i).src = '';
+  ge('preview-'+i).classList.add('hidden');
+  ge('preview-'+i).classList.remove('show');
+  ge('slot-'+i).querySelector('.photo-prompt').style.display = '';
+}
+
+// Resize + compress an image File to max px, returns base64 (no data-URI prefix).
+function compressImage(file, maxPx, quality, cb){
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if(w > maxPx || h > maxPx){
+        if(w >= h){ h = Math.round(h * maxPx / w); w = maxPx; }
+        else      { w = Math.round(w * maxPx / h); h = maxPx; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const mime = 'image/jpeg';
+      const dataUrl = canvas.toDataURL(mime, quality);
+      cb(dataUrl.split(',')[1], mime);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
 // ── Boot ────────────────────────────────────────────────────────────────────
 function ge(id){ return document.getElementById(id); }
@@ -373,7 +476,8 @@ function boot(){
   const dist   = DISTRIBUTORS[slug];
 
   if(dist){
-    lockedCompany = dist.name;
+    lockedCompany  = dist.name;
+    lockedProgram  = dist.defaultProgram || '';
 
     // Show and populate distributor bar
     ge('dist-bar').classList.remove('hidden');
@@ -393,14 +497,6 @@ function boot(){
     locked.innerHTML = '<label class="flbl">Distributor / Company</label>'
       + '<input class="finp" value="'+esc(dist.name)+'" readonly style="background:var(--surface-2);color:var(--text-2)">';
     ge('f-company-wrap').parentNode.insertBefore(locked, ge('f-company-wrap'));
-
-    // Pre-select program
-    if(dist.defaultProgram){
-      const sel = ge('f-program');
-      for(let i=0;i<sel.options.length;i++){
-        if(sel.options[i].value === dist.defaultProgram){ sel.selectedIndex=i; break; }
-      }
-    }
 
     // Populate warehouses
     buildWarehouseOptions(dist.warehouses);
@@ -474,23 +570,24 @@ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 // ── Submit ────────────────────────────────────────────────────────────────────
 async function submitLead(){
   // Clear previous errors
-  ['f-rep-name','f-company','f-warehouse','f-dba','f-program','f-interest']
+  ['f-rep-name','f-company','f-warehouse','f-dba','f-interest']
     .forEach(clearErr);
 
   const repName   = ge('f-rep-name').value.trim();
   const company   = getCompany();
   const warehouse = getWarehouse();
   const dba       = ge('f-dba').value.trim();
-  const program   = ge('f-program').value;
   const interest  = ge('f-interest').value;
 
+  // Program comes from the distributor config (locked) or a hidden default
+  const program = lockedProgram || 'Java Select';
+
   // Validate required fields
-  if(!repName)   { markErr('f-rep-name');  notice('Your name is required.');           return; }
+  if(!repName)   { markErr('f-rep-name');  notice('Your name is required.');             return; }
   if(!company)   { markErr('f-company');   notice('Distributor / Company is required.'); return; }
-  if(!dba)       { markErr('f-dba');       notice('Business / DBA name is required.'); return; }
-  if(!warehouse) { markErr('f-warehouse'); notice('Please select a warehouse.');        return; }
-  if(!program)   { markErr('f-program');   notice('Please select a program.');          return; }
-  if(!interest)  { markErr('f-interest');  notice('Please select equipment interest.'); return; }
+  if(!dba)       { markErr('f-dba');       notice('Business / DBA name is required.');   return; }
+  if(!warehouse) { markErr('f-warehouse'); notice('Please select a warehouse.');          return; }
+  if(!interest)  { markErr('f-interest');  notice('Please select equipment interest.');   return; }
 
   const firstName = ge('f-first').value.trim();
   const lastName  = ge('f-last').value.trim();
@@ -515,6 +612,7 @@ async function submitLead(){
     beverage_needs:              ge('f-beverage').value.trim()  || null,
     notes:                       ge('f-notes').value.trim()     || null,
     tradeshow_lead:              ge('f-tradeshow').checked,
+    photos:                      photos.filter(Boolean),
   };
 
   const btn = ge('submit-btn');
@@ -558,22 +656,12 @@ function resetForm(){
     ge('f-company-other-wrap').classList.add('hidden');
   }
   ge('f-warehouse').selectedIndex = 0;
-  ge('f-program').selectedIndex   = 0;
   ge('f-interest').selectedIndex  = 0;
   ge('f-tradeshow').checked        = false;
   ge('f-wh-other-wrap').classList.add('hidden');
 
-  // Re-apply distributor default program if locked
-  if(lockedCompany){
-    const slug = Object.keys(DISTRIBUTORS).find(k => DISTRIBUTORS[k].name === lockedCompany);
-    const dist = slug ? DISTRIBUTORS[slug] : null;
-    if(dist?.defaultProgram){
-      const sel = ge('f-program');
-      for(let i=0;i<sel.options.length;i++){
-        if(sel.options[i].value === dist.defaultProgram){ sel.selectedIndex=i; break; }
-      }
-    }
-  }
+  // Clear photos
+  photos.forEach((_, i) => removePhoto(i));
 }
 
 function submitAnother(){
