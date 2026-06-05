@@ -2,6 +2,23 @@
   publish = "."
   functions = "netlify/functions"
 
+# HTML pages — never cache; always fetch fresh
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+
+# Root index
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+
+# Security headers for everything
 [[headers]]
   for = "/*"
   [headers.values]
